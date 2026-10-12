@@ -121,3 +121,42 @@ Avoid heavy shadows. Use `border border-outline-variant` (1px) for component bou
 - **Navigation:** centered persistent header, `bg-surface/80 backdrop-blur-[10px]`
 
 Layout: 12-column fixed grid, 1200px max-width. Favor `lg` and `xl` gaps between sections.
+
+## Organic Driven Development (ODD)
+
+Follow this flow before making any code change:
+
+- **Authorize first.** If the request only asks to explain or investigate something, don't touch code — respond in read-only mode.
+
+- **Explore proportionally.** Review the relevant code and requirements according to the actual size of the request. Don't re-read the whole project for a trivial change.
+
+- **Resolve doubts sparingly.** At most one intervention per request: one specific question if there's a real product decision you can't resolve by exploring, or one warning if you detect an unchecked high-risk assumption. Don't ask several questions in a row.
+
+- **Classify the work before writing code:**
+  - Substantial = exploration reveals 2 or more real implementation steps, or work that would be worth recovering if interrupted.
+  - Small = anything else.
+
+- **Substantial work → create a task document first.** Before the first line of code, create `odd/tasks/<feature-name>.md` with objective, problem, scope, constraints, a task checklist with acceptance criteria, verification evidence, progress, and next step. State in one sentence which document you created and how many tasks it has.
+
+- **Small work → do it directly.** No document, no extra trace.
+
+- **Implement task by task** (substantial work only). Mark a task as done only with observed proof (run the test, check the result) — never because it "should work". Each task closes with its own commit, with tests and documentation alongside the behavior change.
+
+- **Close with a verified summary.** When finished: what was actually verified, what check is pending or failed, and what the next step is.
+
+> This is the default behavior, not the only one. If SDD (spec) or a Gherkin (BDD) scenario is explicitly requested, that format takes priority over this protocol.
+
+## BDD scenarios per feature
+
+- If a `<feature-name>.feature` file exists inside a feature's folder
+  (`src/app/features/<feature-name>/`), treat it as the source of truth
+  for that feature's expected behavior.
+- Before marking any task on that feature as done, verify the result
+  against every `Scenario` in the file: confirm the `Given` matches the
+  real starting state, the `When` matches the implemented action, and the
+  `Then` is actually true — never assume it holds because it "should".
+- If no `.feature` file exists for the feature you are touching, follow
+  the normal ODD flow instead — a BDD scenario is not required for every
+  change, only for behavior someone deliberately chose to fix in writing.
+- If you change behavior described in an existing `.feature` file, update
+  it in the same change — never leave it out of sync with the code.

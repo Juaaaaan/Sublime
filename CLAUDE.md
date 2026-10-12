@@ -164,3 +164,41 @@ Rules:
 - If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
 - Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
 - After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
+
+## Workflow: Organic Driven Development (ODD)
+
+Before making any code change, follow this protocol:
+
+1. **Authorize.** Check whether the request asks for a real change or just an explanation/investigation. If it's only explaining or investigating, don't touch code — stay in read-only mode.
+
+2. **Explore.** Review the relevant code and requirements, in proportion to the size of the request. A trivial change doesn't need a full re-read of the project.
+
+3. **Resolve doubts** (at most one intervention per request):
+   - If there's a real product decision you can't resolve by exploring, ask ONE specific question and wait for the answer.
+   - If you spot a high-risk assumption that hasn't been checked, flag it once before continuing.
+   - Don't ask several questions in a row or interrogate the user.
+
+4. **Classify the work:**
+   - **Substantial**: exploration reveals 2 or more real implementation steps, or work that would be worth being able to resume if interrupted.
+   - **Small**: anything else.
+
+5. **If substantial**, before writing the first line of code:
+   - Create a document at `odd/tasks/<feature-name>.md` with: objective, problem, scope, constraints, a task checklist with acceptance criteria, verification evidence, progress, and next step.
+   - State in one sentence which document you created and how many tasks it has.
+
+6. **If small**, do it directly. Don't create any document or leave extra traces.
+
+7. **Implement task by task** (substantial work only):
+   - Mark a task as done only with observed proof that it works (run the test, check the result) — never just because it "should work".
+   - Each task closes with its own commit, with tests and documentation alongside the behavior change, not after.
+
+8. **Close.** When finished, report the verified outcome, any pending or failed checks, and what the next step would be.
+
+> This doesn't replace an explicit request for SDD or a BDD scenario. If I explicitly ask for a spec or a Gherkin scenario, that format takes full priority over this protocol — ODD is the default behavior, not the only one possible.
+
+## Convention: per-feature BDD scenarios
+
+- If a `<feature-name>.feature` file exists inside a feature's folder (`src/app/features/<feature-name>/`), treat it as the source of truth for that feature's expected behavior.
+- Before marking any task on that feature as done, verify the result against every `Scenario` in the file: confirm the `Given` matches the real starting state, the `When` matches the implemented action, and the `Then` is actually true — never assume it holds because it "should".
+- If no `.feature` file exists for the feature you're touching, follow the normal ODD flow instead (see section above) — a BDD scenario isn't required for every change, only for behavior someone deliberately chose to pin down in writing.
+- If you change behavior described in an existing `.feature` file, update it in the same change — never leave it out of sync with the code.

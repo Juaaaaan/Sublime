@@ -105,9 +105,9 @@ Components are generated with SCSS by default (set in `angular.json` schematics)
 
 ESLint is configured with `angular-eslint` covering both `.ts` and `.html` files. Template accessibility rules are enabled. Run `npm run lint -- --fix` for auto-fixable issues.
 
-## Design System — Artisanal Ether
+## Design System — Sublime Craft Art (Botanical Minimalism)
 
-Brand personality: tactile craftsmanship meets ethereal beauty. Target audience values slow fashion, intentionality, and handmade imperfection. The UI is gallery-like — it recedes to let product photography dominate. Every interaction should feel deliberate and soft, mimicking polished resin. Style blend: **Minimalism + Tactile Sophistication**.
+Brand personality: tactile craftsmanship meets botanical calm. Target audience values slow fashion, intentionality, and handmade imperfection. The UI is gallery-like — it recedes to let product photography dominate. Every interaction should feel deliberate and soft, mimicking polished resin. Style: **Botanical Minimalism** (sage/moss greens on warm ivory). Source of truth for the design: `DESIGN.md` in the Claude Project.
 
 Tailwind v4 tokens are defined in `src/tailwind.css` via `@theme`. Fonts (Noto Serif + Manrope) are loaded via `<link>` in `src/index.html`.
 
@@ -117,16 +117,18 @@ Material Design 3 tonal palette. Key roles:
 
 | Role | Token | Use |
 |------|-------|-----|
-| Page canvas | `bg-surface` | Warm off-white (#fff8f4), main background |
+| Page canvas | `bg-surface` | Ivory (#f8faf0), main background |
 | Card / highlight | `bg-surface-container-lowest` | Pure white, product cards |
-| Borders / dividers | `border-outline-variant` | Soft taupe (#d0c4bc), 1px solid |
-| Body text | `text-on-surface` | Charcoal-brown (#1f1b18), high contrast |
-| Secondary text | `text-on-surface-variant` | Muted brown (#4d453f) |
-| CTA / primary action | `bg-primary` | Warm brown (#685c52) |
+| Borders / dividers | `border-outline-variant` | Soft grey-green (#c5c7bf), 1px, decorative only (1.6:1 contrast) |
+| Body text | `text-on-surface` | Near-black green (#191d17), high contrast |
+| Secondary text | `text-on-surface-variant` | Muted green-grey (#444841) |
+| CTA / primary action | `bg-primary` | Very dark green (#172014) |
 | Primary text on dark | `text-on-primary` | White |
-| Accent / chip fill | `bg-primary-container` | Blush (#f5e4d7) |
+| Contrast block | `bg-primary-container` | Deep Moss (#2c3528) — DARK fill, pair with `text-on-primary-container` |
+| Light chip / badge | `bg-secondary-container` | Pale sage (#d4e5c8) |
+| Brand aliases | `bg-forest-mist` `bg-deep-moss` `bg-ivory-surface` | #d2dcd0 / #2c3528 / #f8faf0. `sage-leaf` (#8c9c82) is decorative only (2.77:1 as text) |
 
-Avoid heavy shadows. Use `border border-outline-variant` (1px) to define component boundaries. When elevation is needed (modals, floating cart) use: `shadow-[0_12px_32px_rgba(74,69,65,0.05)]`.
+Avoid heavy shadows. Use `border border-outline-variant` (1px) to define component boundaries. When elevation is needed (modals, floating cart) use: `shadow-ambient`.
 
 ### Typography
 
@@ -137,13 +139,16 @@ Avoid heavy shadows. Use `border border-outline-variant` (1px) to define compone
 | h3 | `text-h3 font-serif` | Noto Serif 24px | Sub-sections |
 | body-lg | `text-body-lg font-sans` | Manrope 18px | Lead paragraphs |
 | body-md | `text-body-md font-sans` | Manrope 16px | Body copy |
+| label-md | `text-label-md font-sans font-semibold tracking-label-md` | Manrope 14px | Buttons, navigation |
 | label-sm | `text-label-sm font-sans font-semibold tracking-label uppercase` | Manrope 12px | Chips, field labels, tags |
+
+Mobile h2 variant: `text-h2-mobile` (28px).
 
 ### Spacing
 
-Named spacing tokens: `xs` (8px), `sm` (16px), `md` (24px), `lg` (48px), `xl` (80px), `gutter` (24px), `margin-safe` (32px). Favor `lg` and `xl` gaps between major sections to achieve the airy, minimalist rhythm.
+Named spacing tokens: `xs` (8px), `sm` (16px), `md` (24px), `lg` (48px), `xl` (80px), `gutter` (24px), `margin-safe` (32px), `section-gap` (80px). Favor `lg` and `xl` gaps between major sections to achieve the airy, minimalist rhythm.
 
-Layout: 12-column fixed grid, 1200px max-width desktop. Storytelling sections → centered. Shopping/functional UI → left-aligned.
+Layout: 12-column fixed grid, 1200px max-width desktop (`max-w-content`). Storytelling sections → centered. Shopping/functional UI → left-aligned.
 
 ### Components
 

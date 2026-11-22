@@ -25,7 +25,7 @@ Realiza una revisión exhaustiva del código indicado o, si no se especifica nad
 - [ ] No hay efectos secundarios en constructores que rompan la hidratación
 - [ ] `withEventReplay()` no se duplica
 
-### Design System — Artisanal Ether
+### Design System — Sublime Craft Art
 
 - [ ] Se usan tokens de Tailwind (`bg-surface`, `text-on-surface`, etc.), no valores hex en línea
 - [ ] Tipografía sigue la escala definida (`text-h1 font-serif`, `text-body-md font-sans`, etc.)
@@ -33,7 +33,7 @@ Realiza una revisión exhaustiva del código indicado o, si no se especifica nad
 - [ ] Bordes usan `border-outline-variant` (nunca sombras pesadas)
 - [ ] Espaciado usa tokens (`xs`, `sm`, `md`, `lg`, `xl`, `gutter`) — no valores arbitrarios salvo excepción justificada
 - [ ] Fondos de cards: `bg-surface-container-lowest rounded-lg`
-- [ ] Chips: `rounded-full bg-primary-container text-label-sm`
+- [ ] Chips: `rounded-full bg-secondary-container text-on-secondary-container text-label-sm`
 - [ ] Transiciones lentas (300ms) en elementos interactivos
 
 ### Calidad general

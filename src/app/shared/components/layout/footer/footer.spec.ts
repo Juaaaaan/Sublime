@@ -1,6 +1,8 @@
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { TranslocoService, TranslocoTestingModule } from '@jsverse/transloco';
+import { TRANSLOCO_CONST_CONFIG } from '../../../consts/translations/transloco.const';
 import { FooterComponent } from './footer';
 
 describe('FooterComponent', () => {
@@ -9,7 +11,7 @@ describe('FooterComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FooterComponent],
+      imports: [FooterComponent, TranslocoTestingModule.forRoot(TRANSLOCO_CONST_CONFIG)],
       providers: [provideZonelessChangeDetection(), provideRouter([])],
     }).compileComponents();
 
@@ -46,5 +48,24 @@ describe('FooterComponent', () => {
     expect(hrefs).toContain('/cuidados');
     expect(hrefs).toContain('/contacto');
     expect(hrefs).toContain('/personaliza');
+  });
+
+  it('should render the link labels in the active language', () => {
+    const el: HTMLElement = fixture.nativeElement;
+    const labels = Array.from(el.querySelectorAll('a')).map((a) => a.textContent!.trim());
+    expect(labels).toContain('Care and shipping');
+    expect(labels).toContain('Contact');
+    expect(labels).toContain('Customize your piece');
+  });
+
+  it('should translate the link labels and tagline when the language changes', async () => {
+    TestBed.inject(TranslocoService).setActiveLang('es');
+    await fixture.whenStable();
+
+    const el: HTMLElement = fixture.nativeElement;
+    const labels = Array.from(el.querySelectorAll('a')).map((a) => a.textContent!.trim());
+    expect(labels).toContain('Cuidados y envíos');
+    expect(labels).toContain('Personaliza tu pieza');
+    expect(el.textContent).toContain('Hecho a mano con intención.');
   });
 });

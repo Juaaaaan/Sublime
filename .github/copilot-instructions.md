@@ -4,7 +4,7 @@
 
 Sublime (formerly Resin Craft Art; Jira key: RCA) is an Angular 21 SSR e-commerce application for handmade resin jewelry.
 It uses zoneless change detection, Signals-first state management, Supabase as the backend,
-Transloco for i18n, and Tailwind v4 with a custom design system called Artisanal Ether.
+Transloco for i18n, and Tailwind v4 with a custom design system called Sublime Craft Art (Botanical Minimalism).
 
 ## Stack
 
@@ -78,21 +78,23 @@ To run a single test file: `npx ng test --include='**/path/to/file.spec.ts'`
 - `src/styles.scss` — global styles
 - `src/tailwind.css` — Tailwind v4 design tokens
 
-## Design system — Artisanal Ether
+## Design system — Sublime Craft Art (Botanical Minimalism)
 
-Brand: tactile craftsmanship meets ethereal beauty. UI is gallery-like, minimalist, soft.
+Brand: tactile craftsmanship meets botanical calm. UI is gallery-like, minimalist, soft. Sage/moss greens on warm ivory.
 
 ### Color tokens (Tailwind v4)
 
-| Role             | Token                                 |
-| ---------------- | ------------------------------------- |
-| Page canvas      | `bg-surface` (#fff8f4)                |
-| Card / highlight | `bg-surface-container-lowest` (white) |
-| Borders          | `border-outline-variant` (#d0c4bc)    |
-| Body text        | `text-on-surface` (#1f1b18)           |
-| Secondary text   | `text-on-surface-variant` (#4d453f)   |
-| CTA              | `bg-primary` (#685c52)                |
-| Accent           | `bg-primary-container` (#f5e4d7)      |
+| Role             | Token                                  |
+| ---------------- | -------------------------------------- |
+| Page canvas      | `bg-surface` (#f8faf0)                 |
+| Card / highlight | `bg-surface-container-lowest` (white)  |
+| Borders          | `border-outline-variant` (#c5c7bf)     |
+| Body text        | `text-on-surface` (#191d17)            |
+| Secondary text   | `text-on-surface-variant` (#444841)    |
+| CTA              | `bg-primary` (#172014)                 |
+| Contrast block   | `bg-primary-container` (#2c3528, dark) |
+| Light chip       | `bg-secondary-container` (#d4e5c8)     |
+| Elevation        | `shadow-ambient`                       |
 
 Avoid heavy shadows. Use `border border-outline-variant` (1px) for component boundaries.
 
@@ -109,7 +111,7 @@ Avoid heavy shadows. Use `border border-outline-variant` (1px) for component bou
 
 ### Spacing tokens
 
-`xs` (8px), `sm` (16px), `md` (24px), `lg` (48px), `xl` (80px), `gutter` (24px), `margin-safe` (32px).
+`xs` (8px), `sm` (16px), `md` (24px), `lg` (48px), `xl` (80px), `gutter` (24px), `margin-safe` (32px), `section-gap` (80px).
 
 ### Component patterns
 
@@ -117,10 +119,10 @@ Avoid heavy shadows. Use `border border-outline-variant` (1px) for component bou
 - **Buttons (secondary):** transparent + `border border-outline-variant rounded`
 - **Input fields:** `border-b border-outline-variant` — labels use `text-label-sm uppercase tracking-label`
 - **Product cards:** `bg-surface-container-lowest rounded-lg` — no border, generous padding
-- **Chips:** `rounded-full bg-primary-container text-label-sm`
+- **Chips:** `rounded-full bg-secondary-container text-on-secondary-container text-label-sm`
 - **Navigation:** centered persistent header, `bg-surface/80 backdrop-blur-[10px]`
 
-Layout: 12-column fixed grid, 1200px max-width. Favor `lg` and `xl` gaps between sections.
+Layout: 12-column fixed grid, 1200px max-width (`max-w-content`). Favor `lg` and `xl` gaps between sections.
 
 ## Organic Driven Development (ODD)
 

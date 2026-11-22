@@ -43,9 +43,9 @@
 
 ## 6. Primitivos nuevos
 
-- [ ] 6.1 Crear `shared/components/ui/chip/` (`app-chip`) con `rounded-chip`, 12px `font-extrabold uppercase tracking-label`, estado seleccionado `bg-deep-moss text-on-primary` y no seleccionado `bg-surface-container-low text-deep-moss`, más sus constantes en `shared/consts/components/chip/`. Verificación: su render coincide con los nodos `3:73` (activo) y `3:75` (inactivo).
-- [ ] 6.2 Añadir a `Chip` la entrada `interactive`: cuando es `true` renderiza un `<button>` que emite su selección y expone el estado seleccionado a tecnologías de asistencia; cuando es `false` renderiza un `<span>` no enfocable que no emite nada. Verificación: `chip.spec.ts` cubre los dos modos, la activación por click y por teclado, y alcanza ≥80% del fichero.
-- [ ] 6.3 Crear `shared/components/ui/callout/` (`app-callout`) según el nodo `3:1581`: `bg-surface-container-low border-l-4 border-deep-moss rounded-field`, padding 20/16/14, texto `text-body-sm italic`. Verificación: `callout.spec.ts` afirma que el mensaje recibido por entrada se renderiza y es accesible, con ≥80% del fichero.
+- [x] 6.1 Crear `shared/components/ui/chip/` (`app-chip`) con `rounded-chip`, 12px `font-extrabold uppercase tracking-label`, estado seleccionado `bg-deep-moss text-on-primary` y no seleccionado `bg-surface-container-low text-deep-moss`, más sus constantes en `shared/consts/components/chip/`. Verificación: su render coincide con los nodos `3:73` (activo) y `3:75` (inactivo).
+- [x] 6.2 Añadir a `Chip` la entrada `interactive`: cuando es `true` renderiza un `<button>` que emite su selección y expone el estado seleccionado a tecnologías de asistencia; cuando es `false` renderiza un `<span>` no enfocable que no emite nada. Verificación: `chip.spec.ts` cubre los dos modos, la activación por click y por teclado, y alcanza ≥80% del fichero.
+- [x] 6.3 Crear `shared/components/ui/callout/` (`app-callout`) según el nodo `3:1581`: `bg-surface-container-low border-l-4 border-deep-moss rounded-field`, padding 20/16/14, texto `text-body-sm italic`. Verificación: `callout.spec.ts` afirma que el mensaje recibido por entrada se renderiza y es accesible, con ≥80% del fichero.
 
 ## 7. Verificación de integración
 

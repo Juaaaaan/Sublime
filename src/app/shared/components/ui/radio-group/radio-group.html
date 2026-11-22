@@ -1,6 +1,7 @@
 <div class="flex flex-col gap-xs w-full">
   @if (label()) {
     <span
+      [id]="labelId"
       class="text-label-sm font-semibold tracking-label uppercase text-on-surface-variant mb-xs"
     >
       {{ label() }}
@@ -11,10 +12,12 @@
   }
 
   <div
-    [class]="groupClasses"
+    [class]="groupClasses()"
     role="radiogroup"
-    [attr.aria-label]="label()"
+    [attr.aria-labelledby]="label() ? labelId : null"
+    [attr.aria-describedby]="error() || hint() ? descriptionId : null"
     [attr.aria-required]="required()"
+    [attr.aria-invalid]="error() ? true : null"
   >
     @for (option of options(); track option.value) {
       <label
@@ -24,6 +27,7 @@
       >
         <!-- Input nativo oculto — accesibilidad correcta -->
         <input
+          #radioInput
           type="radio"
           [name]="name()"
           [value]="option.value"
@@ -31,25 +35,22 @@
           [disabled]="isDisabled(option)"
           class="sr-only peer"
           (change)="onChange(option.value)"
+          (keydown)="onKeydown($event)"
         />
 
         <!-- Radio visual custom -->
         <span
-          class="mt-px shrink-0 w-5 h-5 rounded-full border border-outline-variant transition-all duration-300 peer-checked:border-primary peer-checked:border-[5px] peer-focus-visible:ring-2 peer-focus-visible:ring-primary/30 group-hover:border-primary"
+          class="mt-px shrink-0 w-5 h-5 rounded-full border border-outline bg-surface-container-lowest transition-all duration-300 peer-checked:border-deep-moss peer-checked:border-[5px] peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary group-hover:border-deep-moss"
         >
         </span>
 
         <!-- Label + descripción -->
         <span class="flex flex-col">
-          <span
-            class="text-body-md text-on-surface transition-colors duration-300 peer-checked:text-on-surface group-hover:text-on-surface"
-          >
+          <span class="text-body-sm text-deep-moss transition-colors duration-300">
             {{ option.label }}
           </span>
           @if (option.description) {
-            <span
-              class="text-label-sm text-on-surface-variant mt-xs"
-            >
+            <span class="text-label-sm text-on-surface-variant mt-xs">
               {{ option.description }}
             </span>
           }
@@ -59,12 +60,8 @@
   </div>
 
   @if (error()) {
-    <span class="text-label-sm text-error" role="alert">{{
-      error()
-    }}</span>
+    <span [id]="descriptionId" class="text-label-sm text-error" role="alert">{{ error() }}</span>
   } @else if (hint()) {
-    <span class="text-label-sm text-on-surface-variant">{{
-      hint()
-    }}</span>
+    <span [id]="descriptionId" class="text-label-sm text-on-surface-variant">{{ hint() }}</span>
   }
 </div>

@@ -75,4 +75,30 @@ describe('Badge', () => {
     const badge = fixture.nativeElement.querySelector('span');
     expect(badge.className).toContain('text-[10px]');
   });
+
+  it('should reflect a hot change of variant and size without manual detection', async () => {
+    // Escenario «Class strings react to input changes» del spec: con `classes` como
+    // getter el cambio podia no llegar al marcado bajo zoneless + OnPush, porque un
+    // getter solo se reevalua si algo mas dispara la deteccion en el componente.
+    // Aqui no se llama a `detectChanges()`: solo se espera a que el fixture se estabilice.
+    const badge = () => fixture.nativeElement.querySelector('span') as HTMLElement;
+
+    expect(badge().className).toContain('bg-surface-container');
+    expect(badge().className).not.toContain('text-[10px]');
+
+    fixture.componentRef.setInput('variant', 'primary');
+    fixture.componentRef.setInput('size', 'sm');
+    await fixture.whenStable();
+
+    expect(badge().className).toContain('bg-primary-container');
+    expect(badge().className).toContain('text-[10px]');
+    expect(badge().className).not.toContain('bg-surface-container');
+
+    fixture.componentRef.setInput('variant', 'outline');
+    fixture.componentRef.setInput('size', 'md');
+    await fixture.whenStable();
+
+    expect(badge().className).toContain('border-outline-variant');
+    expect(badge().className).not.toContain('text-[10px]');
+  });
 });

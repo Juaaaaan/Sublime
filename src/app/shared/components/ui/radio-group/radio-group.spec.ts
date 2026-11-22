@@ -129,4 +129,185 @@ describe('RadioGroup', () => {
     expect(fixture.nativeElement.querySelector('[role="alert"]')).toBeNull();
     expect(fixture.nativeElement.textContent).toContain('Elige el tipo de resina');
   });
+
+  // --- Escenario «Deterministic group name» del spec ---
+
+  it('should derive a deterministic default name from a module counter', () => {
+    // `Math.random()` daba un valor distinto en servidor y en cliente, asi que el
+    // marcado hidratado no coincidia (decision D-7). El contador de modulo si es
+    // reproducible: el orden de instanciacion es el mismo en los dos renders.
+    const first = fixture.nativeElement.querySelector('input[type="radio"]') as HTMLInputElement;
+    expect(first.name).toMatch(/^radio-group-\d+$/);
+
+    const second = TestBed.createComponent(RadioGroup);
+    second.componentRef.setInput('options', mockOptions);
+    second.detectChanges();
+    const secondName = (
+      second.nativeElement.querySelector('input[type="radio"]') as HTMLInputElement
+    ).name;
+
+    expect(secondName).toMatch(/^radio-group-\d+$/);
+    expect(secondName).not.toBe(first.name);
+    expect(Number(secondName.replace('radio-group-', ''))).toBe(
+      Number(first.name.replace('radio-group-', '')) + 1,
+    );
+  });
+
+  it('should keep the rendered name stable across consecutive renders of the same tree', () => {
+    const readNames = () =>
+      Array.from(
+        fixture.nativeElement.querySelectorAll(
+          'input[type="radio"]',
+        ) as NodeListOf<HTMLInputElement>,
+      ).map((input) => input.name);
+
+    const before = readNames();
+    fixture.detectChanges();
+    fixture.componentRef.setInput('value', 'epoxy');
+    fixture.detectChanges();
+
+    expect(readNames()).toEqual(before);
+    expect(new Set(before).size).toBe(1);
+  });
+
+  it('should let the caller override the group name', () => {
+    fixture.componentRef.setInput('name', 'resin-type');
+    fixture.detectChanges();
+    const inputs = fixture.nativeElement.querySelectorAll('input[type="radio"]');
+    inputs.forEach((input: HTMLInputElement) => expect(input.name).toBe('resin-type'));
+  });
+
+  // --- Escenario «Accessible grouping» del spec ---
+
+  it('should expose the options as a group labelled by its own label', () => {
+    const group = fixture.nativeElement.querySelector('[role="radiogroup"]');
+    const labelledBy = group.getAttribute('aria-labelledby');
+    expect(labelledBy).toBeTruthy();
+    const labelEl = fixture.nativeElement.querySelector(`#${labelledBy}`);
+    expect(labelEl).toBeTruthy();
+    expect(labelEl.textContent.trim()).toContain('Tipo de resina');
+  });
+
+  it('should not reference a label element when there is no label', () => {
+    fixture.componentRef.setInput('label', '');
+    fixture.detectChanges();
+    const group = fixture.nativeElement.querySelector('[role="radiogroup"]');
+    expect(group.getAttribute('aria-labelledby')).toBeNull();
+  });
+
+  it('should associate the error message with the group and mark it invalid', () => {
+    fixture.componentRef.setInput('error', 'Selecciona un tipo');
+    fixture.detectChanges();
+    const group = fixture.nativeElement.querySelector('[role="radiogroup"]');
+    const describedBy = group.getAttribute('aria-describedby');
+    expect(group.getAttribute('aria-invalid')).toBe('true');
+    expect(fixture.nativeElement.querySelector(`#${describedBy}`).textContent.trim()).toBe(
+      'Selecciona un tipo',
+    );
+  });
+
+  it('should associate the hint with the group when there is no error', () => {
+    fixture.componentRef.setInput('hint', 'Elige el tipo de resina');
+    fixture.detectChanges();
+    const group = fixture.nativeElement.querySelector('[role="radiogroup"]');
+    const describedBy = group.getAttribute('aria-describedby');
+    expect(group.getAttribute('aria-invalid')).toBeNull();
+    expect(fixture.nativeElement.querySelector(`#${describedBy}`).textContent.trim()).toBe(
+      'Elige el tipo de resina',
+    );
+  });
+
+  // --- Escenario «Keyboard selection» del spec ---
+
+  it('should select the next enabled option with ArrowDown and ArrowRight', () => {
+    const spy = jasmine.createSpy('valueChange');
+    component.valueChange.subscribe(spy);
+    fixture.componentRef.setInput('value', 'uv');
+    fixture.detectChanges();
+    const radios = fixture.nativeElement.querySelectorAll('input[type="radio"]');
+
+    radios[0].dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+    expect(spy).toHaveBeenCalledWith('epoxy');
+
+    spy.calls.reset();
+    radios[0].dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+    expect(spy).toHaveBeenCalledWith('epoxy');
+  });
+
+  it('should skip disabled options and wrap around with ArrowUp', () => {
+    const spy = jasmine.createSpy('valueChange');
+    component.valueChange.subscribe(spy);
+    fixture.componentRef.setInput('value', 'uv');
+    fixture.detectChanges();
+    const radios = fixture.nativeElement.querySelectorAll('input[type="radio"]');
+
+    // «polyester» esta deshabilitada, asi que la anterior a «uv» es «epoxy».
+    radios[0].dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true }));
+    expect(spy).toHaveBeenCalledWith('epoxy');
+  });
+
+  it('should move focus to the option selected with the keyboard', () => {
+    fixture.componentRef.setInput('value', 'uv');
+    fixture.detectChanges();
+    const inputs = fixture.nativeElement.querySelectorAll('input[type="radio"]');
+
+    inputs[0].dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+    expect(document.activeElement).toBe(inputs[1]);
+  });
+
+  it('should select the first enabled option when nothing is selected yet', () => {
+    const spy = jasmine.createSpy('valueChange');
+    component.valueChange.subscribe(spy);
+    const radios = fixture.nativeElement.querySelectorAll('input[type="radio"]');
+
+    radios[0].dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+    expect(spy).toHaveBeenCalledWith('uv');
+
+    spy.calls.reset();
+    radios[0].dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true }));
+    expect(spy).toHaveBeenCalledWith('epoxy');
+  });
+
+  it('should ignore keys other than the arrows', () => {
+    const spy = jasmine.createSpy('valueChange');
+    component.valueChange.subscribe(spy);
+    const radios = fixture.nativeElement.querySelectorAll('input[type="radio"]');
+    radios[0].dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  it('should ignore the arrows when the whole group is disabled', () => {
+    const spy = jasmine.createSpy('valueChange');
+    component.valueChange.subscribe(spy);
+    fixture.componentRef.setInput('disabled', true);
+    fixture.detectChanges();
+    // Se invoca el manejador directamente: los radios estan deshabilitados, asi que en
+    // uso real no reciben el evento y por el DOM no se alcanzaria esta rama.
+    component.onKeydown(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  it('should ignore the arrows when there are no options', () => {
+    const spy = jasmine.createSpy('valueChange');
+    component.valueChange.subscribe(spy);
+    fixture.componentRef.setInput('options', []);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelectorAll('input[type="radio"]').length).toBe(0);
+    component.onKeydown(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  // --- Tokens ---
+
+  it('should style the option label and the group with design tokens', () => {
+    const optionLabel = fixture.nativeElement.querySelector(
+      'label > span:last-child > span:first-child',
+    );
+    expect(optionLabel.className).toContain('text-body-sm');
+    expect(optionLabel.className).toContain('text-deep-moss');
+
+    const indicator = fixture.nativeElement.querySelector('label > span');
+    expect(indicator.className).toContain('border-outline');
+    expect(indicator.className).toContain('peer-checked:border-deep-moss');
+  });
 });

@@ -27,19 +27,19 @@
 
 ## 4. Campos de formulario
 
-- [ ] 4.1 Reestilar `InputComponent` según el nodo `3:1550`: `bg-surface-container-lowest border border-outline-field rounded-field`, padding 15/11, `text-body-sm`, placeholder `text-placeholder`, etiqueta encima con `text-label-sm font-semibold uppercase tracking-label`. Verificación: `input.spec.ts` afirma las clases nuevas y el render coincide con el nodo.
-- [ ] 4.2 Aplicar el mismo contrato visual a `TextArea` (nodo `3:1578`) y añadirle `ChangeDetectionStrategy.OnPush`. Verificación: `text-area.spec.ts` en verde y el componente declara `OnPush`.
-- [ ] 4.3 Aplicar el mismo contrato visual a `Select` (nodo `3:1570`, con su icono de chevron a la derecha), añadirle `OnPush` y pasar su getter de clases (`select.ts:28`) a `computed()`. Verificación: `select.spec.ts` en verde, el componente declara `OnPush`, y al cambiar la entrada `error` el markup se actualiza sin detección manual.
-- [ ] 4.4 Cubrir en los tres specs los escenarios del spec para campo en error (borde y mensaje de error, mensaje asociado al control, control marcado inválido), campo obligatorio, etiqueta asociada al control y emisión del valor. Verificación: los 3 specs pasan con ≥80% por fichero.
+- [x] 4.1 Reestilar `InputComponent` según el nodo `3:1550`: `bg-surface-container-lowest border border-outline-field rounded-field`, padding 15/11, `text-body-sm`, placeholder `text-placeholder`, etiqueta encima con `text-label-sm font-semibold uppercase tracking-label`. Verificación: `input.spec.ts` afirma las clases nuevas y el render coincide con el nodo.
+- [x] 4.2 Aplicar el mismo contrato visual a `TextArea` (nodo `3:1578`) y añadirle `ChangeDetectionStrategy.OnPush`. Verificación: `text-area.spec.ts` en verde y el componente declara `OnPush`.
+- [x] 4.3 Aplicar el mismo contrato visual a `Select` (nodo `3:1570`, con su icono de chevron a la derecha), añadirle `OnPush` y pasar su getter de clases (`select.ts:28`) a `computed()`. Verificación: `select.spec.ts` en verde, el componente declara `OnPush`, y al cambiar la entrada `error` el markup se actualiza sin detección manual.
+- [x] 4.4 Cubrir en los tres specs los escenarios del spec para campo en error (borde y mensaje de error, mensaje asociado al control, control marcado inválido), campo obligatorio, etiqueta asociada al control y emisión del valor. Verificación: los 3 specs pasan con ≥80% por fichero.
 
 ## 5. Badge, RadioGroup y Modal
 
-- [ ] 5.1 Pasar el getter `classes` de `Badge` (`badge.ts:15`) a `computed()`. Verificación: al cambiar las entradas `variant` o `size` el markup se actualiza, cubierto por un caso nuevo en `badge.spec.ts`.
-- [ ] 5.2 Sustituir el `Math.random()` de `radio-group.ts:21` por un contador incremental de módulo. Verificación: un test afirma que dos instancias reciben nombres distintos y deterministas, y que el `name` renderizado no cambia entre dos renders consecutivos del mismo árbol.
-- [ ] 5.3 Reestilar `RadioGroup` con los tokens nuevos y cubrir en su spec la agrupación accesible (grupo con etiqueta asociada) y la selección por teclado con flechas. Verificación: `radio-group.spec.ts` en verde con ≥80% del fichero.
-- [ ] 5.4 Proteger el `effect()` de `modal.ts:32-37` con `isPlatformBrowser(inject(PLATFORM_ID))` y guardar y restaurar el valor previo de `overflow` del `body` al cerrar. Verificación: `npm run build` prerenderiza todas las rutas sin error, y un test del spec afirma que en plataforma servidor no se toca el documento.
-- [ ] 5.5 Pasar `panelClasses` (`modal.ts:57`) a `computed()` y reemplazar las clases crudas de `MODAL_SIZES` (`max-w-sm|max-w-lg|max-w-2xl|max-w-full mx-sm`) por tokens de contenedor y espaciado. Verificación: `modal.spec.ts` cubre los 4 tamaños y el cambio de tamaño en caliente se refleja en el markup.
-- [ ] 5.6 Cubrir en `modal.spec.ts` los escenarios de cierre del spec: Escape, botón de cierre y click en el fondo cuando es cerrable; ninguno de los tres cuando no lo es; y foco devuelto al elemento que lo abrió. Verificación: `npx ng test --include='**/modal.spec.ts'` en verde con ≥80% del fichero.
+- [x] 5.1 Pasar el getter `classes` de `Badge` (`badge.ts:15`) a `computed()`. Verificación: al cambiar las entradas `variant` o `size` el markup se actualiza, cubierto por un caso nuevo en `badge.spec.ts`.
+- [x] 5.2 Sustituir el `Math.random()` de `radio-group.ts:21` por un contador incremental de módulo. Verificación: un test afirma que dos instancias reciben nombres distintos y deterministas, y que el `name` renderizado no cambia entre dos renders consecutivos del mismo árbol.
+- [x] 5.3 Reestilar `RadioGroup` con los tokens nuevos y cubrir en su spec la agrupación accesible (grupo con etiqueta asociada) y la selección por teclado con flechas. Verificación: `radio-group.spec.ts` en verde con ≥80% del fichero.
+- [x] 5.4 Proteger el `effect()` de `modal.ts:32-37` con `isPlatformBrowser(inject(PLATFORM_ID))` y guardar y restaurar el valor previo de `overflow` del `body` al cerrar. Verificación: `npm run build` prerenderiza todas las rutas sin error, y un test del spec afirma que en plataforma servidor no se toca el documento.
+- [x] 5.5 Pasar `panelClasses` (`modal.ts:57`) a `computed()` y reemplazar las clases crudas de `MODAL_SIZES` (`max-w-sm|max-w-lg|max-w-2xl|max-w-full mx-sm`) por tokens de contenedor y espaciado. Verificación: `modal.spec.ts` cubre los 4 tamaños y el cambio de tamaño en caliente se refleja en el markup.
+- [x] 5.6 Cubrir en `modal.spec.ts` los escenarios de cierre del spec: Escape, botón de cierre y click en el fondo cuando es cerrable; ninguno de los tres cuando no lo es; y foco devuelto al elemento que lo abrió. Verificación: `npx ng test --include='**/modal.spec.ts'` en verde con ≥80% del fichero.
 
 ## 6. Primitivos nuevos
 

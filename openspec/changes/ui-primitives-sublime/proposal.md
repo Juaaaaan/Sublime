@@ -57,7 +57,7 @@ Ninguna. Se revisaron los 4 specs existentes (`cart-drawer`, `product-card`, `sc
 - No se toca el responsive móvil (change 15) ni el pase de SEO/accesibilidad global (change 16).
 - No se cambia el esquema de Supabase, ni los servicios de `core`, ni el enrutado.
 - No se actualizan dependencias (Angular 22 es el change 17). Nunito Sans se carga por `<link>` de Google Fonts, como las fuentes actuales; no se añade ningún paquete npm.
-- No se añaden textos nuevos de UI: los primitivos reciben sus cadenas por `input()` desde las páginas, así que este change no toca `public/i18n/*.json`.
+- No se añaden textos nuevos de UI: los primitivos reciben sus cadenas por `input()` desde las páginas. **Excepción surgida al verificar (tarea 7.1):** `select.ts` traía `'Selecciona una opción'` como valor por defecto y `contact.html` no pasaba placeholder, así que ese texto se saltaba Transloco por completo y salía en español también en inglés. Como el requisito «los primitivos no llevan texto de UI propio» es de este mismo change, se corrige aquí: el defecto pasa a cadena vacía y se añade la clave `contact.subjectPlaceholder` en `es.json` y `en.json` (una línea por fichero), con el texto del nodo `3:1574`. Es el único cambio de i18n del change.
 - No se crea un Storybook ni una página de catálogo de componentes.
 
 ## Decisiones pendientes

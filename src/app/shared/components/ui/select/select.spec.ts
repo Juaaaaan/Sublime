@@ -36,8 +36,18 @@ describe('Select', () => {
       expect(component.label()).toBe('');
     });
 
-    it('should default placeholder to "Selecciona una opción"', () => {
-      expect(component.placeholder()).toBe('Selecciona una opción');
+    // Spec: "Primitives carry no hardcoded UI copy". El placeholder lo aporta quien usa el
+    // select, ya traducido por Transloco; antes venia fijo en espanol y se saltaba la i18n.
+    it('should carry no placeholder copy of its own', () => {
+      expect(component.placeholder()).toBe('');
+      expect(fixture.nativeElement.textContent).not.toContain('Selecciona');
+    });
+
+    it('should render the placeholder the caller provides', async () => {
+      fixture.componentRef.setInput('placeholder', 'Select a reason...');
+      await fixture.whenStable();
+
+      expect(fixture.nativeElement.textContent).toContain('Select a reason...');
     });
 
     it('should default options to []', () => {

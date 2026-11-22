@@ -18,7 +18,8 @@ let nextSelectId = 0;
 export class Select {
   id = input<string>('');
   label = input<string>('');
-  placeholder = input<string>('Selecciona una opción');
+  /** Lo aporta quien usa el select, ya traducido: un primitivo no lleva texto de UI propio. */
+  placeholder = input<string>('');
   options = input<SelectOption[]>([]);
   value = input<string>('');
   error = input<string>('');

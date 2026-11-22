@@ -110,6 +110,7 @@
     "name": "Nombre completo",
     "email": "Correo electrónico",
     "subject": "Asunto",
+    "subjectPlaceholder": "Selecciona un motivo...",
     "subjectOptions": {
       "customCommission": "Encargo Personalizado",
       "orderInquiry": "Consulta sobre un pedido",

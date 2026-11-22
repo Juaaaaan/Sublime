@@ -110,6 +110,7 @@
     "name": "Full Name",
     "email": "Email Address",
     "subject": "Subject",
+    "subjectPlaceholder": "Select a reason...",
     "subjectOptions": {
       "customCommission": "Custom Commission",
       "orderInquiry": "Order Inquiry",

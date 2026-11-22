@@ -25,6 +25,7 @@ Sistema de diseño: `docs/DESIGN.md`. Convenciones: `CLAUDE.md`.
 | #   | Change (nombre)          | Qué incluye                                                                                                                           | Frames Figma                         | Paralelo     |
 | --- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ | ------------ |
 | ~~1~~ | ~~`ui-primitives-sublime`~~ | **HECHO 2026-11-22**, archivado como `2026-11-22-ui-primitives-sublime`. Spec publicado en `openspec/specs/ui-primitives/` (10 requisitos). Pendiente: comparación visual en navegador (tarea 7.3) | todos (referencia) | no |
+| 1b  | `ssr-allowed-hosts`      | Arreglar la validación de `host` de `@angular/ssr`: hoy el servidor sirve el cascarón de cliente con un 200. Sin frames | —                                    | no           |
 | 2   | `layout-navbar-footer`   | Navbar y footer nuevos; enlaces y rutas del menú                                                                                      | `3:2` (cabecera/pie)                 | no           |
 | 3   | `home-redesign`          | Home: hero con cifras, series, "Latest Release", manifiesto                                                                           | `3:2` y/o `3:2905` (ver decisión D1) | sí (con 5-8) |
 | 4   | `catalog-data-model`     | Revisar tablas `products`, `stock_items`, `product_images` frente al catálogo del diseño. Solo propuesta SQL                          | `3:750`, `3:3361`                    | no           |
@@ -81,7 +82,7 @@ Detectados durante el change 1 y **no** arreglados, para que no se pierdan:
 
 | Hallazgo | Dónde va |
 | --- | --- |
-| `npm run serve:ssr:Sublime` rechaza la cabecera `host` y cae a renderizado en cliente: sirve 15 709 bytes en vez del prerender de 38 403. **Ninguna verificación SSR manual del roadmap es fiable hasta arreglarlo** | Change propio, antes de cualquier tarea que dependa de SSR |
+| ~~`npm run serve:ssr:Sublime` rechaza la cabecera `host` y cae a renderizado en cliente~~ | **RESUELTO** por el change `ssr-allowed-hosts` (fila 1-bis). Desbloquea la tarea 7.2 del change 1 y las comprobaciones SSR de los siguientes |
 | Los 3 campos de formulario son casi el mismo componente triplicado: ~120 líneas de plantilla y ~400 de test duplicadas. Falta un componente base | Change de refactor propio; se paga en cada change de página |
 | 6 usos de `tracking-widest` nativo en `features/**` donde el sistema tiene `--tracking-eyebrow` con el mismo valor | Change de cada página |
 | Títulos en `text-on-surface` donde D-3 decidió `deep-moss` | Changes 2-14 |

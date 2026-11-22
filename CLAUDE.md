@@ -58,9 +58,16 @@ npm test             # Unit tests with Karma/Jasmine
 npm run test:coverage  # Unit tests with coverage report
 npm run lint         # ESLint (TypeScript + Angular templates)
 npm run serve:ssr:Sublime  # Run the built SSR server at http://localhost:4000
+npm run test:ssr           # Check the built server actually renders on the server
 ```
 
 To run a single test file: `npx ng test --include='**/path/to/file.spec.ts'`
+
+### Verifying SSR
+
+`@angular/ssr` validates the `host` header against an allow-list as DNS-rebinding protection. `src/server.ts` allows `localhost`, `127.0.0.1` and `[::1]`, plus whatever `NG_ALLOWED_HOSTS` carries as a comma-separated list; the deployed domain is added there, in the environment, never in the repository.
+
+A host that is not on the list does not get an error: the server answers **200 with the client bootstrap document** instead of the rendered page. Status codes cannot tell the two apart, so check the body — the bootstrap is ~15 KB and identical for every route, while a prerendered page is 28-41 KB and contains its own content. `npm run test:ssr` does that check against the files in `dist/`; it needs `npm run build` first.
 
 The pre-commit hook runs `npm test` automatically via Husky.
 

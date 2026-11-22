@@ -3,7 +3,7 @@
   <div class="w-full md:w-1/2 md:h-dvh relative bg-surface-container-low">
     <img
       src="images/home/rc-hero-background.png"
-      alt="Handcrafted resin jewelry by Sublime"
+      [alt]="'hero.image_alt' | transloco"
       class="w-full h-full object-cover"
     />
     <div class="absolute inset-0 bg-linear-to-r from-surface/20 to-transparent"></div>
@@ -13,24 +13,26 @@
   <div class="w-full md:w-1/2 px-8 md:px-xl py-lg bg-surface flex flex-col justify-center">
     <div class="">
       <span class="font-label-sm text-primary mb-sm block uppercase tracking-widest">
-        Handcrafted Intention
+        {{ 'hero.eyebrow' | transloco }}
       </span>
 
       <h1 class="text-h1 font-serif text-on-surface mb-md">
-        Wearable <em class="italic">Ethereal</em> Beauty
+        {{ 'hero.title_before' | transloco }}
+        <em class="italic">{{ 'hero.title_emphasis' | transloco }}</em>
+        {{ 'hero.title_after' | transloco }}
       </h1>
 
       <p class="text-body-lg text-on-surface-variant mb-lg leading-relaxed">
-        Soy una artesana autodidacta que encontró la paz en el ritmo fluido del trabajo con resina.
-        Cada pieza es una meditación, capturando la quieta elegancia de las imperfecciones de la
-        naturaleza dentro de formas cristalinas y pulidas.
+        {{ 'hero.intro' | transloco }}
       </p>
 
       <div class="flex flex-col sm:flex-row gap-md">
         <app-button (clicked)="shopCollections.emit()" routerLink="/colecciones">
-          VER COLECCIONES
+          {{ 'hero.cta_collections' | transloco }}
         </app-button>
-        <app-button variant="secondary" routerLink="/contacto"> NUESTRA HISTORIA </app-button>
+        <app-button variant="secondary" routerLink="/contacto">
+          {{ 'hero.cta_story' | transloco }}
+        </app-button>
       </div>
     </div>
   </div>

@@ -1,8 +1,8 @@
-<div class="flex flex-col gap-xs w-full">
+<div class="flex w-full flex-col gap-xs">
   @if (label()) {
     <label
-      [for]="id()"
-      class="text-label-sm font-semibold tracking-label uppercase text-on-surface-variant"
+      [for]="fieldId()"
+      class="text-label-sm font-semibold tracking-label uppercase text-deep-moss"
     >
       {{ label() }}
       @if (required()) {
@@ -12,37 +12,32 @@
   }
 
   <textarea
+    [id]="fieldId()"
     [value]="value()"
     [placeholder]="placeholder()"
     [rows]="rows()"
     [disabled]="disabled()"
     [required]="required()"
+    [attr.aria-required]="required() ? 'true' : null"
+    [attr.aria-invalid]="error() ? 'true' : null"
+    [attr.aria-describedby]="describedBy()"
     [attr.maxlength]="maxLength()"
     [class]="inputClasses()"
     (input)="onInput($event)"
   >
   </textarea>
 
-  <div class="flex justify-between items-start">
+  <div class="flex items-start justify-between">
     <div>
       @if (error()) {
-        <span
-          class="text-label-sm text-error"
-          role="alert"
-          >{{ error() }}</span
-        >
+        <span [id]="messageId()" class="text-label-sm text-error" role="alert">{{ error() }}</span>
       } @else if (hint()) {
-        <span
-          class="text-label-sm text-on-surface-variant"
-          >{{ hint() }}</span
-        >
+        <span [id]="messageId()" class="text-label-sm text-secondary">{{ hint() }}</span>
       }
     </div>
 
     @if (maxLength()) {
-      <span
-        class="text-label-sm text-on-surface-variant ml-auto"
-      >
+      <span class="text-label-sm text-secondary ml-auto">
         {{ currentLength() }} / {{ maxLength() }}
       </span>
     }

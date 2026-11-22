@@ -1,5 +1,16 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
-import { InputType } from '../../../consts/components/input/input.const';
+import {
+  FIELD_BASE_CLASSES,
+  FIELD_BORDER_CLASSES,
+  InputType,
+} from '../../../consts/components/input/input.const';
+
+/**
+ * Contador de modulo para el id de respaldo. No usa `Math.random()` a proposito: el
+ * prerender y la hidratacion instancian los componentes en el mismo orden, asi que el
+ * contador produce el mismo marcado en servidor y en cliente (misma razon que D-7).
+ */
+let nextInputId = 0;
 
 @Component({
   selector: 'app-input',
@@ -21,17 +32,24 @@ export class InputComponent {
 
   valueChange = output<string>();
 
+  private readonly autoId = `app-input-${++nextInputId}`;
+
+  /** Id real del control: el recibido o, si no llega ninguno, uno estable generado aqui. */
+  readonly fieldId = computed(() => this.id() || this.autoId);
+
+  /** Id del mensaje de error o de ayuda, para asociarlo al control. */
+  readonly messageId = computed(() => `${this.fieldId()}-message`);
+
+  /** `aria-describedby` solo cuando hay mensaje que describir. */
+  readonly describedBy = computed(() => (this.error() || this.hint() ? this.messageId() : null));
+
   onInput(event: Event): void {
     const target = event.target as HTMLInputElement;
     this.valueChange.emit(target.value);
   }
 
-  readonly inputClasses = computed(() => {
-    const base =
-      'w-full bg-transparent border-0 border-b py-sm text-body-md text-on-surface placeholder:text-on-surface-variant/50 outline-none transition-colors duration-300 disabled:opacity-40 disabled:pointer-events-none';
-    const border = this.error()
-      ? 'border-error focus:border-error'
-      : 'border-outline-variant focus:border-primary';
-    return `${base} ${border}`;
-  });
+  /** Nodo `3:1550` del frame «WEB Contacto»: ver `field.const.ts`. */
+  readonly inputClasses = computed(
+    () => `${FIELD_BASE_CLASSES} text-on-surface ${FIELD_BORDER_CLASSES[this.error() ? 'error' : 'default']}`,
+  );
 }

@@ -35,7 +35,7 @@ Verificar uno a uno los criterios del `task.md`. Para cada criterio, indicar:
 - ¿Usan `inject()` en lugar de constructor injection?
 - ¿Usan control flow nativo (`@if`, `@for`) en lugar de directivas estructurales?
 - ¿Evitan `ngClass` y `ngStyle`?
-- ¿Usan tokens de diseño Artisanal Ether en lugar de valores hardcodeados?
+- ¿Usan tokens de diseño Sublime en lugar de valores hardcodeados?
 
 ### Calidad del código
 

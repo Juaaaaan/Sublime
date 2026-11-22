@@ -31,7 +31,7 @@ Tras el fix, confirma mentalmente:
 
 - [ ] ¿El cambio rompe algo en SSR (`src/server.ts`, `app.routes.server.ts`)?
 - [ ] ¿Se mantiene `OnPush` en los componentes modificados?
-- [ ] ¿Los tokens del Design System Artisanal Ether siguen intactos?
+- [ ] ¿Los tokens del Design System Sublime siguen intactos?
 - [ ] ¿Hay que actualizar algún test en `*.spec.ts`?
 - [ ] ¿El linter (`npm run lint`) pasaría sin errores?
 

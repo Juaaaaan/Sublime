@@ -37,7 +37,11 @@ Figma usa Nunito Sans en los 3 nodos auditados de 3 frames distintos (`3:15` y `
 
 Se elimina el token `--font-serif` en lugar de dejarlo apuntando a Nunito Sans. Un alias serif que no es serif es exactamente el tipo de trampa que ha causado este change: quien escriba `font-serif` en el change 5 creerá que está pidiendo un serif. Al borrar el token, `font-serif` pasa a ser una clase inexistente y la comprobación automática del punto D-6 la caza.
 
-Consecuencia: los 18 usos actuales de `font-serif` y la regla `h1,h2,h3` de `styles.scss:9-12` desaparecen; los títulos heredan la familia del `body`.
+Consecuencia: los 17 usos actuales de `font-serif` y la regla `h1,h2,h3` de `styles.scss:9-12` desaparecen; los títulos heredan la familia del `body`.
+
+**Corrección aplicada durante la implementación:** borrar `--font-serif` de `@theme` **no** basta. Tailwind v4 trae `--font-serif` y `--font-mono` en su tema por defecto, así que tras eliminar el token el build seguía emitiendo `--font-serif: ui-serif, Georgia, …` y `.font-serif{font-family:var(--font-serif)}`: los 17 usos no quedaban sin efecto, pasaban a renderizar en Georgia, una familia ajena al sistema. La forma correcta de cerrar el namespace es declarar `--font-serif: initial;` (y `--font-mono: initial;`), que en Tailwind v4 elimina la clave y con ella la utilidad. Verificado: ni la variable ni la clase aparecen en el CSS compilado.
+
+De aquí sale una restricción para D-6: la guardia **no** puede deducir "no hay token ⇒ clase inválida" para nombres que colisionan con el tema por defecto de Tailwind. Esos necesitan una lista explícita de **prohibidas** (`font-serif`, `font-mono`), además de la lista de permitidas.
 
 El `<link>` de `index.html:11` pasa a una sola petición con rango de pesos e itálica:
 `family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000`. Se conservan los `preconnect` (9-10).

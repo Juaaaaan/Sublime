@@ -52,57 +52,84 @@ colors:
   sage-leaf: '#8C9C82'
   deep-moss: '#2C3528'
   ivory-surface: '#F8FAF0'
+  outline-field: '#E2E8DF'
+  placeholder: 'rgba(140, 156, 130, 0.7)'
 typography:
   headline-xl:
-    fontFamily: Noto Serif
+    fontFamily: Nunito Sans
     fontSize: 48px
-    fontWeight: '400'
+    fontWeight: '700'
+    lineHeight: '1.08'
+    letterSpacing: -0.025em
+  headline-lg:
+    fontFamily: Nunito Sans
+    fontSize: 32px
+    fontWeight: '600'
     lineHeight: '1.2'
     letterSpacing: -0.02em
-  headline-lg:
-    fontFamily: Noto Serif
-    fontSize: 32px
-    fontWeight: '400'
-    lineHeight: '1.3'
-    letterSpacing: -0.01em
   headline-md:
-    fontFamily: Noto Serif
+    fontFamily: Nunito Sans
     fontSize: 24px
-    fontWeight: '400'
+    fontWeight: '600'
     lineHeight: '1.4'
   headline-lg-mobile:
-    fontFamily: Noto Serif
+    fontFamily: Nunito Sans
     fontSize: 28px
-    fontWeight: '400'
+    fontWeight: '600'
+    lineHeight: '1.3'
+  lead:
+    fontFamily: Nunito Sans
+    fontSize: 24px
+    fontWeight: '300'
+    fontStyle: italic
     lineHeight: '1.3'
   body-lg:
-    fontFamily: Manrope
+    fontFamily: Nunito Sans
     fontSize: 18px
     fontWeight: '400'
     lineHeight: '1.6'
   body-md:
-    fontFamily: Manrope
+    fontFamily: Nunito Sans
     fontSize: 16px
     fontWeight: '400'
     lineHeight: '1.6'
+  body-sm:
+    fontFamily: Nunito Sans
+    fontSize: 14px
+    fontWeight: '400'
+    lineHeight: '1.43'
   label-md:
-    fontFamily: Manrope
+    fontFamily: Nunito Sans
     fontSize: 14px
     fontWeight: '600'
     lineHeight: '1.2'
     letterSpacing: 0.05em
   label-sm:
-    fontFamily: Manrope
+    fontFamily: Nunito Sans
+    fontSize: 12px
+    fontWeight: '600'
+    lineHeight: '1.0'
+    letterSpacing: 0.05em
+  label-cta:
+    fontFamily: Nunito Sans
+    fontSize: 12px
+    fontWeight: '600'
+    lineHeight: '1.0'
+    letterSpacing: 0.16em
+  label-eyebrow:
+    fontFamily: Nunito Sans
     fontSize: 12px
     fontWeight: '600'
     lineHeight: '1.0'
     letterSpacing: 0.1em
 rounded:
   sm: 0.125rem
+  field: 0.125rem
   DEFAULT: 0.25rem
   md: 0.375rem
   lg: 0.5rem
   xl: 0.75rem
+  chip: 0.75rem
   full: 9999px
 spacing:
   unit: 4px
@@ -126,9 +153,9 @@ The palette is a transition from earthen depths to airy surfaces. **Natural Ivor
 
 ## Typography
 
-The typography pairing balances artisanal elegance with modern readability. **Noto Serif** is utilized for headlines to convey the "artesanía" spirit; its classic proportions and delicate serifs provide a literary, premium quality.
+The system uses a **single typeface, Nunito Sans**, across headlines, body copy and functional labels. Its humanist, low-contrast letterforms carry the "artesanía" spirit without the formality of a serif, and the variable weight range (Light to ExtraBold) supplies all the hierarchy the layout needs from one font request. There is no serif family: a serif heading rule anywhere in the codebase is a defect.
 
-**Manrope** provides a clean, geometric counterpoint for body text and functional UI labels. It ensures clarity in product descriptions and navigation. For a more curated feel, use the `label-sm` style in all-caps with generous letter spacing for categories, tags, and small accents.
+Hierarchy comes from weight and size, not from mixing families: headlines use Bold (700) at 48px and SemiBold (600) at 32/28/24px with slightly negative tracking; lead paragraphs use Light (300) italic at 24px; body copy uses Regular (400) at 18/16/14px; and labels use SemiBold (600) at 12-14px. For a more curated feel, use the `label-sm` style in all-caps for categories, tags and small accents — with `label-cta` tracking (0.16em) on button labels and `label-eyebrow` tracking (0.1em) on section eyebrows.
 
 ## Layout & Spacing
 
@@ -144,13 +171,14 @@ When physical depth is required for interactive components like modals, use a **
 
 ## Shapes
 
-The shape language is **Soft**, with a base radius of 4px. This choice provides a gentle touch that aligns with the brand's "mimo" (care) theme without appearing too playful or informal. Larger containers like product cards may use `rounded-lg` (8px) to emphasize their role as distinct, cradled objects within the layout.
+The shape language is **Soft**, with a base radius of 4px. This choice provides a gentle touch that aligns with the brand's "mimo" (care) theme without appearing too playful or informal. Interactive controls — buttons, inputs, selects, text areas and callouts — use the tighter `rounded-field` (2px) to read as precise and functional, while filter chips use `rounded-chip` (12px) and larger containers like product cards use `rounded-lg` (8px) to emphasize their role as distinct, cradled objects within the layout.
 
 ## Components
 
-- **Buttons:** Primary buttons are solid Dark Green (#2C3528) with Natural Ivory text. Their hover state should involve a subtle shift to Sage Green. Secondary buttons use a Dark Green outline and transparent background.
-- **Input Fields:** Use a minimalist approach with a 1px Dark Green bottom border or a full Sage Green outline. Labels should be small, uppercase, and positioned above the field.
+- **Buttons:** Primary buttons are solid Dark Green (#2C3528) with Natural Ivory text, `rounded-field` (2px) corners and a 12px uppercase label with `label-cta` tracking. Their hover state should involve a subtle shift to Sage Green. Secondary buttons keep the same shape and label, with a 1px Dark Green outline and transparent background.
+- **Input Fields:** White fill with a full 1px `outline-field` (#E2E8DF) border and `rounded-field` (2px) corners. Text is 14px (`body-sm`) and the placeholder uses the `placeholder` color. Labels should be small, uppercase, and positioned above the field.
 - **Cards:** Product cards should use a pure white background or a Forest Green (#D2DCD0) fill to create a soft distinction from the Ivory surface. They should have no border, relying on the subtle color shift for definition.
-- **Chips & Tags:** Pill-shaped with a light Sage Green fill and Dark Green text. These highlight material types or craft techniques.
+- **Chips & Tags:** Soft 12px-radius pills (`rounded-chip`) with a 12px uppercase label. Selected chips use a Dark Green fill with white text; unselected chips use a muted surface fill with Dark Green text. These highlight material types or craft techniques.
+- **Callouts:** Muted surface fill, a 4px Dark Green left border, `rounded-field` corners and 14px italic text, used for process advisories.
 - **Navigation:** A clean, top-aligned header. When scrolled, it should take on the Natural Ivory color with a 90% opacity and a subtle backdrop blur.
-- **Iconography:** Use fine-line icons (1px stroke) in Dark Green to match the delicate nature of the serif typography.
+- **Iconography:** Use fine-line icons (1px stroke) in Dark Green to match the delicate, low-contrast letterforms of the typography.

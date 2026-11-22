@@ -1,0 +1,21 @@
+<!--
+  `<ng-content>` va una sola vez, dentro de un `ng-template`: dos `<ng-content>` en ramas
+  distintas de un `@if` no son equivalentes, Angular proyecta el contenido solo en el
+  primero y la rama del `<span>` quedaria vacia.
+-->
+<ng-template #label><ng-content /></ng-template>
+
+@if (interactive()) {
+  <button
+    type="button"
+    [class]="classes()"
+    [attr.aria-pressed]="selected()"
+    (click)="onActivate()"
+  >
+    <ng-container [ngTemplateOutlet]="label" />
+  </button>
+} @else {
+  <span [class]="classes()">
+    <ng-container [ngTemplateOutlet]="label" />
+  </span>
+}

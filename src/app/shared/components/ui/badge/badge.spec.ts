@@ -51,10 +51,54 @@ describe('Badge', () => {
     expect(badge.className).toContain('border-outline-variant');
   });
 
+  it('should apply the token typography classes in every variant', () => {
+    // `badge.ts:17` llevaba `font-label-sm`, una clase que no emitia CSS.
+    // Se afirma sobre el DOM renderizado, no sobre el getter, para que la
+    // aserveracion sobreviva al paso de `classes` a `computed()`.
+    const typography = ['text-label-sm', 'font-semibold', 'tracking-label', 'uppercase'];
+
+    for (const variant of ['default', 'primary', 'secondary', 'outline'] as const) {
+      fixture.componentRef.setInput('variant', variant);
+      fixture.detectChanges();
+      const badge = fixture.nativeElement.querySelector('span');
+      const classes = badge.className.split(/\s+/);
+      for (const cls of typography) {
+        expect(classes).toContain(cls);
+      }
+      expect(classes).not.toContain('font-label-sm');
+    }
+  });
+
   it('should apply sm size classes', () => {
     fixture.componentRef.setInput('size', 'sm');
     fixture.detectChanges();
     const badge = fixture.nativeElement.querySelector('span');
-    expect(badge.className).toContain('text-[10px]');
+    expect(badge.className).toContain('text-label-xs');
+  });
+
+  it('should reflect a hot change of variant and size without manual detection', async () => {
+    // Escenario «Class strings react to input changes» del spec: con `classes` como
+    // getter el cambio podia no llegar al marcado bajo zoneless + OnPush, porque un
+    // getter solo se reevalua si algo mas dispara la deteccion en el componente.
+    // Aqui no se llama a `detectChanges()`: solo se espera a que el fixture se estabilice.
+    const badge = () => fixture.nativeElement.querySelector('span') as HTMLElement;
+
+    expect(badge().className).toContain('bg-surface-container');
+    expect(badge().className).not.toContain('text-label-xs');
+
+    fixture.componentRef.setInput('variant', 'primary');
+    fixture.componentRef.setInput('size', 'sm');
+    await fixture.whenStable();
+
+    expect(badge().className).toContain('bg-primary-container');
+    expect(badge().className).toContain('text-label-xs');
+    expect(badge().className).not.toContain('bg-surface-container');
+
+    fixture.componentRef.setInput('variant', 'outline');
+    fixture.componentRef.setInput('size', 'md');
+    await fixture.whenStable();
+
+    expect(badge().className).toContain('border-outline-variant');
+    expect(badge().className).not.toContain('text-label-xs');
   });
 });

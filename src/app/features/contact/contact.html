@@ -31,6 +31,7 @@
       <app-select
         id="contact-subject"
         [label]="t('contact.subject')"
+        [placeholder]="t('contact.subjectPlaceholder')"
         [required]="true"
         [value]="form.controls.subject.value ?? ''"
         [error]="errorFor('subject')"
@@ -78,7 +79,7 @@
       </app-button>
 
       <p
-        class="font-label-sm uppercase tracking-widest"
+        class="text-label-sm font-semibold uppercase tracking-widest"
         aria-live="polite"
         [class.text-error]="submitStatus() === 'error'"
         [class.text-primary]="submitStatus() === 'success'"
@@ -119,7 +120,7 @@
       </a>
 
       <div class="border-t border-outline-variant pt-md">
-        <p class="font-label-sm uppercase tracking-widest text-on-surface-variant">
+        <p class="text-label-sm font-semibold uppercase tracking-widest text-on-surface-variant">
           {{ t('contact.studioLocation') }}
         </p>
         <!-- TODO RCA-28: dirección real pendiente de confirmación con la clienta -->

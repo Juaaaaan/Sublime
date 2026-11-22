@@ -85,7 +85,7 @@ describe('ProductCard', () => {
     });
 
     it('should display price in EUR format', () => {
-      const priceEl = el.querySelector('.font-body-md');
+      const priceEl = el.querySelector('.text-body-md');
       expect(priceEl?.textContent?.trim()).toContain('45,50');
       expect(priceEl?.textContent?.trim()).toContain('€');
     });

@@ -62,29 +62,58 @@ describe('TextArea', () => {
     });
   });
 
+  // Escenario del spec: «Default field» y «Placeholder styling» (nodo 3:1578).
   describe('inputClasses', () => {
-    it('should always include base classes', () => {
+    it('should render the shared field contract', () => {
       const classes = component.inputClasses();
       expect(classes).toContain('w-full');
-      expect(classes).toContain('bg-transparent');
+      expect(classes).toContain('bg-surface-container-lowest');
+      expect(classes).toContain('rounded-field');
+      expect(classes).toContain('px-field-x');
+      expect(classes).toContain('py-field-y');
+      expect(classes).toContain('text-body-sm');
       expect(classes).toContain('transition-colors');
       expect(classes).toContain('duration-300');
       expect(classes).toContain('disabled:opacity-40');
       expect(classes).toContain('disabled:pointer-events-none');
     });
 
-    it('should use default border classes when no error', () => {
+    it('should add the extra bottom padding of the design', () => {
+      expect(component.inputClasses()).toContain('pb-sm');
+    });
+
+    it('should style the placeholder with the placeholder token', () => {
+      expect(component.inputClasses()).toContain('placeholder:text-placeholder');
+    });
+
+    it('should use the field border colour when there is no error', () => {
       const classes = component.inputClasses();
-      expect(classes).toContain('border-outline-variant');
+      expect(classes).toContain('border-outline');
       expect(classes).toContain('focus:border-primary');
     });
 
-    it('should use error border classes when error is set', () => {
+    it('should use the error border colour when error is set', () => {
       fixture.componentRef.setInput('error', 'Required field');
       const classes = component.inputClasses();
       expect(classes).toContain('border-error');
       expect(classes).toContain('focus:border-error');
-      expect(classes).not.toContain('border-outline-variant');
+      expect(classes).not.toContain('border-outline');
+    });
+  });
+
+  // Escenario del spec: «Change detection strategy» del requisito de OnPush.
+  describe('label styling', () => {
+    it('should render the label above the control with the label scale', () => {
+      fixture.componentRef.setInput('label', 'Message');
+      fixture.detectChanges();
+      const label: HTMLLabelElement = fixture.nativeElement.querySelector('label');
+      const textareaEl: HTMLTextAreaElement = fixture.nativeElement.querySelector('textarea');
+      expect(label.className).toContain('text-label-sm');
+      expect(label.className).toContain('uppercase');
+      expect(label.className).toContain('tracking-label');
+      expect(
+        label.compareDocumentPosition(textareaEl) & Node.DOCUMENT_POSITION_FOLLOWING,
+      ).toBeTruthy();
     });
   });
 
@@ -208,8 +237,8 @@ describe('TextArea', () => {
     it('should apply computed inputClasses', () => {
       fixture.detectChanges();
       const textareaEl: HTMLTextAreaElement = fixture.nativeElement.querySelector('textarea');
-      expect(textareaEl.className).toContain('w-full');
-      expect(textareaEl.className).toContain('border-outline-variant');
+      expect(textareaEl.className).toContain('bg-surface-container-lowest');
+      expect(textareaEl.className).toContain('border-outline');
     });
   });
 
@@ -299,6 +328,98 @@ describe('TextArea', () => {
       textareaEl.value = '';
       textareaEl.dispatchEvent(new Event('input'));
       expect(spy).toHaveBeenCalledWith('');
+    });
+  });
+
+  // Escenario del spec: «Field in error».
+  describe('accessibility — error state', () => {
+    it('should mark the control invalid and link the error message', () => {
+      fixture.componentRef.setInput('id', 'message-field');
+      fixture.componentRef.setInput('error', 'Tell us more');
+      fixture.detectChanges();
+      const textareaEl: HTMLTextAreaElement = fixture.nativeElement.querySelector('textarea');
+      const errorEl: HTMLElement = fixture.nativeElement.querySelector('[role="alert"]');
+      expect(textareaEl.getAttribute('aria-invalid')).toBe('true');
+      expect(textareaEl.getAttribute('aria-describedby')).toBe(errorEl.id);
+      expect(errorEl.id).toBe('message-field-message');
+      expect(errorEl.className).toContain('text-error');
+    });
+
+    it('should not mark the control invalid when there is no error', () => {
+      fixture.detectChanges();
+      const textareaEl: HTMLTextAreaElement = fixture.nativeElement.querySelector('textarea');
+      expect(textareaEl.getAttribute('aria-invalid')).toBeNull();
+      expect(textareaEl.getAttribute('aria-describedby')).toBeNull();
+    });
+
+    it('should link the hint to the control when there is no error', () => {
+      fixture.componentRef.setInput('id', 'message-field');
+      fixture.componentRef.setInput('hint', 'Up to 500 characters');
+      fixture.detectChanges();
+      const textareaEl: HTMLTextAreaElement = fixture.nativeElement.querySelector('textarea');
+      expect(textareaEl.getAttribute('aria-describedby')).toBe('message-field-message');
+    });
+  });
+
+  // Escenario del spec: «Required field».
+  describe('accessibility — required state', () => {
+    it('should expose required to assistive technology and mark it visually', () => {
+      fixture.componentRef.setInput('label', 'Message');
+      fixture.componentRef.setInput('required', true);
+      fixture.detectChanges();
+      const textareaEl: HTMLTextAreaElement = fixture.nativeElement.querySelector('textarea');
+      const marker: HTMLElement = fixture.nativeElement.querySelector('label span');
+      expect(textareaEl.required).toBeTrue();
+      expect(textareaEl.getAttribute('aria-required')).toBe('true');
+      expect(marker.textContent?.trim()).toBe('*');
+      expect(marker.getAttribute('aria-hidden')).toBe('true');
+    });
+
+    it('should not expose aria-required when the field is optional', () => {
+      fixture.detectChanges();
+      const textareaEl: HTMLTextAreaElement = fixture.nativeElement.querySelector('textarea');
+      expect(textareaEl.getAttribute('aria-required')).toBeNull();
+    });
+  });
+
+  // Escenario del spec: «Label is associated».
+  describe('accessibility — label association', () => {
+    it('should move focus to the control when the label is activated', () => {
+      fixture.componentRef.setInput('id', 'message-field');
+      fixture.componentRef.setInput('label', 'Message');
+      fixture.detectChanges();
+      const label: HTMLLabelElement = fixture.nativeElement.querySelector('label');
+      const textareaEl: HTMLTextAreaElement = fixture.nativeElement.querySelector('textarea');
+      expect(label.getAttribute('for')).toBe(textareaEl.id);
+      label.click();
+      expect(document.activeElement).toBe(textareaEl);
+    });
+
+    it('should fall back to a generated id so the label stays associated', () => {
+      fixture.componentRef.setInput('label', 'Message');
+      fixture.detectChanges();
+      const label: HTMLLabelElement = fixture.nativeElement.querySelector('label');
+      const textareaEl: HTMLTextAreaElement = fixture.nativeElement.querySelector('textarea');
+      expect(textareaEl.id).toMatch(/^app-text-area-\d+$/);
+      expect(label.getAttribute('for')).toBe(textareaEl.id);
+    });
+  });
+
+  // Escenario del spec: «Class strings react to input changes» — OnPush + signals. Sin
+  // `detectChanges()`: solo se espera a que el fixture se estabilice, que es lo que
+  // distingue una senal de un getter bajo zoneless + OnPush.
+  describe('change detection', () => {
+    it('should update the rendered border when the error input changes', async () => {
+      const textareaEl = () =>
+        fixture.nativeElement.querySelector('textarea') as HTMLTextAreaElement;
+      await fixture.whenStable();
+      expect(textareaEl().className).toContain('border-outline');
+
+      fixture.componentRef.setInput('error', 'Tell us more');
+      await fixture.whenStable();
+
+      expect(textareaEl().className).toContain('border-error');
+      expect(textareaEl().className).not.toContain('border-outline');
     });
   });
 });

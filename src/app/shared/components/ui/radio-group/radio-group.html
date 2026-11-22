@@ -1,6 +1,9 @@
 <div class="flex flex-col gap-xs w-full">
   @if (label()) {
-    <span class="font-label-sm text-on-surface-variant uppercase tracking-widest mb-xs">
+    <span
+      [id]="labelId"
+      class="text-label-sm font-semibold tracking-label uppercase text-on-surface-variant mb-xs"
+    >
       {{ label() }}
       @if (required()) {
         <span class="text-error ml-1" aria-hidden="true">*</span>
@@ -9,44 +12,46 @@
   }
 
   <div
-    [class]="groupClasses"
+    [class]="groupClasses()"
     role="radiogroup"
-    [attr.aria-label]="label()"
-    [attr.aria-required]="required()"
+    [attr.aria-labelledby]="label() ? labelId : null"
+    [attr.aria-describedby]="error() || hint() ? descriptionId : null"
+    [attr.aria-required]="required() ? 'true' : null"
+    [attr.aria-invalid]="error() ? true : null"
   >
-    @for (option of options(); track option.value) {
+    @for (entry of renderOptions(); track entry.option.value) {
       <label
         class="flex items-start gap-sm cursor-pointer group"
-        [class.opacity-40]="isDisabled(option)"
-        [class.pointer-events-none]="isDisabled(option)"
+        [class.opacity-40]="entry.disabled"
+        [class.pointer-events-none]="entry.disabled"
       >
         <!-- Input nativo oculto — accesibilidad correcta -->
         <input
+          #radioInput
           type="radio"
           [name]="name()"
-          [value]="option.value"
-          [checked]="isSelected(option.value)"
-          [disabled]="isDisabled(option)"
+          [value]="entry.option.value"
+          [checked]="entry.selected"
+          [disabled]="entry.disabled"
           class="sr-only peer"
-          (change)="onChange(option.value)"
+          (change)="onChange(entry.option.value)"
+          (keydown)="onKeydown($event)"
         />
 
         <!-- Radio visual custom -->
         <span
-          class="mt-px shrink-0 w-5 h-5 rounded-full border border-outline-variant transition-all duration-300 peer-checked:border-primary peer-checked:border-[5px] peer-focus-visible:ring-2 peer-focus-visible:ring-primary/30 group-hover:border-primary"
+          class="mt-px shrink-0 w-5 h-5 rounded-full border border-outline bg-surface-container-lowest transition-all duration-300 peer-checked:border-deep-moss peer-checked:border-[5px] peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary group-hover:border-deep-moss"
         >
         </span>
 
         <!-- Label + descripción -->
         <span class="flex flex-col">
-          <span
-            class="font-body-md text-on-surface transition-colors duration-300 peer-checked:text-on-surface group-hover:text-on-surface"
-          >
-            {{ option.label }}
+          <span class="text-body-sm text-deep-moss transition-colors duration-300">
+            {{ entry.option.label }}
           </span>
-          @if (option.description) {
-            <span class="font-label-sm text-on-surface-variant mt-xs">
-              {{ option.description }}
+          @if (entry.option.description) {
+            <span class="text-label-sm text-on-surface-variant mt-xs">
+              {{ entry.option.description }}
             </span>
           }
         </span>
@@ -55,8 +60,8 @@
   </div>
 
   @if (error()) {
-    <span class="font-label-sm text-error" role="alert">{{ error() }}</span>
+    <span [id]="descriptionId" class="text-label-sm text-error" role="alert">{{ error() }}</span>
   } @else if (hint()) {
-    <span class="font-label-sm text-on-surface-variant">{{ hint() }}</span>
+    <span [id]="descriptionId" class="text-label-sm text-on-surface-variant">{{ hint() }}</span>
   }
 </div>

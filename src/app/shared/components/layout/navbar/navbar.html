@@ -3,11 +3,7 @@
 >
   <div class="flex justify-between items-center px-8 md:px-12 h-20 max-w-content mx-auto">
     <!-- Logo -->
-    <a
-      routerLink="/"
-      class="text-2xl font-serif italic text-on-surface tracking-tight"
-      (click)="closeMenu()"
-    >
+    <a routerLink="/" class="text-2xl italic text-on-surface tracking-tight" (click)="closeMenu()">
       Sublime
     </a>
 
@@ -18,7 +14,7 @@
           [routerLink]="link.route"
           routerLinkActive="border-b border-on-surface text-on-surface"
           [routerLinkActiveOptions]="{ exact: false }"
-          class="font-label-sm text-on-surface-variant hover:text-on-surface transition-colors duration-300 pb-px"
+          class="text-label-sm font-semibold tracking-label uppercase text-on-surface-variant hover:text-on-surface transition-colors duration-300 pb-px"
         >
           {{ link.label }}
         </a>
@@ -86,7 +82,7 @@
         <a
           [routerLink]="link.route"
           routerLinkActive="text-on-surface"
-          class="font-label-sm text-on-surface-variant hover:text-on-surface transition-colors duration-300 py-xs"
+          class="text-label-sm font-semibold tracking-label uppercase text-on-surface-variant hover:text-on-surface transition-colors duration-300 py-xs"
           (click)="closeMenu()"
         >
           {{ link.label }}

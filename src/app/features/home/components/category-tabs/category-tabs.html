@@ -2,7 +2,7 @@
   <div class="max-w-content mx-auto px-margin-safe">
     <!-- Título -->
     <div class="flex flex-col items-center mb-lg" appScrollReveal direction="up">
-      <h2 class="text-h2 font-serif text-on-surface text-center mb-sm">The Elements</h2>
+      <h2 class="text-h2 text-on-surface text-center mb-sm">The Elements</h2>
       <div class="w-12 h-px bg-outline-variant"></div>
     </div>
 
@@ -12,7 +12,7 @@
     >
       @for (tab of tabs; track tab.slug) {
         <button
-          class="pb-base font-label-sm transition-colors duration-300 cursor-pointer"
+          class="pb-sm text-label-sm font-semibold tracking-label uppercase transition-colors duration-300 cursor-pointer"
           [class.text-on-surface]="activeTab() === tab.slug"
           [class.border-b-2]="activeTab() === tab.slug"
           [class.border-primary]="activeTab() === tab.slug"
@@ -41,11 +41,11 @@
         ></div>
         <div class="absolute bottom-lg left-lg">
           <span
-            class="font-label-sm text-white bg-on-surface/40 backdrop-blur-md px-sm py-xs mb-xs inline-block"
+            class="text-label-sm font-semibold tracking-label uppercase text-white bg-on-surface/40 backdrop-blur-md px-sm py-xs mb-xs inline-block"
           >
             MÁS VENDIDO
           </span>
-          <h3 class="text-h3 font-serif text-white drop-shadow-sm">Botanical Series</h3>
+          <h3 class="text-h3 text-white drop-shadow-sm">Botanical Series</h3>
         </div>
       </div>
 
@@ -61,7 +61,7 @@
           class="absolute inset-0 bg-on-surface/5 transition-opacity group-hover:opacity-20"
         ></div>
         <div class="absolute bottom-lg left-lg">
-          <h3 class="text-h3 font-serif text-white drop-shadow-sm">Geometric Clarity</h3>
+          <h3 class="text-h3 text-white drop-shadow-sm">Geometric Clarity</h3>
         </div>
       </div>
     </div>

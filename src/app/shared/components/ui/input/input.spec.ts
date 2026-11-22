@@ -54,27 +54,72 @@ describe('InputComponent', () => {
     });
   });
 
+  // Escenario del spec: «Default field» y «Placeholder styling» (nodo 3:1550).
   describe('inputClasses', () => {
-    it('should always include base classes', () => {
+    it('should render the shared field contract', () => {
       const classes = component.inputClasses();
       expect(classes).toContain('w-full');
+      expect(classes).toContain('bg-surface-container-lowest');
+      expect(classes).toContain('rounded-field');
+      expect(classes).toContain('px-field-x');
+      expect(classes).toContain('py-field-y');
+      expect(classes).toContain('text-body-sm');
       expect(classes).toContain('transition-colors');
       expect(classes).toContain('duration-300');
       expect(classes).toContain('disabled:opacity-40');
     });
 
-    it('should use default border classes when no error', () => {
+    it('should style the placeholder with the placeholder token', () => {
+      expect(component.inputClasses()).toContain('placeholder:text-placeholder');
+    });
+
+    /**
+     * El foco no puede depender solo del color: antes el unico indicador era
+     * `focus:border-primary` sobre un borde de 1px. Es el mismo anillo que `Button` y `Chip`.
+     */
+    it('should show the shared visible focus ring', () => {
       const classes = component.inputClasses();
-      expect(classes).toContain('border-outline-variant');
+      expect(classes).toContain('focus-visible:outline-2');
+      expect(classes).toContain('focus-visible:outline-offset-2');
+      expect(classes).toContain('focus-visible:outline-primary');
+      expect(classes).not.toContain('outline-none');
+    });
+
+    it('should use the field border colour when there is no error', () => {
+      const classes = component.inputClasses();
+      expect(classes).toContain('border-outline');
       expect(classes).toContain('focus:border-primary');
     });
 
-    it('should use error border classes when error is set', () => {
+    it('should use the error border colour when error is set', () => {
       fixture.componentRef.setInput('error', 'Required field');
       const classes = component.inputClasses();
       expect(classes).toContain('border-error');
       expect(classes).toContain('focus:border-error');
-      expect(classes).not.toContain('border-outline-variant');
+      expect(classes).not.toContain('border-outline');
+    });
+
+    it('should apply the computed classes to the rendered input', () => {
+      fixture.detectChanges();
+      const inputEl: HTMLInputElement = fixture.nativeElement.querySelector('input');
+      expect(inputEl.className).toContain('bg-surface-container-lowest');
+      expect(inputEl.className).toContain('border-outline');
+    });
+  });
+
+  // Escenario del spec: «Default field» — etiqueta encima con el estilo de 12px.
+  describe('label styling', () => {
+    it('should render the label above the control with the label scale', () => {
+      fixture.componentRef.setInput('label', 'Email');
+      fixture.detectChanges();
+      const label: HTMLLabelElement = fixture.nativeElement.querySelector('label');
+      const inputEl: HTMLInputElement = fixture.nativeElement.querySelector('input');
+      expect(label.className).toContain('text-label-sm');
+      expect(label.className).toContain('uppercase');
+      expect(label.className).toContain('tracking-label');
+      expect(
+        label.compareDocumentPosition(inputEl) & Node.DOCUMENT_POSITION_FOLLOWING,
+      ).toBeTruthy();
     });
   });
 
@@ -186,6 +231,82 @@ describe('InputComponent', () => {
       inputEl.value = 'hello@example.com';
       inputEl.dispatchEvent(new Event('input'));
       expect(spy).toHaveBeenCalledWith('hello@example.com');
+    });
+  });
+
+  // Escenario del spec: «Field in error».
+  describe('accessibility — error state', () => {
+    it('should mark the control invalid and link the error message', () => {
+      fixture.componentRef.setInput('id', 'email-field');
+      fixture.componentRef.setInput('error', 'Invalid email');
+      fixture.detectChanges();
+      const inputEl: HTMLInputElement = fixture.nativeElement.querySelector('input');
+      const errorEl: HTMLElement = fixture.nativeElement.querySelector('[role="alert"]');
+      expect(inputEl.getAttribute('aria-invalid')).toBe('true');
+      expect(inputEl.getAttribute('aria-describedby')).toBe(errorEl.id);
+      expect(errorEl.id).toBe('email-field-message');
+      expect(errorEl.className).toContain('text-error');
+    });
+
+    it('should not mark the control invalid when there is no error', () => {
+      fixture.detectChanges();
+      const inputEl: HTMLInputElement = fixture.nativeElement.querySelector('input');
+      expect(inputEl.getAttribute('aria-invalid')).toBeNull();
+      expect(inputEl.getAttribute('aria-describedby')).toBeNull();
+    });
+
+    it('should link the hint to the control when there is no error', () => {
+      fixture.componentRef.setInput('id', 'email-field');
+      fixture.componentRef.setInput('hint', 'We never share it');
+      fixture.detectChanges();
+      const inputEl: HTMLInputElement = fixture.nativeElement.querySelector('input');
+      const hintEl: HTMLElement = fixture.nativeElement.querySelector('#email-field-message');
+      expect(inputEl.getAttribute('aria-describedby')).toBe('email-field-message');
+      expect(hintEl.textContent?.trim()).toBe('We never share it');
+    });
+  });
+
+  // Escenario del spec: «Required field».
+  describe('accessibility — required state', () => {
+    it('should expose required to assistive technology and mark it visually', () => {
+      fixture.componentRef.setInput('label', 'Email');
+      fixture.componentRef.setInput('required', true);
+      fixture.detectChanges();
+      const inputEl: HTMLInputElement = fixture.nativeElement.querySelector('input');
+      const marker: HTMLElement = fixture.nativeElement.querySelector('label span');
+      expect(inputEl.required).toBeTrue();
+      expect(inputEl.getAttribute('aria-required')).toBe('true');
+      expect(marker.textContent?.trim()).toBe('*');
+      expect(marker.getAttribute('aria-hidden')).toBe('true');
+    });
+
+    it('should not expose aria-required when the field is optional', () => {
+      fixture.detectChanges();
+      const inputEl: HTMLInputElement = fixture.nativeElement.querySelector('input');
+      expect(inputEl.getAttribute('aria-required')).toBeNull();
+    });
+  });
+
+  // Escenario del spec: «Label is associated».
+  describe('accessibility — label association', () => {
+    it('should move focus to the control when the label is activated', () => {
+      fixture.componentRef.setInput('id', 'email-field');
+      fixture.componentRef.setInput('label', 'Email');
+      fixture.detectChanges();
+      const label: HTMLLabelElement = fixture.nativeElement.querySelector('label');
+      const inputEl: HTMLInputElement = fixture.nativeElement.querySelector('input');
+      expect(label.getAttribute('for')).toBe(inputEl.id);
+      label.click();
+      expect(document.activeElement).toBe(inputEl);
+    });
+
+    it('should fall back to a generated id so the label stays associated', () => {
+      fixture.componentRef.setInput('label', 'Email');
+      fixture.detectChanges();
+      const label: HTMLLabelElement = fixture.nativeElement.querySelector('label');
+      const inputEl: HTMLInputElement = fixture.nativeElement.querySelector('input');
+      expect(inputEl.id).toMatch(/^app-input-\d+$/);
+      expect(label.getAttribute('for')).toBe(inputEl.id);
     });
   });
 });

@@ -43,31 +43,40 @@ Tokens de marca (aliases): `bg-ivory-surface` `#f8faf0`, `bg-forest-mist` `#d2dc
 
 ## Tipografía
 
-Fuentes: **Noto Serif** (editorial) + **Manrope** (funcional).
+Fuente única: **Nunito Sans** variable, con itálica. **No hay familia serif**: `--font-serif` y `--font-mono` están cerradas con `initial` en `@theme`, así que `font-serif` y `font-mono` no emiten CSS y `npm run lint:tokens` las rechaza. Tampoco hace falta escribir `font-sans`: es la familia del `body`.
 
-| Escala   | Clase Tailwind                                                   | Fuente     | Tamaño | Uso                    |
-| -------- | ---------------------------------------------------------------- | ---------- | ------ | ---------------------- |
-| h1       | `text-h1 font-serif tracking-h1`                                 | Noto Serif | 48px   | Hero headlines         |
-| h2       | `text-h2 font-serif tracking-h2`                                 | Noto Serif | 32px   | Títulos de sección     |
-| h3       | `text-h3 font-serif`                                             | Noto Serif | 24px   | Subsecciones           |
-| body-lg  | `text-body-lg font-sans`                                         | Manrope    | 18px   | Párrafos lead          |
-| body-md  | `text-body-md font-sans`                                         | Manrope    | 16px   | Cuerpo de texto        |
-| label-md | `text-label-md font-sans font-semibold tracking-label-md`        | Manrope    | 14px   | Botones, navegación    |
-| label-sm | `text-label-sm font-sans font-semibold tracking-label uppercase` | Manrope    | 12px   | Chips, etiquetas, tags |
+| Escala   | Clase Tailwind                                          | Tamaño y peso       | Uso                      |
+| -------- | ------------------------------------------------------- | ------------------- | ------------------------ |
+| h1       | `text-h1 tracking-h1`                                       | 48px, Bold 700      | Hero headlines           |
+| h2       | `text-h2 tracking-h2`                                       | 32px, SemiBold 600  | Títulos de sección       |
+| h3       | `text-h3`                                                   | 24px, SemiBold 600  | Subsecciones             |
+| lead     | `text-lead italic`                                          | 24px, Light 300     | Subtítulo de hero        |
+| body-lg  | `text-body-lg`                                              | 18px                | Párrafos lead            |
+| body-md  | `text-body-md`                                              | 16px                | Cuerpo de texto          |
+| body-sm  | `text-body-sm`                                              | 14px                | Campos, texto pequeño    |
+| label-md | `text-label-md font-semibold tracking-label-md`             | 14px                | Navegación               |
+| label-sm | `text-label-sm font-semibold tracking-label uppercase`      | 12px                | Etiquetas de campo, tags |
+| eyebrow  | `text-label-sm font-semibold tracking-eyebrow uppercase`    | 12px                | Antecabezas de sección   |
+| CTA      | `text-cta tracking-cta uppercase`                           | 12px, caja de 16px  | Etiquetas de botón       |
+| label-xs | `text-label-xs`                                             | 10px                | Badge pequeño            |
+
+El peso de h1-h3 y lead lo pone el propio token (`--text-h*--font-weight`): no añadas `font-bold`. Una clase `font-*` explícita sigue ganando si la quieres a propósito.
 
 Variante móvil de h2: `text-h2-mobile` (28px). Úsala por debajo de `md:` y `md:text-h2` a partir de ahí.
 
 ```html
 <!-- ✅ Correcto -->
-<h1 class="text-h1 font-serif tracking-h1 text-on-surface">Bespoke Creations</h1>
-<p class="text-body-md font-sans text-on-surface-variant">Descripción de producto</p>
+<h1 class="text-h1 tracking-h1 text-on-surface">Bespoke Creations</h1>
+<p class="text-body-md text-on-surface-variant">Descripción de producto</p>
 <span
-  class="text-label-sm font-sans font-semibold tracking-label uppercase bg-secondary-container text-on-secondary-container rounded-full px-sm py-xs"
+  class="text-label-sm font-semibold tracking-label uppercase bg-secondary-container text-on-secondary-container rounded-chip px-sm py-chip-y"
   >Organic Resin</span
 >
 
 <!-- ❌ Incorrecto -->
-<h1 style="font-size: 48px; font-family: 'Noto Serif';">...</h1>
+<h1 style="font-size: 48px; font-family: 'Nunito Sans';">...</h1>
+<h1 class="text-h1 font-serif">...</h1>
+<!-- font-serif no emite CSS: lint:tokens lo rechaza -->
 <p class="text-gray-500 text-base">...</p>
 ```
 
@@ -106,14 +115,15 @@ Tokens nombrados definidos en `@theme`. Favorecer gaps `lg` y `xl` entre seccion
 ```html
 <!-- Primario: sólido dark, texto blanco, transición lenta -->
 <button
-  class="bg-on-surface text-surface rounded px-sm py-xs transition-all duration-300 hover:opacity-90"
+  class="bg-deep-moss text-on-primary rounded-field px-cta-x py-cta-y text-cta uppercase tracking-cta transition-all duration-300 hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
 >
   INITIATE COMMISSION
 </button>
+<!-- Mejor aun: usa el primitivo <app-button>, no repitas la cadena -->
 
 <!-- Secundario: transparente, borde suave -->
 <button
-  class="border border-outline-variant rounded px-sm py-xs transition-all duration-300 text-on-surface hover:bg-surface-container-low"
+  class="border border-deep-moss rounded-field px-cta-x py-cta-y text-cta uppercase tracking-cta transition-all duration-300 text-on-surface hover:bg-surface-container-low"
 >
   VIEW SERIES
 </button>
@@ -131,22 +141,24 @@ Tokens nombrados definidos en `@theme`. Favorecer gaps `lg` y `xl` entre seccion
 
 ```html
 <span
-  class="rounded-full bg-secondary-container text-on-secondary-container text-label-sm font-semibold tracking-label uppercase px-sm py-xs"
+  class="rounded-chip border border-outline bg-surface-container-low text-deep-moss text-label-sm font-extrabold uppercase tracking-label px-sm py-chip-y h-6"
 >
   Gold Plated
 </span>
+<!-- Mejor aun: usa <app-chip>, que ya maneja seleccionado / no seleccionado y el rol accesible -->
 ```
 
 ### Campos de input
 
 ```html
-<!-- Estilo underline minimalista -->
-<label class="text-label-sm uppercase tracking-label text-on-surface-variant block mb-xs">
+<!-- Borde completo de 1px (nodo 3:1550). Mejor aun: usa <app-input> -->
+<label class="text-label-sm font-semibold uppercase tracking-label text-deep-moss block mb-xs">
   Email
 </label>
 <input
-  class="border-b border-outline-variant bg-transparent w-full text-body-md font-sans text-on-surface focus:outline-none focus:border-primary transition-colors duration-300"
+  class="w-full bg-surface-container-lowest border border-outline rounded-field px-field-x py-field-y text-body-sm text-on-surface placeholder:text-placeholder focus:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-colors duration-300"
 />
+<!-- La ayuda y el error van en text-label-sm en caja normal, nunca en mayusculas -->
 ```
 
 ### Navegación
@@ -176,12 +188,12 @@ Tokens nombrados definidos en `@theme`. Favorecer gaps `lg` y `xl` entre seccion
 
 ## Shapes (radios de borde)
 
-| Uso               | Clase          | Valor  |
-| ----------------- | -------------- | ------ |
-| Botones e inputs  | `rounded`      | 4px    |
-| Cards pequeñas    | `rounded-md`   | 6px    |
-| Cards de producto | `rounded-lg`   | 8px    |
-| Chips / pills     | `rounded-full` | 9999px |
+| Uso                | Clase           | Valor |
+| ------------------ | --------------- | ----- |
+| Botones y campos   | `rounded-field` | 2px   |
+| Cards pequeñas     | `rounded-md`    | 6px   |
+| Cards de producto  | `rounded-lg`    | 8px   |
+| Chips / pills      | `rounded-chip`  | 12px  |
 
 ---
 
@@ -191,5 +203,8 @@ Tokens nombrados definidos en `@theme`. Favorecer gaps `lg` y `xl` entre seccion
 - ❌ Sombras pesadas (`shadow-lg`, `drop-shadow`)
 - ❌ Colores Tailwind genéricos (`text-gray-500`, `bg-white`, `border-gray-200`)
 - ❌ Transiciones rápidas (`duration-100`, `duration-150`) — mínimo `duration-300`
-- ❌ Fuentes distintas a Noto Serif y Manrope
+- ❌ Fuentes distintas a Nunito Sans; en particular `font-serif` y `font-mono`, que no emiten CSS
+- ❌ `outline-none` en un control: deja el foco dependiendo solo del color. El anillo compartido es `focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary`
+- ❌ `border-outline-variant` como límite de un control (1.6:1): para eso, `border-outline`
+- ❌ Texto de UI dentro de un primitivo: todo llega por `input()` o `<ng-content>`, ya traducido por Transloco
 - ❌ Tamaños de fuente fuera de la escala tipográfica definida

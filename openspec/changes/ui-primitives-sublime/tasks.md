@@ -22,8 +22,8 @@
 
 ## 3. Botón
 
-- [ ] 3.1 Reestilar `ButtonComponent` según el frame `3:1584`: variante `primary` con `bg-deep-moss text-on-primary rounded-field`, padding 32/14, etiqueta `text-label-sm font-semibold uppercase tracking-cta`, `transition-all duration-300`; `secondary` con borde de 1px y fondo transparente; `ghost` sin borde ni fondo. Verificación: `button.spec.ts` cubre las 3 variantes y los 3 tamaños, y el render de la variante primaria coincide con el screenshot del nodo `3:1584`.
-- [ ] 3.2 Cubrir en `button.spec.ts` los escenarios del spec para estado deshabilitado (expone `disabled`, no emite `clicked`), carga (no emite `clicked`, estado accesible) y foco visible por teclado. Verificación: `npx ng test --include='**/button.spec.ts'` en verde con ≥80% del fichero.
+- [x] 3.1 Reestilar `ButtonComponent` según el frame `3:1584`: variante `primary` con `bg-deep-moss text-on-primary rounded-field`, padding 32/14, etiqueta `text-label-sm font-semibold uppercase tracking-cta`, `transition-all duration-300`; `secondary` con borde de 1px y fondo transparente; `ghost` sin borde ni fondo. Verificación: `button.spec.ts` cubre las 3 variantes y los 3 tamaños, y el render de la variante primaria coincide con el screenshot del nodo `3:1584`.
+- [x] 3.2 Cubrir en `button.spec.ts` los escenarios del spec para estado deshabilitado (expone `disabled`, no emite `clicked`), carga (no emite `clicked`, estado accesible) y foco visible por teclado. Verificación: `npx ng test --include='**/button.spec.ts'` en verde con ≥80% del fichero.
 
 ## 4. Campos de formulario
 
@@ -50,6 +50,6 @@
 ## 7. Verificación de integración
 
 - [ ] 7.1 Confirmar que este change no introduce texto de UI: `grep` de cadenas en español o inglés en las plantillas de `shared/components/ui/*` no devuelve nada fuera de entradas, y `git diff --stat public/i18n/` está vacío. Verificación: ambas comprobaciones en verde (por eso no hay tarea de i18n: los primitivos reciben todo su texto por `input()`).
-- [ ] 7.2 Comprobación SSR completa: `npm run build` y `npm run serve:ssr:Sublime`, cargar Home, Contacto y Stock, y confirmar que no hay errores de hidratación en consola (especialmente del `name` del grupo de radios) ni acceso a `document` en prerender. Verificación: consola limpia en las 3 páginas.
+- [ ] 7.2 Comprobación SSR. **Bloqueada por un fallo preexistente**: `npm run serve:ssr:Sublime` rechaza la cabecera `host` (`Header "host" with value "localhost:4000" is not allowed`) y cae a renderizado en cliente, sirviendo el cascarón de 15117 bytes en vez del prerender de 39687, así que **no hay hidratación que observar**. `src/server.ts` y `angular.json` no los toca este change. Verificación posible hoy: `npm run build` prerenderiza las 5 rutas sin error y las 5 responden 200. Lo que queda fuera: avisos de hidratación en consola. Nota: `RadioGroup` y `Modal` **no tienen ningún consumidor** en las rutas actuales, así que su hidratación no es observable por carga de página ni arreglando el host; su determinismo se verifica por test unitario (tarea 5.2).
 - [ ] 7.3 Comparación visual contra Figma de Home (`3:2`), Contacto (`3:1536`) y Stock (`3:2550`): tipografía, radios de campo y botón, chips y aviso. Anotar en el change cualquier desborde de layout atribuible al cambio de métricas de fuente que se deje para el change de su página. Verificación: las tres páginas coinciden en tipografía y forma con su frame, y los desvíos pendientes quedan listados.
 - [ ] 7.4 Puerta final: `npm run test:coverage` (80% por fichero), `npm run lint` y `npm run build` en verde. Verificación: los tres comandos terminan con código 0 y la cobertura no baja en ningún fichero tocado.

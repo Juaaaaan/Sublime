@@ -105,8 +105,12 @@ describe('RadioGroup', () => {
   it('should not render label when label is empty', () => {
     fixture.componentRef.setInput('label', '');
     fixture.detectChanges();
-    const labelEl = fixture.nativeElement.querySelector('span.text-label-sm');
-    expect(labelEl).toBeNull();
+    // No se consulta por clase: `text-label-sm` la comparten la descripcion de
+    // opcion, el error y la pista, asi que el selector dejaria de identificar a
+    // la etiqueta del grupo. La etiqueta es el hermano anterior al radiogroup.
+    const group = fixture.nativeElement.querySelector('[role="radiogroup"]');
+    expect(group.previousElementSibling).toBeNull();
+    expect(fixture.nativeElement.textContent).not.toContain('Tipo de resina');
   });
 
   it('should not show required indicator when required is false', () => {

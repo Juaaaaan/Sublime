@@ -92,12 +92,16 @@
   /* Font sizes with paired line-heights */
   --text-h1: 3rem; /* 48px */
   --text-h1--line-height: 1.08; /* 51.84px */
+  --text-h1--font-weight: 700; /* Bold, nodo 3:15 */
   --text-h2: 2rem; /* 32px */
   --text-h2--line-height: 1.2; /* 38.4px */
+  --text-h2--font-weight: 600; /* SemiBold, nodo 3:71 */
   --text-h3: 1.5rem; /* 24px */
   --text-h3--line-height: 1.4;
+  --text-h3--font-weight: 600; /* SemiBold */
   --text-lead: 1.5rem; /* 24px — parrafo lead, Light italic */
   --text-lead--line-height: 1.3;
+  --text-lead--font-weight: 300; /* Light, nodo 3:17 (la italica va por clase) */
   --text-body-lg: 1.125rem; /* 18px */
   --text-body-lg--line-height: 1.6;
   --text-body-md: 1rem; /* 16px */
@@ -109,6 +113,7 @@
   --text-label-md: 0.875rem; /* 14px */
   --text-label-md--line-height: 1.2;
   --text-h2-mobile: 1.75rem; /* 28px — headline-lg-mobile */
+  --text-h2-mobile--font-weight: 600;
   --text-h2-mobile--line-height: 1.3;
 
   /* Letter spacing */
@@ -140,6 +145,14 @@
   --spacing-gutter: 1.5rem; /* 24px — column gutter */
   --spacing-margin-safe: 2rem; /* 32px — page safe area */
   --spacing-section-gap: 5rem; /* 80px — gap vertical entre secciones */
+
+  /* Padding interno de controles, medido en Figma. No encaja en la escala de
+     seccion (xs/sm/md/lg/xl) porque no es ritmo de pagina: son 2px y 14px que
+     salen del diseno de los propios campos y botones (nodos 3:1550 y 3:1584). */
+  --spacing-cta-x: 2rem; /* 32px — boton, horizontal */
+  --spacing-cta-y: 0.875rem; /* 14px — boton, vertical */
+  --spacing-field-x: 0.9375rem; /* 15px — campo, horizontal */
+  --spacing-field-y: 0.6875rem; /* 11px — campo, vertical */
 
   /* ── Layout ── */
 

@@ -15,6 +15,12 @@ import { join } from 'node:path';
  * `bg-white`) pasan aunque DESIGN.md prefiera un token nombrado; eso es trabajo de la
  * revisión de diseño de cada página, no de una puerta automática.
  *
+ * Prefijos cubiertos: los de TOKEN_NAMESPACES. Quedan fuera a propósito `w-`, `h-`,
+ * `inset-`, `top-/right-/bottom-/left-`, `translate-`, `ring-` y `divide-`, porque
+ * admiten fracciones, porcentajes y palabras clave (`w-1/2`, `h-screen`, `inset-auto`)
+ * que darian falsos positivos constantes. Si un bug aparece ahi, se anade el prefijo
+ * con su lista de nativas.
+ *
  * Va como script de Node y no como spec de Karma porque los tests corren en navegador,
  * sin acceso al sistema de ficheros: un spec no puede leer `src/tailwind.css`. Se engancha
  * en `npm run lint:tokens`, que entra en el pre-commit junto a lint y cobertura.
@@ -46,6 +52,12 @@ const TOKEN_NAMESPACES = [
   { prefix: 'mb-', namespaces: ['--spacing-'] },
   { prefix: 'ml-', namespaces: ['--spacing-'] },
   { prefix: 'gap-', namespaces: ['--spacing-'] },
+  { prefix: 'gap-x-', namespaces: ['--spacing-'] },
+  { prefix: 'gap-y-', namespaces: ['--spacing-'] },
+  { prefix: 'space-x-', namespaces: ['--spacing-'] },
+  { prefix: 'space-y-', namespaces: ['--spacing-'] },
+  { prefix: 'leading-', namespaces: ['--leading-'] },
+  { prefix: 'drop-shadow-', namespaces: ['--drop-shadow-'] },
 ];
 
 /**
@@ -82,6 +94,12 @@ const NATIVE_UTILITIES = new Set([
   'max-w-4xl', 'max-w-5xl', 'max-w-6xl', 'max-w-7xl',
   // bordes nativos: ancho, no color
   'border-0', 'border-2', 'border-4', 'border-8',
+  // interlineado nativo
+  'leading-none', 'leading-tight', 'leading-snug', 'leading-normal', 'leading-relaxed',
+  'leading-loose',
+  // drop-shadow nativo
+  'drop-shadow-none', 'drop-shadow-xs', 'drop-shadow-sm', 'drop-shadow-md', 'drop-shadow-lg',
+  'drop-shadow-xl', 'drop-shadow-2xl',
   // margen automatico
   'm-auto', 'mx-auto', 'my-auto', 'mt-auto', 'mr-auto', 'mb-auto', 'ml-auto',
 ]);
@@ -167,8 +185,12 @@ function candidateClasses(content) {
   for (const [, body] of attrs) {
     for (const raw of body.split(/\s+/)) {
       if (!raw) continue;
-      // quita variantes (hover:, md:, placeholder:) y el modificador de opacidad
-      const cls = raw.split(':').pop() || '';
+      // quita variantes (hover:, md:, placeholder:)
+      const withoutVariant = raw.split(':').pop() || '';
+      // y el modificador de opacidad (bg-navbar/80). Antes la barra hacia fallar la
+      // regex y la clase se descartaba entera: `bg-inexistente/80` pasaba sin mirarse,
+      // incluso siendo una clase prohibida. Hay 15 clases con modificador en src/app.
+      const cls = withoutVariant.split('/')[0];
       if (/^[a-z][a-z0-9-]*$/.test(cls)) found.push(cls);
     }
   }
@@ -221,7 +243,10 @@ const forbidden = [];
 for (const file of files) {
   const content = readFileSync(file, 'utf8');
   const lines = content.split('\n');
-  const lineOf = (cls) => lines.findIndex((l) => l.includes(cls)) + 1;
+  const lineOf = (cls) => {
+    const re = new RegExp(`(^|[\\s"'\`])${cls}(?=[\\s"'\`/]|$)`);
+    return lines.findIndex((l) => re.test(l)) + 1;
+  };
 
   for (const cls of new Set(candidateClasses(content))) {
     const reason = FORBIDDEN.get(cls);
@@ -240,7 +265,9 @@ for (const file of files) {
       if (suffix === null) continue;
       namespaces = ['--color-'];
     } else {
-      const match = TOKEN_NAMESPACES.find((ns) => cls.startsWith(ns.prefix));
+      const match = [...TOKEN_NAMESPACES]
+        .sort((a, b) => b.prefix.length - a.prefix.length)
+        .find((ns) => cls.startsWith(ns.prefix));
       if (!match) continue;
       suffix = cls.slice(match.prefix.length);
       namespaces = match.namespaces;

@@ -63,6 +63,7 @@ Regla acordada: **forma y tipografía de Figma; color de DESIGN.md.** Resultado:
 | Familia | `Noto Serif` + `Manrope` | Nunito Sans | Figma (D-1) |
 | `--text-h1` / lh / tracking | 3rem / 1.2 / −0.02em | 48px / 51.84px / −1.2px | Figma: `3rem` / `1.08` / `-0.025em` |
 | `--text-h2` / lh / tracking | 2rem / 1.3 / −0.01em | 32px / 38.4px / −0.64px | Figma: `2rem` / `1.2` / `-0.02em` |
+| Peso de los títulos | sin declarar (400) | H1 Bold 700, H2/H3 SemiBold 600, lead Light 300 | Figma, vía `--text-h*--font-weight` |
 | `--text-label-sm` tracking | 0.1em (= 1.2px) | 0.6px en labels, 1.2px en antecabezas | Se separan: `--tracking-label` `0.05em`, nuevo `--tracking-eyebrow` `0.1em` |
 | Tracking de CTA | no existe | 1.92px sobre 12px | nuevo `--tracking-cta` `0.16em` |
 | Radio de campo y botón | `--radius` 4px | 2px | nuevo `--radius-field` `0.125rem`; `--radius` se mantiene para el resto |
@@ -75,7 +76,11 @@ Regla acordada: **forma y tipografía de Figma; color de DESIGN.md.** Resultado:
 
 Los tres valores de color que Figma aporta y la paleta no tenía (`#e2e8df`, el placeholder y nada más) entran como tokens nuevos; no se toca ningún color MD3 existente. Los tamaños se expresan en `rem` para no romper el zoom del navegador, y los tracking en `em` para que escalen con el tamaño de fuente, que es lo que Figma expresa en px absolutos.
 
-Tokens nuevos añadidos: `--text-lead` (1.5rem / 1.3), `--text-body-sm` (0.875rem / 1.43), `--tracking-cta`, `--tracking-eyebrow`, `--radius-field`, `--radius-chip`, `--color-outline-field`, `--color-placeholder`.
+Tokens nuevos añadidos: `--text-lead` (1.5rem / 1.3), `--text-body-sm` (0.875rem / 1.43), `--tracking-cta`, `--tracking-eyebrow`, `--radius-field`, `--radius-chip`, `--color-outline-field`, `--color-placeholder`, los pesos `--text-h1/h2/h3/lead/h2-mobile--font-weight` y el padding de controles `--spacing-cta-x` (32px), `--spacing-cta-y` (14px), `--spacing-field-x` (15px) y `--spacing-field-y` (11px).
+
+**Añadido tras la revisión de QA:** el peso de los títulos faltaba en esta tabla y en las plantillas, así que todos los H1 y H2 renderizaban a 400 pese a que la propuesta prometía Bold y SemiBold. Se resuelve en el token (`--text-h*--font-weight`) y no clase a clase: Tailwind lo emite como `font-weight: var(--tw-font-weight, var(--text-h1--font-weight))`, de modo que una clase `font-light` explícita sigue ganando donde se quiera a propósito.
+
+El padding de control no entra en la escala de sección (xs/sm/md/lg/xl) porque no es ritmo de página: son los 14px y 15px que salen del diseño de los propios campos y botones. Sin estos tokens, el botón `md` quedaba en 48px frente a los 44px del nodo `3:1584`.
 
 ### D-4. Las clases inexistentes se sustituyen una a una, sin crear alias
 
@@ -115,6 +120,15 @@ No va como regla de ESLint porque la lista de utilidades válidas depende del co
 El script comprueba cuatro cosas: que existan los tokens de los que depende media UI, que las familias por defecto de Tailwind que el sistema no usa sigan cerradas con `initial`, que ninguna clase emita cero CSS, y que no aparezca ninguna clase de la lista de prohibidas. Las utilidades nativas permitidas y las prohibidas son listas explícitas en el propio fichero, para que añadir una sea una decisión consciente.
 
 La heurística necesitó normalizar dos familias de utilidades que no son cromáticas aunque lo parezcan: `border-b`/`border-l-2` son grosor de lado, `border-solid` es estilo y solo `border-t-primary` lleva color; y `bg-linear-to-r` es un degradado, no un color. Sin eso daba 22 falsos positivos. Verificado en ambos sentidos: pasa sobre el código limpio (84 ficheros, 100 tokens) y falla al reintroducir a mano `font-label-sm`, `mb-mb` y `font-serif`.
+
+**Huecos cerrados tras la revisión de QA.** La primera versión de la guardia tenía dos agujeros que la hacían aparentar más cobertura de la que daba:
+
+1. **El modificador de opacidad la desactivaba por completo.** `candidateClasses()` filtraba con `/^[a-z][a-z0-9-]*$/`, que rechaza la barra, así que `bg-inexistente/80` se descartaba entera sin mirarse — incluso `font-serif/90`, estando prohibida, pasaba. No era teórico: hay 11 clases con modificador en `src/app`, varias del propio sistema (`bg-navbar/80`, `border-outline-variant/40`, `bg-on-surface/5`). Ninguna estaba rota, pero la guardia no lo garantizaba. Ahora se corta por `/` igual que por `:`.
+2. **Prefijos sin cubrir.** Faltaban `leading-`, `drop-shadow-`, `gap-x-`, `gap-y-`, `space-x-` y `space-y-`; `drop-shadow-soft` es el vecino directo de `shadow-soft`, el bug original. Añadidos con sus nativas. `gap-x-mb` además diagnosticaba mal el token (`--spacing-x-mb`): se resuelve ordenando los prefijos de más largo a más corto.
+
+Quedan fuera a propósito `w-`, `h-`, `inset-`, `top-/right-/bottom-/left-`, `translate-`, `ring-` y `divide-`: admiten fracciones, porcentajes y palabras clave (`w-1/2`, `h-screen`, `inset-auto`) que darían falsos positivos constantes. El alcance está documentado en la cabecera del script.
+
+También se corrigió el número de línea que reporta: antes daba la primera línea que *contuviera* la cadena, por lo que con una clase repetida señalaba el sitio equivocado; ahora busca con límites de palabra.
 
 *Alternativa descartada:* `eslint-plugin-tailwindcss`. A fecha de hoy no soporta la detección de tokens de `@theme` de Tailwind v4, que es justo lo que hace falta.
 

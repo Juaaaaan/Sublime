@@ -1,62 +1,62 @@
 @import 'tailwindcss';
 
 @theme {
-  /* ── Colors (Material Design 3 tonal palette — "Artisanal Ether") ── */
+  /* ── Colors (Material Design 3 tonal palette — "Sublime Craft Art", Botanical Minimalism) ── */
 
   /* Navbar */
-  --color-navbar: #fbfaf8;
+  --color-navbar: #f8faf0;
 
   /* Footer */
-  --color-footer: #fbfaf8;
+  --color-footer: #f8faf0;
 
   /* Surface */
-  --color-surface: #fff8f4;
-  --color-surface-dim: #e1d8d3;
-  --color-surface-bright: #fff8f4;
+  --color-surface: #f8faf0;
+  --color-surface-dim: #d9dbd1;
+  --color-surface-bright: #f8faf0;
   --color-surface-container-lowest: #ffffff;
-  --color-surface-container-low: #fbf2ec;
-  --color-surface-container: #f5ece6;
-  --color-surface-container-high: #efe6e1;
-  --color-surface-container-highest: #eae1db;
-  --color-on-surface: #1f1b18;
-  --color-on-surface-variant: #4d453f;
-  --color-inverse-surface: #34302c;
-  --color-inverse-on-surface: #f8efe9;
-  --color-outline: #7f756e;
-  --color-outline-variant: #d0c4bc;
-  --color-surface-tint: #685c52;
-  --color-surface-variant: #eae1db;
+  --color-surface-container-low: #f3f5eb;
+  --color-surface-container: #edefe5;
+  --color-surface-container-high: #e7e9df;
+  --color-surface-container-highest: #e1e3da;
+  --color-on-surface: #191d17;
+  --color-on-surface-variant: #444841;
+  --color-inverse-surface: #2e312b;
+  --color-inverse-on-surface: #f0f2e8;
+  --color-outline: #757871;
+  --color-outline-variant: #c5c7bf;
+  --color-surface-tint: #586152;
+  --color-surface-variant: #e1e3da;
 
   /* Primary */
-  --color-primary: #685c52;
+  --color-primary: #172014;
   --color-on-primary: #ffffff;
-  --color-primary-container: #f5e4d7;
-  --color-on-primary-container: #71655b;
-  --color-inverse-primary: #d4c4b7;
-  --color-primary-fixed: #f0dfd3;
-  --color-primary-fixed-dim: #d4c4b7;
-  --color-on-primary-fixed: #221a12;
-  --color-on-primary-fixed-variant: #50453b;
+  --color-primary-container: #2c3528;
+  --color-on-primary-container: #949e8d;
+  --color-inverse-primary: #c0cab7;
+  --color-primary-fixed: #dce6d3;
+  --color-primary-fixed-dim: #c0cab7;
+  --color-on-primary-fixed: #151e12;
+  --color-on-primary-fixed-variant: #40493b;
 
   /* Secondary */
-  --color-secondary: #5d5f5f;
+  --color-secondary: #54634c;
   --color-on-secondary: #ffffff;
-  --color-secondary-container: #dfe0e0;
-  --color-on-secondary-container: #616363;
-  --color-secondary-fixed: #e2e2e2;
-  --color-secondary-fixed-dim: #c6c6c7;
-  --color-on-secondary-fixed: #1a1c1c;
-  --color-on-secondary-fixed-variant: #454747;
+  --color-secondary-container: #d4e5c8;
+  --color-on-secondary-container: #586750;
+  --color-secondary-fixed: #d7e8cb;
+  --color-secondary-fixed-dim: #bbccb0;
+  --color-on-secondary-fixed: #121f0d;
+  --color-on-secondary-fixed-variant: #3c4b35;
 
   /* Tertiary */
-  --color-tertiary: #6b5c4c;
+  --color-tertiary: #172018;
   --color-on-tertiary: #ffffff;
-  --color-tertiary-container: #f8e3cf;
-  --color-on-tertiary-container: #746455;
-  --color-tertiary-fixed: #f4dfcb;
-  --color-tertiary-fixed-dim: #d7c3b0;
-  --color-on-tertiary-fixed: #241a0e;
-  --color-on-tertiary-fixed-variant: #524436;
+  --color-tertiary-container: #2c352d;
+  --color-on-tertiary-container: #949e93;
+  --color-tertiary-fixed: #dbe5d9;
+  --color-tertiary-fixed-dim: #bfc9be;
+  --color-on-tertiary-fixed: #151e16;
+  --color-on-tertiary-fixed-variant: #404940;
 
   /* Error */
   --color-error: #ba1a1a;
@@ -65,8 +65,14 @@
   --color-on-error-container: #93000a;
 
   /* Background */
-  --color-background: #fff8f4;
-  --color-on-background: #1f1b18;
+  --color-background: #f8faf0;
+  --color-on-background: #191d17;
+
+  /* Brand (Sublime Craft Art) */
+  --color-forest-mist: #d2dcd0;
+  --color-sage-leaf: #8c9c82;
+  --color-deep-moss: #2c3528;
+  --color-ivory-surface: #f8faf0;
 
   /* ── Typography ── */
 
@@ -86,11 +92,16 @@
   --text-body-md--line-height: 1.6;
   --text-label-sm: 0.75rem; /* 12px */
   --text-label-sm--line-height: 1;
+  --text-label-md: 0.875rem; /* 14px */
+  --text-label-md--line-height: 1.2;
+  --text-h2-mobile: 1.75rem; /* 28px — headline-lg-mobile */
+  --text-h2-mobile--line-height: 1.3;
 
   /* Letter spacing */
   --tracking-h1: -0.02em;
   --tracking-h2: -0.01em;
   --tracking-label: 0.1em;
+  --tracking-label-md: 0.05em;
 
   /* ── Border Radius ── */
 
@@ -110,4 +121,13 @@
   --spacing-xl: 5rem; /* 80px */
   --spacing-gutter: 1.5rem; /* 24px — column gutter */
   --spacing-margin-safe: 2rem; /* 32px — page safe area */
+  --spacing-section-gap: 5rem; /* 80px — gap vertical entre secciones */
+
+  /* ── Layout ── */
+
+  --container-content: 75rem; /* 1200px — container-max de DESIGN.md (clase max-w-content) */
+
+  /* ── Elevation ── */
+
+  --shadow-ambient: 0 12px 32px rgba(44, 53, 40, 0.04); /* tinte Deep Moss, muy sutil */
 }

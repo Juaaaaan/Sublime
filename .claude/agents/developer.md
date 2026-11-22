@@ -33,7 +33,7 @@ siguiendo estrictamente las convenciones del proyecto.
 - Seguir todas las convenciones de `CLAUDE.md`.
 - No inventar patrones nuevos — seguir los existentes en el proyecto.
 - Componentes standalone, `OnPush`, `inject()`, Signals, control flow nativo.
-- Usar tokens de diseño Artisanal Ether — nunca colores hardcodeados.
+- Usar tokens de diseño Sublime — nunca colores hardcodeados.
 - `NgOptimizedImage` para todas las imágenes estáticas.
 - Compatibilidad SSR — no usar `window` ni `document` directamente.
 

@@ -106,13 +106,13 @@ Never use `<img src="...">` for static images. `NgOptimizedImage` does not work 
 
 ## Design system tokens
 
-Always use Artisanal Ether tokens — never hardcode colors or sizes:
+Always use Sublime design tokens (`src/tailwind.css`) — never hardcode colors or sizes:
 
 ```html
 <!-- ✅ Correct -->
 <div class="bg-surface text-on-surface border border-outline-variant rounded px-sm py-xs">
   <!-- ❌ Wrong -->
-  <div style="background: #fff8f4; color: #1f1b18;"></div>
+  <div style="background: #f8faf0; color: #191d17;"></div>
 </div>
 ```
 

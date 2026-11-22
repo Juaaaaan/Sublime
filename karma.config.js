@@ -12,7 +12,7 @@ module.exports = function (config) {
       suppressAll: true,
     },
     coverageReporter: {
-      dir: require('path').join(__dirname, 'coverage/resin-craft-art'),
+      dir: require('path').join(__dirname, 'coverage/sublime'),
       subdir: '.',
       reporters: [{ type: 'html' }, { type: 'text-summary' }],
       check: {

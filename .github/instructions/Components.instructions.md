@@ -2,7 +2,7 @@
 applyTo: '**/*.component.ts'
 ---
 
-# Component conventions — Resin Craft Art
+# Component conventions — Sublime
 
 ## Required decorator configuration
 
@@ -99,7 +99,7 @@ Use the `host` object in the decorator, never `@HostBinding` or `@HostListener`:
 Always use `NgOptimizedImage` for static images:
 
 ```html
-<img ngSrc="/assets/logo.png" width="120" height="40" alt="Resin Craft Art" priority />
+<img ngSrc="/assets/logo.png" width="120" height="40" alt="Sublime" priority />
 ```
 
 Never use `<img src="...">` for static images. `NgOptimizedImage` does not work with base64.

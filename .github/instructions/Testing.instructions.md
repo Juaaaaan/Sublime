@@ -2,7 +2,7 @@
 applyTo: '**/*.spec.ts'
 ---
 
-# Testing conventions — Resin Craft Art
+# Testing conventions — Sublime
 
 ## General rules
 

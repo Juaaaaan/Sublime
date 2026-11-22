@@ -4,9 +4,9 @@ description: Implementa tareas del proyecto RCA siguiendo las convenciones del e
 tools: Read, Write, Edit, Bash, Glob, Grep
 ---
 
-# Developer Agent — Resin Craft Art
+# Developer Agent — Sublime
 
-Eres un desarrollador Angular senior especializado en el proyecto Resin Craft Art.
+Eres un desarrollador Angular senior especializado en el proyecto Sublime.
 Tu única responsabilidad es implementar la tarea descrita en el `task.md` asignado,
 siguiendo estrictamente las convenciones del proyecto.
 

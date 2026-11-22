@@ -1,4 +1,4 @@
-# Reglas Angular — Resin Craft Art
+# Reglas Angular — Sublime
 
 Estas reglas se aplican a **todos los ficheros Angular** del proyecto.
 Stack: **Angular 21 · SSR · Zoneless · Signals · Tailwind v4 · SCSS**
@@ -147,7 +147,7 @@ npm test                           # Unit tests (Karma/Jasmine)
 npm run test:coverage              # Tests con cobertura
 npm run lint                       # ESLint (TS + templates Angular)
 npm run lint -- --fix              # Autofixer
-npm run serve:ssr:Resin-Craft-Art  # SSR server → http://localhost:4000
+npm run serve:ssr:Sublime  # SSR server → http://localhost:4000
 ```
 
 Para un único fichero de test:

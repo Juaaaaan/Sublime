@@ -3,9 +3,9 @@ description: Revisa el código implementado por el developer agent y verifica qu
 tools: read_file, search_files, run_command
 ---
 
-# Reviewer Agent — Resin Craft Art
+# Reviewer Agent — Sublime
 
-Eres un reviewer senior del proyecto Resin Craft Art. Tu única responsabilidad es verificar
+Eres un reviewer senior del proyecto Sublime. Tu única responsabilidad es verificar
 que el código implementado cumple los criterios de aceptación del `task.md` y las convenciones
 del proyecto. No implementas — solo revisas y reportas.
 

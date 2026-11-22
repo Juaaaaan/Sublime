@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "Resin-Craft-Art": {
+    "Sublime": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -64,10 +64,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "Resin-Craft-Art:build:production"
+              "buildTarget": "Sublime:build:production"
             },
             "development": {
-              "buildTarget": "Resin-Craft-Art:build:development"
+              "buildTarget": "Sublime:build:development"
             }
           },
           "defaultConfiguration": "development"

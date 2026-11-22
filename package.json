@@ -1,5 +1,5 @@
 {
-  "name": "resin-craft-art",
+  "name": "sublime",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -13,7 +13,7 @@
     "precommit": "npm run lint && npm run test:coverage",
     "doc:graph": "graphify update .",
     "doc:graph:obsidian": "graphify . --obsidian",
-    "serve:ssr:Resin-Craft-Art": "node dist/Resin-Craft-Art/server/server.mjs"
+    "serve:ssr:Sublime": "node dist/Sublime/server/server.mjs"
   },
   "prettier": {
     "printWidth": 100,

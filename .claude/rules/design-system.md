@@ -1,6 +1,6 @@
 # Design System — Artisanal Ether
 
-Sistema de diseño de **Resin Craft Art**. Todos los ficheros de UI deben respetar estas reglas.
+Sistema de diseño de **Sublime**. Todos los ficheros de UI deben respetar estas reglas.
 Los tokens están definidos en `src/tailwind.css` vía `@theme`. Las fuentes se cargan en `src/index.html`.
 
 ---

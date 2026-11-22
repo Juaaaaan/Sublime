@@ -51,12 +51,6 @@ export class ProductsService {
   }
 
   getPrimaryImage(product: Product): string {
-    console.log(
-      product.images.find((i) => i.is_primary)?.url ??
-        product.images[MAGIC_NUMBERS.ZERO]?.url ??
-        ''.split('?')[0],
-    );
-
     const imgProduct =
       product.images.find((i) => i.is_primary)?.url ??
       product.images[MAGIC_NUMBERS.ZERO]?.url ??

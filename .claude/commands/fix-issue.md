@@ -1,4 +1,4 @@
-# Fix Issue — Resin Craft Art
+# Fix Issue — Sublime
 
 Analiza y corrige el problema indicado: $ARGUMENTS
 

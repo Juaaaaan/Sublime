@@ -1,4 +1,4 @@
-# SPEC.md — Resin Craft Art (RCA)
+# SPEC.md — Sublime (antes Resin Craft Art · clave Jira: RCA)
 > Versión: 1.0 · Generado: 2026-06-16 · Fuente: Jira RCA  
 > Este documento está optimizado para consumo por IA (Claude Code, Cursor, Copilot, etc.).  
 > Léelo completo antes de generar código. No omitas secciones.
@@ -7,7 +7,7 @@
 
 ## 1. Visión del producto
 
-Resin Craft Art es una tienda e-commerce de artesanía en resina epoxi hecha a mano, orientada al mercado español. La cliente es una artesana individual que vende piezas únicas (pendientes, llaveros, marcos, bandejas, etc.) con opción de encargo personalizado.
+Sublime es una tienda e-commerce de artesanía en resina epoxi hecha a mano, orientada al mercado español. La cliente es una artesana individual que vende piezas únicas (pendientes, llaveros, marcos, bandejas, etc.) con opción de encargo personalizado.
 
 **Objetivo técnico:** construir una web SSR con Angular 21, rápida, SEO-friendly y fácil de mantener por una sola persona no técnica (la artesana gestiona stock y pedidos desde el Dashboard de Supabase, no hay panel de administración propio).
 
@@ -491,7 +491,7 @@ APP_URL=http://localhost:4200
 STRIPE_SECRET_KEY=sk_test_...       # sk_live_... en producción
 STRIPE_WEBHOOK_SECRET=whsec_...
 RESEND_API_KEY=re_...
-APP_URL=https://resincraft.art       # dominio pendiente confirmar
+APP_URL=https://<dominio-pendiente>       # dominio pendiente confirmar
 ```
 
 ### Producción (Vercel env vars)
@@ -565,7 +565,7 @@ Cada página configura sus meta tags en el resolver o en `ngOnInit`:
 
 ```typescript
 // Patrón a seguir en cada página
-this.title.setTitle('Resin Craft Art — Página Colecciones');
+this.title.setTitle('Sublime — Página Colecciones');
 this.meta.updateTag({ name: 'description', content: '...' });
 this.meta.updateTag({ property: 'og:title', content: '...' });
 this.meta.updateTag({ property: 'og:image', content: '...' });

@@ -9,6 +9,6 @@ export const environment = {
     // TODO RCA-28: número de WhatsApp real pendiente de confirmación con la clienta
     whatsappNumber: '+34600000000',
     // TODO RCA-28: email de contacto real pendiente de confirmación con la clienta
-    email: 'hello@resincraftart.example',
+    email: 'hello@sublime.example',
   },
 };

@@ -35,7 +35,7 @@ describe('FooterComponent', () => {
     const el: HTMLElement = fixture.nativeElement;
     const logoLink = el.querySelector<HTMLAnchorElement>('a[href="/"]');
     expect(logoLink).toBeTruthy();
-    expect(logoLink!.textContent!.trim()).toBe('Resin Craft Art');
+    expect(logoLink!.textContent!.trim()).toBe('Sublime');
   });
 
   it('should render navigation links to /cuidados, /contacto and /personaliza', () => {

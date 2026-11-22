@@ -1,4 +1,4 @@
-# AGENTS.md — Resin Craft Art
+# AGENTS.md — Sublime
 
 Este fichero define cómo debe comportarse el agente cuando trabaja de forma autónoma en el proyecto RCA.
 Léelo completo antes de iniciar cualquier tarea.

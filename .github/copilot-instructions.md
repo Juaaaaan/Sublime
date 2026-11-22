@@ -1,8 +1,8 @@
-# Resin Craft Art — Copilot Instructions
+# Sublime — Copilot Instructions
 
 ## Project overview
 
-Resin Craft Art (RCA) is an Angular 21 SSR e-commerce application for handmade resin jewelry.
+Sublime (formerly Resin Craft Art; Jira key: RCA) is an Angular 21 SSR e-commerce application for handmade resin jewelry.
 It uses zoneless change detection, Signals-first state management, Supabase as the backend,
 Transloco for i18n, and Tailwind v4 with a custom design system called Artisanal Ether.
 
@@ -63,7 +63,7 @@ npm test                           # Unit tests with Karma/Jasmine
 npm run test:coverage              # Unit tests with coverage report
 npm run lint                       # ESLint
 npm run lint -- --fix              # ESLint with auto-fix
-npm run serve:ssr:Resin-Craft-Art  # SSR server at http://localhost:4000
+npm run serve:ssr:Sublime  # SSR server at http://localhost:4000
 ```
 
 To run a single test file: `npx ng test --include='**/path/to/file.spec.ts'`

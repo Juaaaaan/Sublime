@@ -57,7 +57,7 @@ npm run watch        # Dev build with watch mode
 npm test             # Unit tests with Karma/Jasmine
 npm run test:coverage  # Unit tests with coverage report
 npm run lint         # ESLint (TypeScript + Angular templates)
-npm run serve:ssr:Resin-Craft-Art  # Run the built SSR server at http://localhost:4000
+npm run serve:ssr:Sublime  # Run the built SSR server at http://localhost:4000
 ```
 
 To run a single test file: `npx ng test --include='**/path/to/file.spec.ts'`

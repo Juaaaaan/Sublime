@@ -1,4 +1,4 @@
-# Code Review — Resin Craft Art
+# Code Review — Sublime
 
 Realiza una revisión exhaustiva del código indicado o, si no se especifica nada, del diff actual (`git diff HEAD`).
 

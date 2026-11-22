@@ -24,7 +24,7 @@ Sistema de diseño: `docs/DESIGN.md`. Convenciones: `CLAUDE.md`.
 
 | #   | Change (nombre)          | Qué incluye                                                                                                                           | Frames Figma                         | Paralelo     |
 | --- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ | ------------ |
-| 1   | `ui-primitives-sublime`  | Button, Badge, Input, Select, TextArea, RadioGroup, Modal alineados con DESIGN.md; arreglar `font-label-sm` (clase sin CSS, ~30 usos) | todos (referencia)                   | no           |
+| ~~1~~ | ~~`ui-primitives-sublime`~~ | **HECHO 2026-11-22**, archivado como `2026-11-22-ui-primitives-sublime`. Spec publicado en `openspec/specs/ui-primitives/` (10 requisitos). Pendiente: comparación visual en navegador (tarea 7.3) | todos (referencia) | no |
 | 2   | `layout-navbar-footer`   | Navbar y footer nuevos; enlaces y rutas del menú                                                                                      | `3:2` (cabecera/pie)                 | no           |
 | 3   | `home-redesign`          | Home: hero con cifras, series, "Latest Release", manifiesto                                                                           | `3:2` y/o `3:2905` (ver decisión D1) | sí (con 5-8) |
 | 4   | `catalog-data-model`     | Revisar tablas `products`, `stock_items`, `product_images` frente al catálogo del diseño. Solo propuesta SQL                          | `3:750`, `3:3361`                    | no           |
@@ -74,6 +74,23 @@ Sistema de diseño: `docs/DESIGN.md`. Convenciones: `CLAUDE.md`.
 | D7  | Pagos: el diseño ofrece Bizum, Revolut y transferencia tras hablar con la clienta. ¿Se elimina Stripe del proyecto?                              |
 | D8  | Logo y fotos reales: pendientes. Hasta entonces, usar marcadores de posición con `NgOptimizedImage`                                              |
 | D9  | Móvil: nadie lo ha revisado. Se hace en el change 15 a partir de DESIGN.md                                                                       |
+
+## Hallazgos abiertos fuera de alcance
+
+Detectados durante el change 1 y **no** arreglados, para que no se pierdan:
+
+| Hallazgo | Dónde va |
+| --- | --- |
+| `npm run serve:ssr:Sublime` rechaza la cabecera `host` y cae a renderizado en cliente: sirve 15 709 bytes en vez del prerender de 38 403. **Ninguna verificación SSR manual del roadmap es fiable hasta arreglarlo** | Change propio, antes de cualquier tarea que dependa de SSR |
+| Los 3 campos de formulario son casi el mismo componente triplicado: ~120 líneas de plantilla y ~400 de test duplicadas. Falta un componente base | Change de refactor propio; se paga en cada change de página |
+| 6 usos de `tracking-widest` nativo en `features/**` donde el sistema tiene `--tracking-eyebrow` con el mismo valor | Change de cada página |
+| Títulos en `text-on-surface` donde D-3 decidió `deep-moss` | Changes 2-14 |
+| `footer.ts:8` declara `standalone: true`; `footer.ts` e `intro-page-section.ts` sin `OnPush` | Change 2 |
+| `max-w-[1200px]` arbitrario en `contact.html` y `stock.html` donde existe `max-w-content`; `bg-white`, `drop-shadow-sm` y espaciado numérico en `features/**` | Change de cada página |
+| El chip accionable no tiene hover: en táctil no se distingue de una etiqueta estática | Change que lo adopte (3 o 5) |
+| `contact.html:55-75` tiene un aviso a mano que debería ser `app-callout` | Change 7 o 10 |
+| Áreas táctiles por debajo de 44px: botón `sm` (28px) y fila de opción de radio (~20px) | Change 15 (móvil) |
+| `/contacto` mezcla idiomas: H1 «Let's connect» sobre formulario en español | Decisión D2 |
 
 ## Definición de terminado (cada change)
 

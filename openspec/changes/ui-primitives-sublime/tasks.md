@@ -1,0 +1,55 @@
+# Tasks
+
+## 1. Capa de tokens y tipografía
+
+- [ ] 1.1 En `src/tailwind.css`, sustituir `--font-sans` por `'Nunito Sans', sans-serif` y **eliminar** `--font-serif` (líneas 79-80). Verificación: `grep -n "font-serif" src/tailwind.css` no devuelve nada.
+- [ ] 1.2 En `src/index.html:11`, reemplazar el `<link>` de Noto Serif + Manrope por `family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap`, conservando los dos `preconnect`. Verificación: `npm start` y comprobar en la pestaña Network que solo se solicita Nunito Sans y que `getComputedStyle(document.body).fontFamily` empieza por `Nunito Sans`.
+- [ ] 1.3 En `src/styles.scss`, eliminar la regla `h1,h2,h3 { font-family: var(--font-serif) }` (líneas 9-12). Verificación: `npm run build` pasa y `grep -n "font-serif" src/styles.scss` no devuelve nada.
+- [ ] 1.4 Realinear la escala en `@theme` según la tabla D-3 de `design.md`: `--text-h1` lh `1.08` y `--tracking-h1` `-0.025em`; `--text-h2` lh `1.2` y `--tracking-h2` `-0.02em`; `--tracking-label` a `0.05em`. Verificación: una página de prueba con `text-h1 tracking-h1` mide 48px de tamaño y 51.8px de interlineado en el inspector.
+- [ ] 1.5 Añadir los tokens nuevos de `@theme`: `--text-lead` (1.5rem / 1.3), `--text-body-sm` (0.875rem / 1.43), `--tracking-cta` (0.16em), `--tracking-eyebrow` (0.1em), `--radius-field` (0.125rem), `--radius-chip` (0.75rem), `--color-outline-field` (#e2e8df), `--color-placeholder` (rgba(140,156,130,0.7)). Verificación: cada clase correspondiente (`text-lead`, `rounded-field`, `border-outline-field`, …) genera CSS en el build.
+- [ ] 1.6 Actualizar `docs/DESIGN.md`: bloque `typography` con Nunito Sans y los pesos reales, bloque `rounded` con el radio de campo y de chip, los tokens de color nuevos, y las secciones "Typography" y "Components" sin referencias a Noto Serif ni a Manrope. Verificación: `grep -niE "noto serif|manrope" docs/DESIGN.md` no devuelve nada.
+
+## 2. Sustitución de clases sin token y guardia automática
+
+> El orden dentro de este grupo importa: la guardia (2.6) se añade **después** de limpiar las clases, para que ningún commit deje los tests en rojo. El pre-commit de Husky ejecuta lint y cobertura completos en cada commit.
+
+- [ ] 2.1 Sustituir los 18 usos de `font-serif` (ya sin token tras 1.1) por `text-h1`/`text-h2`/`text-h3` según el nivel del título en cada sitio, o por nada donde el tamaño ya venga dado. Verificación: `grep -rn "font-serif" src/` no devuelve nada y `npm run lint` pasa.
+- [ ] 2.2 Sustituir los 35 `font-label-sm` por `text-label-sm font-semibold tracking-label uppercase` en los 20 ficheros afectados (plantillas de `features/{home,contact,collections}`, `shared/components/layout/{navbar,footer}`, `product-card` y los `ui/*`), incluida la cadena base de `badge.ts:17`. Verificación: `grep -rn "font-label-sm" src/` no devuelve nada.
+- [ ] 2.3 Sustituir `font-body-md` → `text-body-md` (8 usos: `input.ts:31`, `text-area.ts:30`, `select.ts:30`, `radio-group.html:43`, `featured-products.html:34,57`, `product-card.html:47`) y `font-h3` → `text-h3` (`modal.html:23`, `product-card.html:38`). Verificación: `grep -rnE "font-body-md|font-h3" src/` no devuelve nada.
+- [ ] 2.4 Sustituir `shadow-soft` → `shadow-ambient` (`modal.ts:59`, `brand-story.html:28`), `pb-base` → `pb-sm` (`category-tabs.html:15`) y `mb-mb` → `mb-md` (`health-cards.html:10,16,28,34`). Verificación: `grep -rnE "shadow-soft|pb-base|mb-mb" src/` no devuelve nada.
+- [ ] 2.5 Reescribir las dos aserciones que apuntan a clases sin CSS: `radio-group.spec.ts:108` (`span.font-label-sm`) y `product-card.spec.ts:88` (`font-body-md`), contra la clase con token equivalente en el mismo elemento. Verificación: ambos specs pasan y siguen afirmando una clase que sí existe.
+- [ ] 2.6 Crear `src/app/shared/tokens.spec.ts`: parsea los nombres de token de `@theme` en `src/tailwind.css`, recorre `src/app/**/*.html` y las cadenas de clases de `src/app/**/*.ts`, y falla listando cualquier clase `text-*`, `tracking-*`, `font-*`, `shadow-*`, `rounded-*`, `max-w-*` o de espaciado sin token detrás, con una lista explícita de utilidades nativas de Tailwind permitidas. Verificación: `npx ng test --include='**/tokens.spec.ts'` pasa **en verde** sobre el código ya limpio (2.1-2.5), y vuelve a fallar si se reintroduce a mano un `font-label-sm` de prueba.
+
+## 3. Botón
+
+- [ ] 3.1 Reestilar `ButtonComponent` según el frame `3:1584`: variante `primary` con `bg-deep-moss text-on-primary rounded-field`, padding 32/14, etiqueta `text-label-sm font-semibold uppercase tracking-cta`, `transition-all duration-300`; `secondary` con borde de 1px y fondo transparente; `ghost` sin borde ni fondo. Verificación: `button.spec.ts` cubre las 3 variantes y los 3 tamaños, y el render de la variante primaria coincide con el screenshot del nodo `3:1584`.
+- [ ] 3.2 Cubrir en `button.spec.ts` los escenarios del spec para estado deshabilitado (expone `disabled`, no emite `clicked`), carga (no emite `clicked`, estado accesible) y foco visible por teclado. Verificación: `npx ng test --include='**/button.spec.ts'` en verde con ≥80% del fichero.
+
+## 4. Campos de formulario
+
+- [ ] 4.1 Reestilar `InputComponent` según el nodo `3:1550`: `bg-surface-container-lowest border border-outline-field rounded-field`, padding 15/11, `text-body-sm`, placeholder `text-placeholder`, etiqueta encima con `text-label-sm font-semibold uppercase tracking-label`. Verificación: `input.spec.ts` afirma las clases nuevas y el render coincide con el nodo.
+- [ ] 4.2 Aplicar el mismo contrato visual a `TextArea` (nodo `3:1578`) y añadirle `ChangeDetectionStrategy.OnPush`. Verificación: `text-area.spec.ts` en verde y el componente declara `OnPush`.
+- [ ] 4.3 Aplicar el mismo contrato visual a `Select` (nodo `3:1570`, con su icono de chevron a la derecha), añadirle `OnPush` y pasar su getter de clases (`select.ts:28`) a `computed()`. Verificación: `select.spec.ts` en verde, el componente declara `OnPush`, y al cambiar la entrada `error` el markup se actualiza sin detección manual.
+- [ ] 4.4 Cubrir en los tres specs los escenarios del spec para campo en error (borde y mensaje de error, mensaje asociado al control, control marcado inválido), campo obligatorio, etiqueta asociada al control y emisión del valor. Verificación: los 3 specs pasan con ≥80% por fichero.
+
+## 5. Badge, RadioGroup y Modal
+
+- [ ] 5.1 Pasar el getter `classes` de `Badge` (`badge.ts:15`) a `computed()`. Verificación: al cambiar las entradas `variant` o `size` el markup se actualiza, cubierto por un caso nuevo en `badge.spec.ts`.
+- [ ] 5.2 Sustituir el `Math.random()` de `radio-group.ts:21` por un contador incremental de módulo. Verificación: un test afirma que dos instancias reciben nombres distintos y deterministas, y que el `name` renderizado no cambia entre dos renders consecutivos del mismo árbol.
+- [ ] 5.3 Reestilar `RadioGroup` con los tokens nuevos y cubrir en su spec la agrupación accesible (grupo con etiqueta asociada) y la selección por teclado con flechas. Verificación: `radio-group.spec.ts` en verde con ≥80% del fichero.
+- [ ] 5.4 Proteger el `effect()` de `modal.ts:32-37` con `isPlatformBrowser(inject(PLATFORM_ID))` y guardar y restaurar el valor previo de `overflow` del `body` al cerrar. Verificación: `npm run build` prerenderiza todas las rutas sin error, y un test del spec afirma que en plataforma servidor no se toca el documento.
+- [ ] 5.5 Pasar `panelClasses` (`modal.ts:57`) a `computed()` y reemplazar las clases crudas de `MODAL_SIZES` (`max-w-sm|max-w-lg|max-w-2xl|max-w-full mx-sm`) por tokens de contenedor y espaciado. Verificación: `modal.spec.ts` cubre los 4 tamaños y el cambio de tamaño en caliente se refleja en el markup.
+- [ ] 5.6 Cubrir en `modal.spec.ts` los escenarios de cierre del spec: Escape, botón de cierre y click en el fondo cuando es cerrable; ninguno de los tres cuando no lo es; y foco devuelto al elemento que lo abrió. Verificación: `npx ng test --include='**/modal.spec.ts'` en verde con ≥80% del fichero.
+
+## 6. Primitivos nuevos
+
+- [ ] 6.1 Crear `shared/components/ui/chip/` (`app-chip`) con `rounded-chip`, 12px `font-extrabold uppercase tracking-label`, estado seleccionado `bg-deep-moss text-on-primary` y no seleccionado `bg-surface-container-low text-deep-moss`, más sus constantes en `shared/consts/components/chip/`. Verificación: su render coincide con los nodos `3:73` (activo) y `3:75` (inactivo).
+- [ ] 6.2 Añadir a `Chip` la entrada `interactive`: cuando es `true` renderiza un `<button>` que emite su selección y expone el estado seleccionado a tecnologías de asistencia; cuando es `false` renderiza un `<span>` no enfocable que no emite nada. Verificación: `chip.spec.ts` cubre los dos modos, la activación por click y por teclado, y alcanza ≥80% del fichero.
+- [ ] 6.3 Crear `shared/components/ui/callout/` (`app-callout`) según el nodo `3:1581`: `bg-surface-container-low border-l-4 border-deep-moss rounded-field`, padding 20/16/14, texto `text-body-sm italic`. Verificación: `callout.spec.ts` afirma que el mensaje recibido por entrada se renderiza y es accesible, con ≥80% del fichero.
+
+## 7. Verificación de integración
+
+- [ ] 7.1 Confirmar que este change no introduce texto de UI: `grep` de cadenas en español o inglés en las plantillas de `shared/components/ui/*` no devuelve nada fuera de entradas, y `git diff --stat public/i18n/` está vacío. Verificación: ambas comprobaciones en verde (por eso no hay tarea de i18n: los primitivos reciben todo su texto por `input()`).
+- [ ] 7.2 Comprobación SSR completa: `npm run build` y `npm run serve:ssr:Sublime`, cargar Home, Contacto y Stock, y confirmar que no hay errores de hidratación en consola (especialmente del `name` del grupo de radios) ni acceso a `document` en prerender. Verificación: consola limpia en las 3 páginas.
+- [ ] 7.3 Comparación visual contra Figma de Home (`3:2`), Contacto (`3:1536`) y Stock (`3:2550`): tipografía, radios de campo y botón, chips y aviso. Anotar en el change cualquier desborde de layout atribuible al cambio de métricas de fuente que se deje para el change de su página. Verificación: las tres páginas coinciden en tipografía y forma con su frame, y los desvíos pendientes quedan listados.
+- [ ] 7.4 Puerta final: `npm run test:coverage` (80% por fichero), `npm run lint` y `npm run build` en verde. Verificación: los tres comandos terminan con código 0 y la cobertura no baja en ningún fichero tocado.

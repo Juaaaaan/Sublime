@@ -108,7 +108,13 @@ Sin esto, los 15 changes siguientes reintroducen el bug. Se añade un test unita
 2. recorre las plantillas y las cadenas de clases de `src/app/**`;
 3. falla listando cualquier clase `text-*`, `tracking-*`, `font-*`, `shadow-*`, `rounded-*`, `max-w-*` o de espaciado cuyo sufijo no corresponda a un token ni a una utilidad nativa de Tailwind.
 
-Va como test y no como regla de ESLint porque la lista de utilidades válidas depende del contenido de `tailwind.css`, que ESLint no resuelve; y porque así entra en la misma puerta (`npm test`) que ya bloquea el pre-commit vía Husky. La lista de utilidades nativas permitidas se mantiene explícita en el propio test.
+No va como regla de ESLint porque la lista de utilidades válidas depende del contenido de `tailwind.css`, que ESLint no resuelve.
+
+**Corrección aplicada durante la implementación:** tampoco puede ir como spec de Karma, que es lo que decía este diseño. Los tests del proyecto corren en navegador (`ChromeHeadless`), sin acceso al sistema de ficheros: un spec no puede leer `src/tailwind.css` ni recorrer `src/app` (`TS2307: Cannot find module 'node:fs'`). La guardia pasa a ser un script de Node, `scripts/check-tokens.mjs`, expuesto como `npm run lint:tokens` y enganchado en el hook de pre-commit de Husky junto a `lint` y `test:coverage`, que es la puerta real que se pretendía usar.
+
+El script comprueba cuatro cosas: que existan los tokens de los que depende media UI, que las familias por defecto de Tailwind que el sistema no usa sigan cerradas con `initial`, que ninguna clase emita cero CSS, y que no aparezca ninguna clase de la lista de prohibidas. Las utilidades nativas permitidas y las prohibidas son listas explícitas en el propio fichero, para que añadir una sea una decisión consciente.
+
+La heurística necesitó normalizar dos familias de utilidades que no son cromáticas aunque lo parezcan: `border-b`/`border-l-2` son grosor de lado, `border-solid` es estilo y solo `border-t-primary` lleva color; y `bg-linear-to-r` es un degradado, no un color. Sin eso daba 22 falsos positivos. Verificado en ambos sentidos: pasa sobre el código limpio (84 ficheros, 100 tokens) y falla al reintroducir a mano `font-label-sm`, `mb-mb` y `font-serif`.
 
 *Alternativa descartada:* `eslint-plugin-tailwindcss`. A fecha de hoy no soporta la detección de tokens de `@theme` de Tailwind v4, que es justo lo que hace falta.
 

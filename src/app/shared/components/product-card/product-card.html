@@ -9,7 +9,10 @@
       />
     } @else {
       <div class="w-full h-full flex items-center justify-center bg-surface-container-high">
-        <span class="font-label-sm text-on-surface-variant/40 uppercase">Sin imagen</span>
+        <span
+          class="text-label-sm font-semibold tracking-label uppercase text-on-surface-variant/40"
+          >Sin imagen</span
+        >
       </div>
     }
 
@@ -27,7 +30,7 @@
 
     @if (showAddBag()) {
       <button
-        class="absolute bottom-0 w-full py-sm bg-on-surface text-white font-label-sm translate-y-full group-hover:translate-y-0 transition-transform duration-300 hover:bg-primary"
+        class="absolute bottom-0 w-full py-sm bg-on-surface text-white text-label-sm font-semibold tracking-label uppercase translate-y-full group-hover:translate-y-0 transition-transform duration-300 hover:bg-primary"
         (click)="onAddToBag($event)"
       >
         AÑADIR AL CARRITO
@@ -35,16 +38,18 @@
     }
   </div>
 
-  <h4 class="font-h3 text-on-surface mb-xs">{{ product().name }}</h4>
+  <h4 class="text-h3 text-on-surface mb-xs">{{ product().name }}</h4>
 
   @if (product().collection) {
-    <span class="text-label-sm font-sans font-semibold tracking-label uppercase text-on-surface-variant mb-xs">
+    <span
+      class="text-label-sm font-sans font-semibold tracking-label uppercase text-on-surface-variant mb-xs"
+    >
       {{ product().collection!.name }}
     </span>
   }
 
   <div class="flex justify-between items-center">
-    <span class="font-body-md text-on-surface-variant">
+    <span class="text-body-md text-on-surface-variant">
       {{ product().price | currency: 'EUR' : 'symbol' : '1.2-2' : 'es' }}
     </span>
 

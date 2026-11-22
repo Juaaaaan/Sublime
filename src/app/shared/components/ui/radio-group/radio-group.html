@@ -1,6 +1,8 @@
 <div class="flex flex-col gap-xs w-full">
   @if (label()) {
-    <span class="font-label-sm text-on-surface-variant uppercase tracking-widest mb-xs">
+    <span
+      class="text-label-sm font-semibold tracking-label uppercase text-on-surface-variant mb-xs"
+    >
       {{ label() }}
       @if (required()) {
         <span class="text-error ml-1" aria-hidden="true">*</span>
@@ -40,12 +42,14 @@
         <!-- Label + descripción -->
         <span class="flex flex-col">
           <span
-            class="font-body-md text-on-surface transition-colors duration-300 peer-checked:text-on-surface group-hover:text-on-surface"
+            class="text-body-md text-on-surface transition-colors duration-300 peer-checked:text-on-surface group-hover:text-on-surface"
           >
             {{ option.label }}
           </span>
           @if (option.description) {
-            <span class="font-label-sm text-on-surface-variant mt-xs">
+            <span
+              class="text-label-sm text-on-surface-variant mt-xs"
+            >
               {{ option.description }}
             </span>
           }
@@ -55,8 +59,12 @@
   </div>
 
   @if (error()) {
-    <span class="font-label-sm text-error" role="alert">{{ error() }}</span>
+    <span class="text-label-sm text-error" role="alert">{{
+      error()
+    }}</span>
   } @else if (hint()) {
-    <span class="font-label-sm text-on-surface-variant">{{ hint() }}</span>
+    <span class="text-label-sm text-on-surface-variant">{{
+      hint()
+    }}</span>
   }
 </div>

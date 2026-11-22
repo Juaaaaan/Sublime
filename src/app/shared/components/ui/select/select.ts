@@ -27,7 +27,7 @@ export class Select {
 
   get selectClasses(): string {
     const base =
-      'w-full bg-transparent border-0 border-b py-sm font-body-md text-on-surface outline-none transition-colors duration-300 cursor-pointer appearance-none disabled:opacity-40 disabled:pointer-events-none';
+      'w-full bg-transparent border-0 border-b py-sm text-body-md text-on-surface outline-none transition-colors duration-300 cursor-pointer appearance-none disabled:opacity-40 disabled:pointer-events-none';
     const border = this.error()
       ? 'border-error focus:border-error'
       : 'border-outline-variant focus:border-primary';

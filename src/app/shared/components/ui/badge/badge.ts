@@ -14,7 +14,7 @@ export class Badge {
 
   get classes(): string {
     const base =
-      'inline-flex items-center font-label-sm uppercase tracking-widest rounded-full transition-colors duration-300';
+      'inline-flex items-center text-label-sm font-semibold tracking-label uppercase rounded-full transition-colors duration-300';
 
     const variants: Record<BadgeVariant, string> = {
       default: 'bg-surface-container text-on-surface-variant',

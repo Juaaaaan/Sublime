@@ -56,7 +56,7 @@ export class Modal {
 
   get panelClasses(): string {
     const base =
-      'relative bg-surface w-full mx-margin-safe flex flex-col shadow-soft rounded-lg max-h-[90vh]';
+      'relative bg-surface w-full mx-margin-safe flex flex-col shadow-ambient rounded-lg max-h-[90vh]';
 
     return `${base} ${MODAL_SIZES[this.size()]}`;
   }

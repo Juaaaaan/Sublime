@@ -1,6 +1,9 @@
 <div class="flex flex-col gap-xs w-full">
   @if (label()) {
-    <label [for]="id()" class="font-label-sm text-on-surface-variant uppercase tracking-widest">
+    <label
+      [for]="id()"
+      class="text-label-sm font-semibold tracking-label uppercase text-on-surface-variant"
+    >
       {{ label() }}
       @if (required()) {
         <span class="text-error ml-1" aria-hidden="true">*</span>
@@ -20,8 +23,12 @@
   />
 
   @if (error()) {
-    <span class="font-label-sm text-error" role="alert">{{ error() }}</span>
+    <span class="text-label-sm text-error" role="alert">{{
+      error()
+    }}</span>
   } @else if (hint()) {
-    <span class="font-label-sm text-on-surface-variant">{{ hint() }}</span>
+    <span class="text-label-sm text-on-surface-variant">{{
+      hint()
+    }}</span>
   }
 </div>

@@ -27,7 +27,7 @@ export class TextArea {
 
   readonly inputClasses = computed(() => {
     const base =
-      'w-full bg-transparent border-0 border-b py-sm font-body-md text-on-surface placeholder:text-on-surface-variant/50 outline-none transition-colors duration-300 disabled:opacity-40 disabled:pointer-events-none';
+      'w-full bg-transparent border-0 border-b py-sm text-body-md text-on-surface placeholder:text-on-surface-variant/50 outline-none transition-colors duration-300 disabled:opacity-40 disabled:pointer-events-none';
     const border = this.error()
       ? 'border-error focus:border-error'
       : 'border-outline-variant focus:border-primary';

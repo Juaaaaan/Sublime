@@ -105,7 +105,7 @@ describe('RadioGroup', () => {
   it('should not render label when label is empty', () => {
     fixture.componentRef.setInput('label', '');
     fixture.detectChanges();
-    const labelEl = fixture.nativeElement.querySelector('span.font-label-sm');
+    const labelEl = fixture.nativeElement.querySelector('span.text-label-sm');
     expect(labelEl).toBeNull();
   });
 

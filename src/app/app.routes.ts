@@ -1,3 +1,41 @@
 import { Routes } from '@angular/router';
+import { LayoutComponent } from './shared/components/layout/layout/layout';
 
-export const routes: Routes = [];
+export const routes: Routes = [
+  {
+    path: '',
+    component: LayoutComponent,
+    children: [
+      {
+        path: '',
+        pathMatch: 'full',
+        loadComponent: () => import('./features/home/home').then((m) => m.Home),
+      },
+      {
+        path: 'colecciones',
+        pathMatch: 'full',
+        loadComponent: () =>
+          import('./features/collections/collections').then((m) => m.Collections),
+      },
+
+      {
+        path: 'cuidados',
+        pathMatch: 'full',
+        loadComponent: () => import('./features/health-care/health-care').then((m) => m.HealthCare),
+      },
+
+      {
+        path: 'stock',
+        pathMatch: 'full',
+        loadComponent: () => import('./features/stock/stock').then((m) => m.Stock),
+      },
+
+      {
+        path: 'contacto',
+        pathMatch: 'full',
+        loadComponent: () => import('./features/contact/contact').then((m) => m.Contact),
+      },
+    ],
+  },
+  { path: '**', redirectTo: '' },
+];

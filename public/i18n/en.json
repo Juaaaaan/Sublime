@@ -1,0 +1,140 @@
+{
+  "nav": {
+    "shop": "Shop",
+    "about": "About",
+    "contact": "Contact",
+    "cart": "Cart"
+  },
+  "hero": {
+    "headline": "Handcrafted Resin Art",
+    "subheadline": "Each piece is a unique expression — shaped by hand, sealed in time.",
+    "cta": "Explore the Collection"
+  },
+  "products": {
+    "title": "The Collection",
+    "subtitle": "Slow-made objects for intentional living.",
+    "addToCart": "Add to Cart",
+    "outOfStock": "Out of Stock",
+    "details": "View Details",
+    "new": "New",
+    "soldOut": "Sold Out"
+  },
+  "cart": {
+    "title": "Your Cart",
+    "empty": "Your cart is empty.",
+    "continueShopping": "Continue Shopping",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "selectShipping": "Select shipping",
+    "total": "Total",
+    "checkout": "Proceed to Checkout",
+    "remove": "Remove",
+    "quantity": "Qty",
+    "close": "Close cart"
+  },
+  "shipping": {
+    "ordinary": "Standard mail",
+    "certified": "Certified mail",
+    "pickup": "In-person pickup"
+  },
+
+  "collections": {
+    "title_section": {
+      "series": "The 2026 Series",
+      "title": "Selected Collections",
+      "subtitle": "A celebration of suspended moments, where organic forms merge with the fluid transparency of high-quality resin."
+    },
+    "hero": {
+      "chapters": {
+        "first": {
+          "tag": "Chapter I",
+          "title": "Ethereal Petals",
+          "description": "Inspired by the ephemeral beauty of spring, this collection captures the delicate pulse of plant life. Each piece features a single hand-selected flower, preserved forever in a crystal embrace.",
+          "types": {
+            "minerals": "Gold-plated silver",
+            "ingredients": "Conserved botanical ingredients"
+          },
+          "button": "Explore Ethereal Petals"
+        },
+        "second": {
+          "tag": "Chapter II",
+          "title": "Ocean Depths",
+          "description": "Intense cerulean pigments blend with translucent layers to mimic the rhythmic movement of the tide. A collection designed for those who find peace in the vastness of the sea.",
+          "characteristics": {
+            "made": "Handcrafted",
+            "resistance": "UV resistant",
+            "typo": "Unique Swirls"
+          },
+          "button": "Explore Ocean Depths"
+        }
+      }
+    },
+    "info_cards": {
+      "first": {
+        "title": "Artisan Grade",
+        "description": "Non-yellowing, high-clarity resin that protects the integrity of your pieces for years."
+      },
+      "second": {
+        "title": "Selected Collections",
+        "description": "We source our botanicals from local sustainable gardens and use bio-based resin components."
+      },
+      "third": {
+        "title": "One of a Kind",
+        "description": "Due to the hand-poured nature of resin, no two pieces will ever be identical."
+      }
+    }
+  },
+
+  "care": {
+    "title_section": {
+      "title": "Care & Handcrafting Times",
+      "subtitle": "Artistry requires patience and intentionality. Each piece is a journey from liquid resin to a wearable treasure."
+    }
+  },
+
+  "about": {
+    "title": "About the Studio",
+    "body": "Every piece begins as an idea — a color, a feeling, a texture found in nature. We pour, cure, and finish each item by hand in our small studio."
+  },
+  "contact": {
+    "title": "Let's connect",
+    "subtitle": "Write to us without rush — every message is read slowly, the way every piece is made.",
+    "name": "Full Name",
+    "email": "Email Address",
+    "subject": "Subject",
+    "subjectOptions": {
+      "customCommission": "Custom Commission",
+      "orderInquiry": "Order Inquiry",
+      "wholesale": "Wholesale",
+      "press": "Press / Collaboration",
+      "other": "Other"
+    },
+    "message": "Message",
+    "send": "Send Message",
+    "success": "Thank you! We'll be in touch soon.",
+    "error": "Something went wrong. Please try again.",
+    "legalNotice": "Your order is not confirmed until we talk and payment is received.",
+    "whatsapp": "Message us on WhatsApp",
+    "emailLink": "Email us",
+    "studioLocation": "Studio Location",
+    "errors": {
+      "required": "This field is required.",
+      "email": "Enter a valid email address.",
+      "minLength": "This field is too short."
+    }
+  },
+  "common": {
+    "loading": "Loading…",
+    "backToTop": "Back to top",
+    "learnMore": "Learn more",
+    "close": "Close",
+    "open": "Open",
+    "currency": "USD"
+  },
+  "footer": {
+    "tagline": "Handmade with intention.",
+    "rights": "All rights reserved.",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  }
+}

@@ -3,7 +3,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Modal } from './modal';
 
 @Component({
-  standalone: true,
   imports: [Modal],
   template: `
     <app-modal
@@ -123,7 +122,7 @@ describe('Modal (via TestWrapper)', () => {
     expect(component.closedCalled).toBeFalse();
   });
 
-  it('should not emit closed when closeable is false', () => {
+  it('should not render the close button when closeable is false', () => {
     component.isOpen = true;
     component.closeable = false;
     fixture.detectChanges();
@@ -150,7 +149,7 @@ describe('Modal (via TestWrapper)', () => {
     component.isOpen = true;
     fixture.detectChanges();
     const panel = fixture.nativeElement.querySelector('[cdktrapfocus]');
-    expect(panel.className).toContain('max-w-lg');
+    expect(panel.className).toContain('max-w-modal-md');
   });
 
   it('should apply sm size class when configured', () => {
@@ -158,7 +157,7 @@ describe('Modal (via TestWrapper)', () => {
     component.size = 'sm';
     fixture.detectChanges();
     const panel = fixture.nativeElement.querySelector('[cdktrapfocus]');
-    expect(panel.className).toContain('max-w-sm');
+    expect(panel.className).toContain('max-w-modal-sm');
   });
 
   it('should apply lg size class when configured', () => {
@@ -166,7 +165,7 @@ describe('Modal (via TestWrapper)', () => {
     component.size = 'lg';
     fixture.detectChanges();
     const panel = fixture.nativeElement.querySelector('[cdktrapfocus]');
-    expect(panel.className).toContain('max-w-2xl');
+    expect(panel.className).toContain('max-w-modal-lg');
   });
 
   it('should apply full size class when configured', () => {
@@ -180,11 +179,21 @@ describe('Modal (via TestWrapper)', () => {
     expect(panel.className).not.toContain('mx-sm');
   });
 
-  it('should close on backdrop click', () => {
+  /**
+   * El clic se hace sobre el backdrop, el primer hijo del dialogo: es el elemento que
+   * recibe de verdad los clics de la zona oscura, porque es `absolute inset-0` y tapa el
+   * overlay. El test anterior pulsaba el overlay, inalcanzable para una persona, y por eso
+   * seguia verde con el manejador roto.
+   */
+  it('should close when clicking the visible backdrop', () => {
     component.isOpen = true;
     fixture.detectChanges();
     const dialog = fixture.nativeElement.querySelector('[role="dialog"]');
-    dialog.click();
+    const backdrop = dialog.firstElementChild as HTMLElement;
+    expect(backdrop.className).toContain('absolute');
+    expect(backdrop.className).toContain('inset-0');
+
+    backdrop.click();
     expect(component.closedCalled).toBeTrue();
   });
 
@@ -202,16 +211,16 @@ describe('Modal (via TestWrapper)', () => {
     component.isOpen = true;
     fixture.detectChanges();
     const panel = () => fixture.nativeElement.querySelector('[cdktrapfocus]') as HTMLElement;
-    expect(panel().className).toContain('max-w-lg');
+    expect(panel().className).toContain('max-w-modal-md');
 
     component.size = 'lg';
     await settle(fixture);
-    expect(panel().className).toContain('max-w-2xl');
-    expect(panel().className).not.toContain('max-w-lg');
+    expect(panel().className).toContain('max-w-modal-lg');
+    expect(panel().className).not.toContain('max-w-modal-md');
 
     component.size = 'sm';
     await settle(fixture);
-    expect(panel().className).toContain('max-w-sm');
+    expect(panel().className).toContain('max-w-modal-sm');
   });
 
   it('should keep the ambient elevation and the safe margin in every size', async () => {
@@ -224,6 +233,69 @@ describe('Modal (via TestWrapper)', () => {
       expect(panel.className).toContain('shadow-ambient');
       expect(panel.className).toContain('mx-margin-safe');
     }
+  });
+
+  /**
+   * Valor computado y no solo la cadena de clase: `max-w-lg` existia como clase y los
+   * tests pasaban, pero compilaba a `var(--spacing-lg)` y el panel medio media 48px de
+   * ancho. Aqui se mide el CSS que el navegador aplica de verdad.
+   */
+  it('should resolve the panel max-width to a real container width, not a spacing value', () => {
+    component.isOpen = true;
+    fixture.detectChanges();
+    const panel = () => fixture.nativeElement.querySelector('[cdktrapfocus]') as HTMLElement;
+
+    expect(getComputedStyle(panel()).maxWidth).toBe('512px');
+
+    component.size = 'sm';
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+    expect(getComputedStyle(panel()).maxWidth).toBe('384px');
+
+    component.size = 'lg';
+    fixture.changeDetectorRef.markForCheck();
+    fixture.detectChanges();
+    expect(getComputedStyle(panel()).maxWidth).toBe('672px');
+  });
+
+  // --- Nombre accesible del dialogo ---
+
+  it('should name the dialog with aria-labelledby pointing at its heading', () => {
+    component.isOpen = true;
+    component.title = 'Mi titulo';
+    fixture.detectChanges();
+    const dialog = fixture.nativeElement.querySelector('[role="dialog"]');
+    const heading = fixture.nativeElement.querySelector('h2') as HTMLElement;
+
+    expect(heading.id).toBeTruthy();
+    expect(dialog.getAttribute('aria-labelledby')).toBe(heading.id);
+  });
+
+  it('should not emit an empty accessible name when there is no title', () => {
+    component.isOpen = true;
+    fixture.detectChanges();
+    const dialog = fixture.nativeElement.querySelector('[role="dialog"]');
+
+    expect(dialog.getAttribute('aria-label')).toBeNull();
+    expect(dialog.getAttribute('aria-labelledby')).toBeNull();
+  });
+
+  // --- Boton de cierre: tipo explicito y area tactil ---
+
+  it('should render the close button as type=button with a 44px touch target', () => {
+    component.isOpen = true;
+    fixture.detectChanges();
+    const closeBtn = fixture.nativeElement.querySelector(
+      '[aria-label="Cerrar"]',
+    ) as HTMLButtonElement;
+
+    // Sin `type` explicito el boton es `submit` y enviaba el formulario que lo contuviera.
+    expect(closeBtn.type).toBe('button');
+    expect(closeBtn.offsetHeight).toBeGreaterThanOrEqual(44);
+    expect(closeBtn.offsetWidth).toBeGreaterThanOrEqual(44);
+    expect(closeBtn.className).toContain('focus-visible:outline-2');
+    expect(closeBtn.className).toContain('focus-visible:outline-offset-2');
+    expect(closeBtn.className).toContain('focus-visible:outline-primary');
   });
 
   // --- Escenario «Non-closeable modal» del spec ---
@@ -242,7 +314,7 @@ describe('Modal (via TestWrapper)', () => {
     component.closeable = false;
     fixture.detectChanges();
     const dialog = fixture.nativeElement.querySelector('[role="dialog"]');
-    dialog.click();
+    (dialog.firstElementChild as HTMLElement).click();
     expect(component.closedCalled).toBeFalse();
   });
 
@@ -257,10 +329,42 @@ describe('Modal (via TestWrapper)', () => {
     await settle(fixture);
 
     const dialog = fixture.nativeElement.querySelector('[role="dialog"]');
-    const panel = fixture.nativeElement.querySelector('[cdktrapfocus]');
-    expect(panel.hasAttribute('cdktrapfocusautocapture')).toBeTrue();
     expect(dialog.contains(document.activeElement)).toBeTrue();
     expect(document.activeElement).not.toBe(opener);
+  });
+
+  /**
+   * Escenario «Focus trap»: con el modal abierto, tabular no saca el foco del dialogo.
+   *
+   * La pulsacion real del tabulador no se puede simular desde Karma: un `KeyboardEvent`
+   * sintetico no mueve el foco, eso lo hace el navegador por su cuenta. Lo que si se
+   * puede ejercitar es el mecanismo del que depende la trampa: el CDK coloca un ancla
+   * enfocable justo detras del panel, que es donde aterriza el foco al tabular desde el
+   * ultimo elemento enfocable, y al recibirlo lo devuelve al primero del panel. Enfocar
+   * esa ancla es el equivalente observable de ese tabulador.
+   */
+  it('should send focus back into the panel when it leaves past the last focusable element', async () => {
+    fixture.detectChanges();
+    component.isOpen = true;
+    component.title = 'Confirmar pedido';
+    await settle(fixture);
+
+    const panel = fixture.nativeElement.querySelector('[cdktrapfocus]') as HTMLElement;
+    const anchors = fixture.nativeElement.querySelectorAll(
+      '.cdk-focus-trap-anchor',
+    ) as NodeListOf<HTMLElement>;
+    expect(anchors.length).toBe(2);
+
+    const footerButton = fixture.nativeElement.querySelector('#footer-btn') as HTMLButtonElement;
+    footerButton.focus();
+    expect(panel.contains(document.activeElement)).toBeTrue();
+
+    // Tabular desde el ultimo elemento enfocable lleva el foco al ancla final.
+    anchors[1].focus();
+    await fixture.whenStable();
+
+    expect(panel.contains(document.activeElement)).toBeTrue();
+    expect(document.activeElement).not.toBe(anchors[1]);
   });
 
   it('should return focus to the element that opened it when it closes', async () => {

@@ -68,15 +68,26 @@ Regla acordada: **forma y tipografía de Figma; color de DESIGN.md.** Resultado:
 | Tracking de CTA | no existe | 1.92px sobre 12px | nuevo `--tracking-cta` `0.16em` |
 | Radio de campo y botón | `--radius` 4px | 2px | nuevo `--radius-field` `0.125rem`; `--radius` se mantiene para el resto |
 | Radio de chip | `--radius-full` | 12px | nuevo `--radius-chip` `0.75rem` |
-| Borde de campo | `outline-variant` `#c5c7bf` | `#e2e8df` | nuevo `--color-outline-field`; `outline-variant` sigue siendo el divisor |
-| Placeholder | no existe | `rgba(140,156,130,.7)` | nuevo `--color-placeholder`, derivado de `sage-leaf` |
+| Borde de campo | `outline-variant` `#c5c7bf` | `#e2e8df` | **ninguno de los dos**: `border-outline` `#757871`. Ver la excepción de accesibilidad abajo |
+| Placeholder | no existe | `rgba(140,156,130,.7)` | nuevo `--color-placeholder`, pero en `#6b7a64`. Ver la excepción de accesibilidad abajo |
+| Altura del botón | — | 44px (nodo `3:1584`) | `--text-cta` con caja de 16px; con `text-label-sm` (lh 1) quedaba en 40px |
+| Ancho del panel del modal | `max-w-sm/lg/2xl` | sin frame | `--container-modal-sm/md/lg`. `max-w-lg` compilaba a 48px |
 | Fondo de botón primario | `on-surface` `#191d17` | `#2c3528` | Figma: `deep-moss`, que **ya existe** como token |
 | Color de título | `on-surface` `#191d17` | `#2c3528` | Figma: `deep-moss`, token existente |
 | Paleta restante | MD3 | hex sueltos | DESIGN.md, sin cambios |
 
-Los tres valores de color que Figma aporta y la paleta no tenía (`#e2e8df`, el placeholder y nada más) entran como tokens nuevos; no se toca ningún color MD3 existente. Los tamaños se expresan en `rem` para no romper el zoom del navegador, y los tracking en `em` para que escalen con el tamaño de fuente, que es lo que Figma expresa en px absolutos.
+**Excepción de accesibilidad a D-3, decidida por el usuario.** Dos colores del diseño no llegan a WCAG AA y se desvían a propósito:
 
-Tokens nuevos añadidos: `--text-lead` (1.5rem / 1.3), `--text-body-sm` (0.875rem / 1.43), `--tracking-cta`, `--tracking-eyebrow`, `--radius-field`, `--radius-chip`, `--color-outline-field`, `--color-placeholder`, los pesos `--text-h1/h2/h3/lead/h2-mobile--font-weight` y el padding de controles `--spacing-cta-x` (32px), `--spacing-cta-y` (14px), `--spacing-field-x` (15px) y `--spacing-field-y` (11px).
+| Valor de Figma | Contraste | Sustituto | Contraste |
+| --- | --- | --- | --- |
+| placeholder `rgba(140,156,130,.7)` sobre blanco | 2,02:1 (AA pide 4,5) | `#6b7a64` | 4,57:1 |
+| borde de campo `#e2e8df` sobre blanco | 1,25:1 (SC 1.4.11 pide 3) | `border-outline` `#757871` | 4,49:1 |
+
+El primero era `sage-leaf` aclarado al 70%, es decir peor que el color que `docs/DESIGN.md` ya marca como «solo decorativo, no vale como texto»: importarlo habría contradicho la propia documentación. El segundo dejaba los campos prácticamente invisibles sobre la tarjeta blanca. Se corrigen aquí y no en el change 16 porque los 14 changes de página se construyen sobre estos primitivos. El chip no seleccionado recibe por lo mismo un borde de 1px: su fondo daba 1,04:1 contra la página.
+
+Ningún color MD3 existente se modifica. Los tamaños se expresan en `rem` para no romper el zoom del navegador, y los tracking en `em` para que escalen con el tamaño de fuente, que es lo que Figma expresa en px absolutos.
+
+Tokens nuevos añadidos: `--text-lead` (1.5rem / 1.3), `--text-body-sm` (0.875rem / 1.43), `--tracking-cta`, `--tracking-eyebrow`, `--radius-field`, `--radius-chip`, `--color-placeholder`, `--text-cta` (12px con caja de 16px), `--text-label-xs`, `--container-modal-sm/md/lg`, `--spacing-badge-y`, los `--text-h1/h2--letter-spacing`, los pesos `--text-h1/h2/h3/lead/h2-mobile--font-weight` y el padding de controles `--spacing-cta-x` (32px), `--spacing-cta-y` (14px), `--spacing-field-x` (15px) y `--spacing-field-y` (11px).
 
 **Añadido tras la revisión de QA:** el peso de los títulos faltaba en esta tabla y en las plantillas, así que todos los H1 y H2 renderizaban a 400 pese a que la propuesta prometía Bold y SemiBold. Se resuelve en el token (`--text-h*--font-weight`) y no clase a clase: Tailwind lo emite como `font-weight: var(--tw-font-weight, var(--text-h1--font-weight))`, de modo que una clase `font-light` explícita sigue ganando donde se quiera a propósito.
 

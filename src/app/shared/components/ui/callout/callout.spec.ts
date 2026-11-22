@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { Callout } from './callout';
+import { CALLOUT_CLASSES } from '../../../consts/components/callout/callout.const';
 
 /** Host de formulario: el aviso del nodo `3:1581` vive dentro del formulario de contacto. */
 @Component({
@@ -95,13 +96,11 @@ describe('Callout', () => {
     expect(box().textContent!.trim()).toBe('');
   });
 
-  // Escenario «Class strings react to input changes» (D-5): clases por `computed()`, no getter.
-  it('should expose its classes through a computed signal', async () => {
-    const first = component.classes();
-    await fixture.whenStable();
-
-    expect(first).toBe(component.classes());
+  // El contrato visual es una constante compartida: la plantilla pinta exactamente lo que
+  // declara `CALLOUT_CLASSES`, sin anadir ni perder clases por el camino.
+  it('should render exactly the shared class contract', () => {
+    expect(component.classes).toBe(CALLOUT_CLASSES);
     // Angular normaliza el orden de las clases al aplicarlas, se comparan como conjunto.
-    expect(classList().sort()).toEqual(first.split(/\s+/).sort());
+    expect(classList().sort()).toEqual(CALLOUT_CLASSES.split(/\s+/).sort());
   });
 });

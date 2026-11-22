@@ -24,8 +24,11 @@ export class ButtonComponent {
    */
   protected readonly variantClasses: Record<ButtonVariant, string> = {
     primary: 'bg-deep-moss text-on-primary hover:opacity-90',
+    // Borde `deep-moss` y no `outline-variant`: #c5c7bf da 1.62:1 sobre el fondo de pagina,
+    // por debajo del 3:1 que SC 1.4.11 exige al limite de un control. `docs/DESIGN.md`
+    // describe este boton con borde Dark Green.
     secondary:
-      'bg-transparent border border-outline-variant text-on-surface hover:bg-surface-container-low',
+      'bg-transparent border border-deep-moss text-on-surface hover:bg-surface-container-low',
     ghost: 'bg-transparent text-on-surface hover:opacity-70',
   };
 
@@ -42,9 +45,14 @@ export class ButtonComponent {
     lg: 'px-lg py-md',
   };
 
+  /**
+   * La etiqueta usa `text-cta` (12px con caja de 16px y peso 600 en el propio token) y no
+   * `text-label-sm font-semibold`: `text-label-sm` tiene interlineado 1, asi que con el
+   * padding vertical de 14px el boton `md` medía 40px en lugar de los 44 del nodo `3:1584`.
+   */
   readonly classes = computed(() => {
     const base =
-      'inline-flex items-center cursor-pointer justify-center gap-xs rounded-field font-sans text-label-sm font-semibold uppercase tracking-cta transition-all duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-40 disabled:pointer-events-none';
+      'inline-flex items-center cursor-pointer justify-center gap-xs rounded-field font-sans text-cta uppercase tracking-cta transition-all duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-40 disabled:pointer-events-none';
     const width = this.fullWidth() ? 'w-full' : '';
     return `${base} ${this.variantClasses[this.variant()]} ${this.sizeClasses[this.size()]} ${width}`;
   });

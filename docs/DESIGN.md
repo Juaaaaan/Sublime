@@ -52,8 +52,7 @@ colors:
   sage-leaf: '#8C9C82'
   deep-moss: '#2C3528'
   ivory-surface: '#F8FAF0'
-  outline-field: '#E2E8DF'
-  placeholder: 'rgba(140, 156, 130, 0.7)'
+  placeholder: '#6B7A64'
 typography:
   headline-xl:
     fontFamily: Nunito Sans
@@ -114,8 +113,19 @@ typography:
     fontFamily: Nunito Sans
     fontSize: 12px
     fontWeight: '600'
-    lineHeight: '1.0'
+    lineHeight: '1.3333'
     letterSpacing: 0.16em
+  label-xs:
+    fontFamily: Nunito Sans
+    fontSize: 10px
+    fontWeight: '600'
+    lineHeight: '1.2'
+  chip-label:
+    fontFamily: Nunito Sans
+    fontSize: 12px
+    fontWeight: '800'
+    lineHeight: '1.0'
+    letterSpacing: 0.05em
   label-eyebrow:
     fontFamily: Nunito Sans
     fontSize: 12px
@@ -175,10 +185,10 @@ The shape language is **Soft**, with a base radius of 4px. This choice provides 
 
 ## Components
 
-- **Buttons:** Primary buttons are solid Dark Green (#2C3528) with Natural Ivory text, `rounded-field` (2px) corners and a 12px uppercase label with `label-cta` tracking. Their hover state should involve a subtle shift to Sage Green. Secondary buttons keep the same shape and label, with a 1px Dark Green outline and transparent background.
-- **Input Fields:** White fill with a full 1px `outline-field` (#E2E8DF) border and `rounded-field` (2px) corners. Text is 14px (`body-sm`) and the placeholder uses the `placeholder` color. Labels should be small, uppercase, and positioned above the field.
+- **Buttons:** Primary buttons are solid Dark Green (#2C3528) with white text (`on-primary`), `rounded-field` (2px) corners and a 12px uppercase label with `label-cta` tracking and a 16px line box, which gives the 44px height of the node. Their hover state softens the fill with a slight opacity reduction (90%), not a hue change: shifting to Sage Green would drop the label below the AA contrast ratio. Secondary buttons keep the same shape and label, with a 1px Dark Green (`deep-moss`) border and transparent background.
+- **Input Fields:** White fill with a full 1px `outline` (#757871) border and `rounded-field` (2px) corners. Text is 14px (`body-sm`) and the placeholder uses the `placeholder` color (#6B7A64). Both values are darker than the Figma source on purpose: the original #E2E8DF border gave 1.25:1 and the translucent placeholder 2.02:1, short of the 3:1 that SC 1.4.11 asks of a control boundary and the 4.5:1 of body text. Focus adds the shared 2px `primary` ring with a 2px offset, so it never depends on colour alone. Labels should be small, uppercase, and positioned above the field.
 - **Cards:** Product cards should use a pure white background or a Forest Green (#D2DCD0) fill to create a soft distinction from the Ivory surface. They should have no border, relying on the subtle color shift for definition.
-- **Chips & Tags:** Soft 12px-radius pills (`rounded-chip`) with a 12px uppercase label. Selected chips use a Dark Green fill with white text; unselected chips use a muted surface fill with Dark Green text. These highlight material types or craft techniques.
+- **Chips & Tags:** Soft 12px-radius pills (`rounded-chip`) 24px tall with a 12px uppercase ExtraBold label (`chip-label`). Selected chips use a Dark Green fill with white text; unselected chips use a muted surface fill with Dark Green text. Both states carry a 1px border — `outline` when unselected, the fill colour itself when selected — because the unselected fill alone gives 1.04:1 against the page and left the control invisible. These highlight material types or craft techniques.
 - **Callouts:** Muted surface fill, a 4px Dark Green left border, `rounded-field` corners and 14px italic text, used for process advisories.
 - **Navigation:** A clean, top-aligned header. When scrolled, it should take on the Natural Ivory color with a 90% opacity and a subtle backdrop blur.
 - **Iconography:** Use fine-line icons (1px stroke) in Dark Green to match the delicate, low-contrast letterforms of the typography.

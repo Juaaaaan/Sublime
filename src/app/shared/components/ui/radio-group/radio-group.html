@@ -16,25 +16,25 @@
     role="radiogroup"
     [attr.aria-labelledby]="label() ? labelId : null"
     [attr.aria-describedby]="error() || hint() ? descriptionId : null"
-    [attr.aria-required]="required()"
+    [attr.aria-required]="required() ? 'true' : null"
     [attr.aria-invalid]="error() ? true : null"
   >
-    @for (option of options(); track option.value) {
+    @for (entry of renderOptions(); track entry.option.value) {
       <label
         class="flex items-start gap-sm cursor-pointer group"
-        [class.opacity-40]="isDisabled(option)"
-        [class.pointer-events-none]="isDisabled(option)"
+        [class.opacity-40]="entry.disabled"
+        [class.pointer-events-none]="entry.disabled"
       >
         <!-- Input nativo oculto — accesibilidad correcta -->
         <input
           #radioInput
           type="radio"
           [name]="name()"
-          [value]="option.value"
-          [checked]="isSelected(option.value)"
-          [disabled]="isDisabled(option)"
+          [value]="entry.option.value"
+          [checked]="entry.selected"
+          [disabled]="entry.disabled"
           class="sr-only peer"
-          (change)="onChange(option.value)"
+          (change)="onChange(entry.option.value)"
           (keydown)="onKeydown($event)"
         />
 
@@ -47,11 +47,11 @@
         <!-- Label + descripción -->
         <span class="flex flex-col">
           <span class="text-body-sm text-deep-moss transition-colors duration-300">
-            {{ option.label }}
+            {{ entry.option.label }}
           </span>
-          @if (option.description) {
+          @if (entry.option.description) {
             <span class="text-label-sm text-on-surface-variant mt-xs">
-              {{ option.description }}
+              {{ entry.option.description }}
             </span>
           }
         </span>

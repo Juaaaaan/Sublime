@@ -4,14 +4,17 @@ import {
   computed,
   effect,
   inject,
+  ElementRef,
   input,
   output,
   PLATFORM_ID,
+  viewChild,
 } from '@angular/core';
 import { MODAL_SIZES, ModalSize } from '../../../consts/components/modal/modal.const';
 import { isPlatformBrowser } from '@angular/common';
 
 import { A11yModule } from '@angular/cdk/a11y';
+import { UiIdService } from '../../../../core/services/ui-id/ui-id.service';
 
 @Component({
   selector: 'app-modal',
@@ -22,6 +25,15 @@ import { A11yModule } from '@angular/cdk/a11y';
 })
 export class Modal {
   private platformId = inject(PLATFORM_ID);
+
+  /** Id base del dialogo, generado por el inyector: identico en servidor y en cliente (D-7). */
+  private readonly uid = inject(UiIdService).next('modal');
+
+  /** Id del titulo, para nombrar el dialogo con `aria-labelledby` cuando hay titulo. */
+  readonly titleId = `${this.uid}-title`;
+
+  /** El fondo oscuro, el elemento que recibe los clics de la zona exterior al panel. */
+  private readonly backdrop = viewChild<ElementRef<HTMLElement>>('backdrop');
 
   /** `overflow` que tenia el `body` antes de bloquear el scroll; `null` si no esta bloqueado. */
   private previousBodyOverflow: string | null = null;
@@ -34,8 +46,12 @@ export class Modal {
    * Etiqueta accesible del boton de cierre. La aporta quien usa el modal, ya traducida por
    * Transloco: un primitivo no lleva texto de UI propio, y el boton es solo icono, asi que
    * sin etiqueta queda anunciado como "button" a secas.
+   *
+   * Es `required`: con un valor por defecto vacio, olvidarla producia en silencio un
+   * boton de solo icono sin nombre accesible, justo lo contrario del escenario
+   * «Icon-only controls are labelled».
    */
-  closeLabel = input<string>('');
+  closeLabel = input.required<string>();
 
   closed = output<void>();
 
@@ -71,8 +87,14 @@ export class Modal {
     }
   }
 
+  /**
+   * Cierra al pulsar fuera del panel. Compara contra el elemento del backdrop y no solo
+   * contra `currentTarget`: el backdrop es un hijo `absolute inset-0` que cubre todo el
+   * overlay, asi que cualquier clic de una persona en la zona oscura impacta en el hijo
+   * y la comparacion anterior nunca se cumplia.
+   */
   onBackdropClick(event: MouseEvent): void {
-    if (event.target === event.currentTarget) {
+    if (event.target === this.backdrop()?.nativeElement || event.target === event.currentTarget) {
       this.close();
     }
   }

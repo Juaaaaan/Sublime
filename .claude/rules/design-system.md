@@ -57,7 +57,8 @@ Fuente única: **Nunito Sans** variable, con itálica. **No hay familia serif**:
 | label-md | `text-label-md font-semibold tracking-label-md`             | 14px                | Navegación               |
 | label-sm | `text-label-sm font-semibold tracking-label uppercase`      | 12px                | Etiquetas de campo, tags |
 | eyebrow  | `text-label-sm font-semibold tracking-eyebrow uppercase`    | 12px                | Antecabezas de sección   |
-| CTA      | `text-label-sm font-semibold tracking-cta uppercase`        | 12px                | Etiquetas de botón       |
+| CTA      | `text-cta tracking-cta uppercase`                           | 12px, caja de 16px  | Etiquetas de botón       |
+| label-xs | `text-label-xs`                                             | 10px                | Badge pequeño            |
 
 El peso de h1-h3 y lead lo pone el propio token (`--text-h*--font-weight`): no añadas `font-bold`. Una clase `font-*` explícita sigue ganando si la quieres a propósito.
 
@@ -114,7 +115,7 @@ Tokens nombrados definidos en `@theme`. Favorecer gaps `lg` y `xl` entre seccion
 ```html
 <!-- Primario: sólido dark, texto blanco, transición lenta -->
 <button
-  class="bg-deep-moss text-on-primary rounded-field px-cta-x py-cta-y text-label-sm font-semibold uppercase tracking-cta transition-all duration-300 hover:opacity-90"
+  class="bg-deep-moss text-on-primary rounded-field px-cta-x py-cta-y text-cta uppercase tracking-cta transition-all duration-300 hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
 >
   INITIATE COMMISSION
 </button>
@@ -122,7 +123,7 @@ Tokens nombrados definidos en `@theme`. Favorecer gaps `lg` y `xl` entre seccion
 
 <!-- Secundario: transparente, borde suave -->
 <button
-  class="border border-outline-variant rounded-field px-cta-x py-cta-y text-label-sm font-semibold uppercase tracking-cta transition-all duration-300 text-on-surface hover:bg-surface-container-low"
+  class="border border-deep-moss rounded-field px-cta-x py-cta-y text-cta uppercase tracking-cta transition-all duration-300 text-on-surface hover:bg-surface-container-low"
 >
   VIEW SERIES
 </button>
@@ -140,7 +141,7 @@ Tokens nombrados definidos en `@theme`. Favorecer gaps `lg` y `xl` entre seccion
 
 ```html
 <span
-  class="rounded-chip bg-surface-container-low text-deep-moss text-label-sm font-extrabold uppercase tracking-label px-sm py-chip-y"
+  class="rounded-chip border border-outline bg-surface-container-low text-deep-moss text-label-sm font-extrabold uppercase tracking-label px-sm py-chip-y h-6"
 >
   Gold Plated
 </span>
@@ -155,7 +156,7 @@ Tokens nombrados definidos en `@theme`. Favorecer gaps `lg` y `xl` entre seccion
   Email
 </label>
 <input
-  class="w-full bg-surface-container-lowest border border-outline-field rounded-field px-field-x py-field-y text-body-sm text-on-surface placeholder:text-placeholder outline-none focus:border-primary transition-colors duration-300"
+  class="w-full bg-surface-container-lowest border border-outline rounded-field px-field-x py-field-y text-body-sm text-on-surface placeholder:text-placeholder focus:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-colors duration-300"
 />
 <!-- La ayuda y el error van en text-label-sm en caja normal, nunca en mayusculas -->
 ```
@@ -203,5 +204,7 @@ Tokens nombrados definidos en `@theme`. Favorecer gaps `lg` y `xl` entre seccion
 - ❌ Colores Tailwind genéricos (`text-gray-500`, `bg-white`, `border-gray-200`)
 - ❌ Transiciones rápidas (`duration-100`, `duration-150`) — mínimo `duration-300`
 - ❌ Fuentes distintas a Nunito Sans; en particular `font-serif` y `font-mono`, que no emiten CSS
+- ❌ `outline-none` en un control: deja el foco dependiendo solo del color. El anillo compartido es `focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary`
+- ❌ `border-outline-variant` como límite de un control (1.6:1): para eso, `border-outline`
 - ❌ Texto de UI dentro de un primitivo: todo llega por `input()` o `<ng-content>`, ya traducido por Transloco
 - ❌ Tamaños de fuente fuera de la escala tipográfica definida

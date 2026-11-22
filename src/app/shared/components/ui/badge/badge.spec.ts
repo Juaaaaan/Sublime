@@ -73,7 +73,7 @@ describe('Badge', () => {
     fixture.componentRef.setInput('size', 'sm');
     fixture.detectChanges();
     const badge = fixture.nativeElement.querySelector('span');
-    expect(badge.className).toContain('text-[10px]');
+    expect(badge.className).toContain('text-label-xs');
   });
 
   it('should reflect a hot change of variant and size without manual detection', async () => {
@@ -84,14 +84,14 @@ describe('Badge', () => {
     const badge = () => fixture.nativeElement.querySelector('span') as HTMLElement;
 
     expect(badge().className).toContain('bg-surface-container');
-    expect(badge().className).not.toContain('text-[10px]');
+    expect(badge().className).not.toContain('text-label-xs');
 
     fixture.componentRef.setInput('variant', 'primary');
     fixture.componentRef.setInput('size', 'sm');
     await fixture.whenStable();
 
     expect(badge().className).toContain('bg-primary-container');
-    expect(badge().className).toContain('text-[10px]');
+    expect(badge().className).toContain('text-label-xs');
     expect(badge().className).not.toContain('bg-surface-container');
 
     fixture.componentRef.setInput('variant', 'outline');
@@ -99,6 +99,6 @@ describe('Badge', () => {
     await fixture.whenStable();
 
     expect(badge().className).toContain('border-outline-variant');
-    expect(badge().className).not.toContain('text-[10px]');
+    expect(badge().className).not.toContain('text-label-xs');
   });
 });

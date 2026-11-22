@@ -5,10 +5,15 @@
     (click)="onBackdropClick($event)"
     role="dialog"
     aria-modal="true"
-    [attr.aria-label]="title()"
+    [attr.aria-labelledby]="title() ? titleId : null"
   >
-    <!-- Backdrop -->
+    <!--
+      Backdrop. Lleva `#backdrop` porque es el elemento que recibe de verdad los clics de
+      la zona oscura: tapa el overlay por completo, asi que comparar `target` con
+      `currentTarget` nunca acertaba y cerrar pulsando el fondo no funcionaba.
+    -->
     <div
+      #backdrop
       class="absolute inset-0 bg-inverse-surface/20 backdrop-blur-sm transition-opacity duration-300"
     ></div>
 
@@ -20,12 +25,19 @@
           class="flex items-center justify-between px-lg py-md border-b border-outline-variant shrink-0"
         >
           @if (title()) {
-            <h2 class="text-h3 text-on-surface">{{ title() }}</h2>
+            <h2 [id]="titleId" class="text-h3 text-on-surface">{{ title() }}</h2>
           }
           @if (closeable()) {
+            <!--
+              `type="button"` explicito: dentro de un formulario el valor por defecto es
+              `submit`, asi que cerrar el modal enviaba el formulario. `min-h-11 min-w-11`
+              lleva el area tactil a los 44px minimos (antes 36px) y el anillo de foco es
+              el mismo que en `Button` y `Chip`.
+            -->
             <button
-              class="ml-auto text-on-surface-variant hover:text-on-surface transition-colors duration-300 p-xs"
-              [attr.aria-label]="closeLabel() || null"
+              type="button"
+              class="ml-auto inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-field text-on-surface-variant transition-colors duration-300 hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              [attr.aria-label]="closeLabel()"
               (click)="close()"
             >
               <svg

@@ -1,7 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import {
-  CHIP_ACTIVATION_KEYS,
   CHIP_BASE_CLASSES,
   CHIP_INTERACTIVE_CLASSES,
   CHIP_STATE_CLASSES,
@@ -47,21 +46,12 @@ export class Chip {
     return `${CHIP_BASE_CLASSES} ${state} ${interactive}`.trim();
   });
 
-  /** Activacion por puntero. El chip estatico no llega aqui: no renderiza el boton. */
+  /**
+   * Activacion del chip. El `<button>` nativo ya sintetiza el click con Enter y con
+   * Espacio, asi que no hace falta manejar el teclado aparte. El chip estatico no llega
+   * aqui: no renderiza el boton.
+   */
   onActivate(): void {
     this.selectedChange.emit(!this.selected());
-  }
-
-  /**
-   * Activacion por teclado. Un `<button>` nativo ya sintetiza el click con Enter y con
-   * Espacio, asi que se corta la accion por defecto para no emitir dos veces.
-   */
-  onKeydown(event: KeyboardEvent): void {
-    if (!CHIP_ACTIVATION_KEYS.includes(event.key as (typeof CHIP_ACTIVATION_KEYS)[number])) {
-      return;
-    }
-
-    event.preventDefault();
-    this.onActivate();
   }
 }

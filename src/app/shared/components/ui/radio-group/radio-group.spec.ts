@@ -132,12 +132,31 @@ describe('RadioGroup', () => {
 
   // --- Escenario «Deterministic group name» del spec ---
 
-  it('should derive a deterministic default name from a module counter', () => {
-    // `Math.random()` daba un valor distinto en servidor y en cliente, asi que el
-    // marcado hidratado no coincidia (decision D-7). El contador de modulo si es
-    // reproducible: el orden de instanciacion es el mismo en los dos renders.
+  it('should give the first group the same name in two independent bootstraps', async () => {
+    // El escenario del spec es «el mismo `name` en servidor y en cliente». Resetear el
+    // TestBed equivale a un bootstrap nuevo: inyector raiz nuevo, mismo orden de
+    // instanciacion. Con el contador en el modulo el segundo arranque seguia contando
+    // donde lo dejo el primero (prerender de varias rutas en el mismo proceso) y el
+    // `name` no coincidia con el del cliente (decision D-7).
+    const nameOfFirstGroup = async () => {
+      TestBed.resetTestingModule();
+      await TestBed.configureTestingModule({ imports: [RadioGroup] }).compileComponents();
+      const bootstrapped = TestBed.createComponent(RadioGroup);
+      bootstrapped.componentRef.setInput('options', mockOptions);
+      bootstrapped.detectChanges();
+      return (bootstrapped.nativeElement.querySelector('input[type="radio"]') as HTMLInputElement)
+        .name;
+    };
+
+    const onTheServer = await nameOfFirstGroup();
+    const onTheClient = await nameOfFirstGroup();
+
+    expect(onTheServer).toMatch(/^radio-group-\d+$/);
+    expect(onTheClient).toBe(onTheServer);
+  });
+
+  it('should not reuse the same name for two groups alive at once', () => {
     const first = fixture.nativeElement.querySelector('input[type="radio"]') as HTMLInputElement;
-    expect(first.name).toMatch(/^radio-group-\d+$/);
 
     const second = TestBed.createComponent(RadioGroup);
     second.componentRef.setInput('options', mockOptions);
@@ -148,9 +167,6 @@ describe('RadioGroup', () => {
 
     expect(secondName).toMatch(/^radio-group-\d+$/);
     expect(secondName).not.toBe(first.name);
-    expect(Number(secondName.replace('radio-group-', ''))).toBe(
-      Number(first.name.replace('radio-group-', '')) + 1,
-    );
   });
 
   it('should keep the rendered name stable across consecutive renders of the same tree', () => {

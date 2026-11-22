@@ -128,7 +128,7 @@ Material Design 3 tonal palette. Key roles:
 | Light chip / badge | `bg-secondary-container` | Pale sage (#d4e5c8) |
 | Brand aliases | `bg-forest-mist` `bg-deep-moss` `bg-ivory-surface` | #d2dcd0 / #2c3528 / #f8faf0. `sage-leaf` (#8c9c82) is decorative only (2.77:1 as text) |
 
-Avoid heavy shadows. Use `border border-outline-variant` (1px) to define component boundaries. When elevation is needed (modals, floating cart) use: `shadow-ambient`.
+Avoid heavy shadows. Use `border border-outline-variant` (1px) for decorative dividers, and `border-outline` (#757871) where the border is what identifies a control: `outline-variant` is 1.6:1 and fails the 3:1 of SC 1.4.11. When elevation is needed (modals, floating cart) use: `shadow-ambient`.
 
 ### Typography
 
@@ -144,7 +144,8 @@ Avoid heavy shadows. Use `border border-outline-variant` (1px) to define compone
 | label-md | `text-label-md font-semibold tracking-label-md` | 14px | Navigation |
 | label-sm | `text-label-sm font-semibold tracking-label uppercase` | 12px | Field labels, tags |
 | eyebrow | `text-label-sm font-semibold tracking-eyebrow uppercase` | 12px | Section kickers |
-| CTA | `text-label-sm font-semibold tracking-cta uppercase` | 12px | Button labels |
+| CTA | `text-cta tracking-cta uppercase` | 12px / 16px box | Button labels |
+| label-xs | `text-label-xs` | 10px | Small badge |
 
 Weights for h1-h3 and lead come from the token itself (`--text-h*--font-weight`), so no `font-bold` is needed; an explicit `font-*` class still overrides. Do not add `font-sans`: it is the body default.
 
@@ -158,9 +159,9 @@ Layout: 12-column fixed grid, 1200px max-width desktop (`max-w-content`). Storyt
 
 ### Components
 
-- **Buttons (primary):** `bg-deep-moss text-on-primary rounded-field px-cta-x py-cta-y text-label-sm font-semibold uppercase tracking-cta transition-all duration-300`. Use the `app-button` primitive rather than re-deriving this.
-- **Buttons (secondary):** Transparent background, `border border-outline-variant rounded-field`, same shape and slow transition.
-- **Input fields:** full 1px border, `bg-surface-container-lowest border border-outline-field rounded-field px-field-x py-field-y text-body-sm`, placeholder via `placeholder:text-placeholder`. Labels `text-label-sm font-semibold uppercase tracking-label` above the field; hints and errors are `text-label-sm` in sentence case, never uppercase. Use `app-input`, `app-select` and `app-text-area`.
+- **Buttons (primary):** `bg-deep-moss text-on-primary rounded-field px-cta-x py-cta-y text-cta uppercase tracking-cta transition-all duration-300`. `text-cta` carries the 16px line box that makes the button 44px tall; `text-label-sm` has a line-height of 1 and would leave it at 40px. Use the `app-button` primitive rather than re-deriving this.
+- **Buttons (secondary):** Transparent background, `border border-deep-moss rounded-field`, same shape and slow transition. Not `outline-variant`: at 1.62:1 it falls under the 3:1 WCAG 2.1 SC 1.4.11 asks of a control boundary.
+- **Input fields:** full 1px border, `bg-surface-container-lowest border border-outline rounded-field px-field-x py-field-y text-body-sm`, placeholder via `placeholder:text-placeholder`. Labels `text-label-sm font-semibold uppercase tracking-label` above the field; hints and errors are `text-label-sm` in sentence case, never uppercase. Every interactive primitive shares one focus ring, `focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary`, which changes shape rather than only colour; never pair it with `outline-none`. Use `app-input`, `app-select` and `app-text-area`.
 - **Product cards:** `bg-surface-container-lowest rounded-lg` — white fill, no border, separated by whitespace or `bg-primary-container` tint. Generous internal padding.
 - **Chips / Tags:** `app-chip` — `rounded-chip` (12px, not a full pill), `px-sm py-chip-y`, `text-label-sm font-extrabold uppercase tracking-label`; `bg-deep-moss text-on-primary` when selected, `bg-surface-container-low text-deep-moss` when not.
 - **Navigation:** Centered persistent header, `bg-surface/80 backdrop-blur-[10px]`.

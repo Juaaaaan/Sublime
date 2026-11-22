@@ -73,9 +73,21 @@ describe('InputComponent', () => {
       expect(component.inputClasses()).toContain('placeholder:text-placeholder');
     });
 
+    /**
+     * El foco no puede depender solo del color: antes el unico indicador era
+     * `focus:border-primary` sobre un borde de 1px. Es el mismo anillo que `Button` y `Chip`.
+     */
+    it('should show the shared visible focus ring', () => {
+      const classes = component.inputClasses();
+      expect(classes).toContain('focus-visible:outline-2');
+      expect(classes).toContain('focus-visible:outline-offset-2');
+      expect(classes).toContain('focus-visible:outline-primary');
+      expect(classes).not.toContain('outline-none');
+    });
+
     it('should use the field border colour when there is no error', () => {
       const classes = component.inputClasses();
-      expect(classes).toContain('border-outline-field');
+      expect(classes).toContain('border-outline');
       expect(classes).toContain('focus:border-primary');
     });
 
@@ -84,14 +96,14 @@ describe('InputComponent', () => {
       const classes = component.inputClasses();
       expect(classes).toContain('border-error');
       expect(classes).toContain('focus:border-error');
-      expect(classes).not.toContain('border-outline-field');
+      expect(classes).not.toContain('border-outline');
     });
 
     it('should apply the computed classes to the rendered input', () => {
       fixture.detectChanges();
       const inputEl: HTMLInputElement = fixture.nativeElement.querySelector('input');
       expect(inputEl.className).toContain('bg-surface-container-lowest');
-      expect(inputEl.className).toContain('border-outline-field');
+      expect(inputEl.className).toContain('border-outline');
     });
   });
 
@@ -105,7 +117,9 @@ describe('InputComponent', () => {
       expect(label.className).toContain('text-label-sm');
       expect(label.className).toContain('uppercase');
       expect(label.className).toContain('tracking-label');
-      expect(label.compareDocumentPosition(inputEl) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+      expect(
+        label.compareDocumentPosition(inputEl) & Node.DOCUMENT_POSITION_FOLLOWING,
+      ).toBeTruthy();
     });
   });
 

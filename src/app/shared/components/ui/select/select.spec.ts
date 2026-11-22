@@ -3,6 +3,9 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Select } from './select';
 import { SelectOption } from '../../../models/ui/select.model';
 
+/** Clases como tokens: `placeholder:text-placeholder` contiene `text-placeholder`. */
+const tokensOf = (classes: string): string[] => classes.split(/\s+/);
+
 describe('Select', () => {
   let component: Select;
   let fixture: ComponentFixture<Select>;
@@ -97,7 +100,7 @@ describe('Select', () => {
 
     it('should use the field border colour when there is no error', () => {
       const classes = component.selectClasses();
-      expect(classes).toContain('border-outline-field');
+      expect(classes).toContain('border-outline');
       expect(classes).toContain('focus:border-primary');
     });
 
@@ -106,18 +109,24 @@ describe('Select', () => {
       const classes = component.selectClasses();
       expect(classes).toContain('border-error');
       expect(classes).toContain('focus:border-error');
-      expect(classes).not.toContain('border-outline-field');
+      expect(classes).not.toContain('border-outline');
     });
 
-    it('should render the placeholder text in deep-moss when there is no value', () => {
-      expect(component.selectClasses()).toContain('text-deep-moss');
+    // Escenario «Placeholder styling»: el marcador usa el token de placeholder, el mismo
+    // que el campo de texto. `placeholder:text-placeholder` no sirve en un `<select>`
+    // (no existe `::placeholder`), asi que el color se aplica al propio control.
+    // Se comparan tokens de clase y no subcadenas: la base ya trae
+    // `placeholder:text-placeholder`, asi que un `toContain` sobre la cadena acertaria
+    // siempre y el test no distinguiria los dos estados.
+    it('should render the placeholder text with the placeholder token when there is no value', () => {
+      expect(tokensOf(component.selectClasses())).toContain('text-placeholder');
     });
 
     it('should render the chosen value in the body text colour', () => {
       fixture.componentRef.setInput('value', 'gold');
-      const classes = component.selectClasses();
-      expect(classes).toContain('text-on-surface');
-      expect(classes).not.toContain('text-deep-moss');
+      const tokens = tokensOf(component.selectClasses());
+      expect(tokens).toContain('text-on-surface');
+      expect(tokens).not.toContain('text-placeholder');
     });
   });
 
@@ -125,7 +134,8 @@ describe('Select', () => {
   describe('chevron', () => {
     it('should render an inline hairline chevron hidden from assistive technology', () => {
       fixture.detectChanges();
-      const chevronWrapper: HTMLElement = fixture.nativeElement.querySelector('[aria-hidden="true"]');
+      const chevronWrapper: HTMLElement =
+        fixture.nativeElement.querySelector('[aria-hidden="true"]');
       const svg = chevronWrapper.querySelector('svg');
       expect(svg).not.toBeNull();
       expect(svg?.getAttribute('stroke')).toBe('currentColor');
@@ -386,16 +396,33 @@ describe('Select', () => {
     });
   });
 
-  // Escenario del spec: «Class strings react to input changes» — computed() en lugar de getter.
+  // Escenario del spec: «Class strings react to input changes» — computed() en lugar de
+  // getter. Aqui no se llama a `detectChanges()`: solo se espera a que el fixture se
+  // estabilice, que es lo que distingue una senal de un getter bajo zoneless + OnPush.
   describe('change detection', () => {
-    it('should update the rendered border when the error input changes', () => {
-      fixture.detectChanges();
-      const selectEl: HTMLSelectElement = fixture.nativeElement.querySelector('select');
-      expect(selectEl.className).toContain('border-outline-field');
+    it('should update the rendered border when the error input changes', async () => {
+      const selectEl = () => fixture.nativeElement.querySelector('select') as HTMLSelectElement;
+      await fixture.whenStable();
+      expect(selectEl().className).toContain('border-outline');
+
       fixture.componentRef.setInput('error', 'Pick a subject');
-      fixture.detectChanges();
-      expect(selectEl.className).toContain('border-error');
-      expect(selectEl.className).not.toContain('border-outline-field');
+      await fixture.whenStable();
+
+      expect(selectEl().className).toContain('border-error');
+      expect(selectEl().className).not.toContain('border-outline');
+    });
+
+    it('should update the rendered text colour when the value arrives', async () => {
+      const tokens = () =>
+        tokensOf((fixture.nativeElement.querySelector('select') as HTMLSelectElement).className);
+      await fixture.whenStable();
+      expect(tokens()).toContain('text-placeholder');
+
+      fixture.componentRef.setInput('value', 'gold');
+      await fixture.whenStable();
+
+      expect(tokens()).toContain('text-on-surface');
+      expect(tokens()).not.toContain('text-placeholder');
     });
   });
 });

@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { CALLOUT_CLASSES } from '../../../consts/components/callout/callout.const';
 
 /**
  * Aviso de proceso (nodo `3:1581` del frame «WEB Contacto»): fondo tenue, borde izquierdo
@@ -15,23 +16,12 @@ import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
   imports: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div [class]="classes()">
+    <div [class]="classes">
       <ng-content />
     </div>
   `,
 })
 export class Callout {
-  /**
-   * `computed()` y no un getter ni una cadena cruda en la plantilla, por coherencia con
-   * el resto de primitivos (decision D-5): si el aviso gana variantes, el punto de
-   * extension ya esta donde debe.
-   *
-   * Padding: el nodo da 20/16/15/16 y no hay token de 20px ni de 15px. Se usan los
-   * nombrados mas cercanos, `p-sm` (16px) con `pl-md` (24px) a la izquierda, en lugar de
-   * inventar valores arbitrarios: +4px a la izquierda y +1px arriba frente al diseno.
-   */
-  readonly classes = computed(
-    () =>
-      'bg-surface-container-low border-l-4 border-deep-moss rounded-field p-sm pl-md font-sans text-body-sm italic text-deep-moss',
-  );
+  /** Contrato visual del nodo. Constante: el aviso no tiene variantes (ver `callout.const.ts`). */
+  readonly classes = CALLOUT_CLASSES;
 }

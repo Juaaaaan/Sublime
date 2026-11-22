@@ -1,6 +1,21 @@
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ButtonComponent } from './button';
+
+/**
+ * Host con etiqueta proyectada: el fixture del componente suelto renderiza un boton
+ * vacio, y sin contenido en linea la caja de texto mide 0, asi que la altura medida no
+ * seria la del boton real.
+ */
+@Component({
+  imports: [ButtonComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `<app-button [size]="size">Enviar</app-button>`,
+})
+class ButtonHost {
+  size: 'sm' | 'md' | 'lg' = 'md';
+}
 
 describe('ButtonComponent', () => {
   let component: ButtonComponent;
@@ -62,8 +77,7 @@ describe('ButtonComponent', () => {
 
     it('should use the 12px uppercase CTA label', () => {
       const classes = component.classes();
-      expect(classes).toContain('text-label-sm');
-      expect(classes).toContain('font-semibold');
+      expect(classes).toContain('text-cta');
       expect(classes).toContain('uppercase');
       expect(classes).toContain('tracking-cta');
     });
@@ -108,7 +122,7 @@ describe('ButtonComponent', () => {
       const classes = component.classes();
       expect(classes).toContain('bg-transparent');
       expect(classes).toContain('border');
-      expect(classes).toContain('border-outline-variant');
+      expect(classes).toContain('border-deep-moss');
       expect(classes).toContain('text-on-surface');
       expect(classes).not.toContain('bg-deep-moss');
     });
@@ -121,8 +135,7 @@ describe('ButtonComponent', () => {
 
       for (const shared of [
         'rounded-field',
-        'text-label-sm',
-        'font-semibold',
+        'text-cta',
         'uppercase',
         'tracking-cta',
         'transition-all',
@@ -287,5 +300,33 @@ describe('ButtonComponent', () => {
       expect(button.hasAttribute('aria-busy')).toBeFalse();
       expect(button.querySelector('svg')).toBeNull();
     });
+  });
+});
+
+/**
+ * Altura real, no la cadena de clase: con `text-label-sm` (interlineado 1, caja de 12px)
+ * el boton `md` media 40px y no los 44 del nodo `3:1584`. `text-cta` lleva la caja de
+ * 16px dentro del token, asi que 14 + 16 + 14 = 44.
+ */
+describe('ButtonComponent (measured height)', () => {
+  let fixture: ComponentFixture<ButtonHost>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({ imports: [ButtonHost] }).compileComponents();
+    fixture = TestBed.createComponent(ButtonHost);
+    fixture.detectChanges();
+    await fixture.whenStable();
+  });
+
+  it('should measure 44px tall in the md size, like the node 3:1584', () => {
+    const button = fixture.nativeElement.querySelector('button') as HTMLButtonElement;
+
+    const styles = getComputedStyle(button);
+    expect(styles.paddingTop).toBe('14px');
+    expect(styles.paddingBottom).toBe('14px');
+    // 1.3333 x 12px: el navegador devuelve 15.9996px, de ahi la tolerancia.
+    expect(parseFloat(styles.lineHeight)).toBeCloseTo(16, 2);
+    expect(button.getBoundingClientRect().height).toBeCloseTo(44, 1);
+    expect(button.offsetHeight).toBe(44);
   });
 });

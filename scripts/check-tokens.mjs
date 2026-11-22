@@ -36,7 +36,6 @@ const TOKEN_NAMESPACES = [
   { prefix: 'font-', namespaces: ['--font-'] },
   { prefix: 'shadow-', namespaces: ['--shadow-'] },
   { prefix: 'rounded-', namespaces: ['--radius-'] },
-  { prefix: 'max-w-', namespaces: ['--container-'] },
   { prefix: 'p-', namespaces: ['--spacing-'] },
   { prefix: 'px-', namespaces: ['--spacing-'] },
   { prefix: 'py-', namespaces: ['--spacing-'] },
@@ -57,6 +56,15 @@ const TOKEN_NAMESPACES = [
   { prefix: 'space-x-', namespaces: ['--spacing-'] },
   { prefix: 'space-y-', namespaces: ['--spacing-'] },
   { prefix: 'leading-', namespaces: ['--leading-'] },
+  { prefix: 'outline-', namespaces: ['--color-'] },
+  { prefix: 'accent-', namespaces: ['--color-'] },
+  { prefix: 'caret-', namespaces: ['--color-'] },
+  { prefix: 'fill-', namespaces: ['--color-'] },
+  { prefix: 'stroke-', namespaces: ['--color-'] },
+  { prefix: 'decoration-', namespaces: ['--color-'] },
+  { prefix: 'from-', namespaces: ['--color-'] },
+  { prefix: 'via-', namespaces: ['--color-'] },
+  { prefix: 'to-', namespaces: ['--color-'] },
   { prefix: 'drop-shadow-', namespaces: ['--drop-shadow-'] },
 ];
 
@@ -90,10 +98,18 @@ const NATIVE_UTILITIES = new Set([
   // anchos de contenedor nativos
   'max-w-none', 'max-w-full', 'max-w-min', 'max-w-max', 'max-w-fit', 'max-w-prose',
   'max-w-screen-sm', 'max-w-screen-md', 'max-w-screen-lg', 'max-w-screen-xl',
-  'max-w-xs', 'max-w-sm', 'max-w-md', 'max-w-lg', 'max-w-xl', 'max-w-2xl', 'max-w-3xl',
-  'max-w-4xl', 'max-w-5xl', 'max-w-6xl', 'max-w-7xl',
+  // Ojo: max-w-xs..7xl NO van aqui. Existen en el tema por defecto, pero --spacing-* los
+  // ensombrece, asi que necesitan pasar por la comprobacion de ambiguedad.
   // bordes nativos: ancho, no color
   'border-0', 'border-2', 'border-4', 'border-8',
+  // outline: grosor, estilo y offset son nativos; solo el color necesita token
+  'outline-none', 'outline-hidden', 'outline-solid', 'outline-dashed', 'outline-dotted',
+  'outline-double', 'outline-offset-0', 'outline-offset-1', 'outline-offset-2',
+  'outline-offset-4', 'outline-offset-8',
+  'fill-none', 'fill-current', 'stroke-none', 'stroke-current',
+  'decoration-solid', 'decoration-dashed', 'decoration-dotted', 'decoration-double',
+  'decoration-wavy', 'decoration-from-font', 'decoration-auto',
+  'to-transparent', 'from-transparent', 'via-transparent',
   // interlineado nativo
   'leading-none', 'leading-tight', 'leading-snug', 'leading-normal', 'leading-relaxed',
   'leading-loose',
@@ -111,6 +127,11 @@ const NATIVE_UTILITIES = new Set([
  * el token del proyecto no basta: `font-serif` seguía renderizando en Georgia. El `@theme`
  * las cierra con `initial`, y esta lista impide que vuelvan a escribirse.
  */
+/** Contenedores del tema por defecto de Tailwind v4, que emiten CSS sin token del proyecto. */
+const DEFAULT_CONTAINERS = new Set([
+  '3xs', '2xs', 'xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl',
+]);
+
 const FORBIDDEN = new Map([
   ['font-serif', 'Sublime no tiene familia serif: Nunito Sans cubre titulos y cuerpo (decision D3)'],
   ['font-mono', 'no hay familia monoespaciada en el sistema de diseño'],
@@ -175,10 +196,28 @@ function themeTokens(css) {
 }
 
 /** Saca las clases candidatas de un fichero: atributos class y cadenas de clases en TS. */
-function candidateClasses(content) {
+/**
+ * Quita comentarios antes de escanear. Los comentarios del proyecto citan clases entre
+ * comillas invertidas (`outline-variant`), y el escaner de cadenas las tomaba por clases
+ * reales: dos falsos positivos en cuanto se anadieron los prefijos cromaticos.
+ */
+function stripComments(content) {
+  return content
+    .replace(/<!--[\s\S]*?-->/g, ' ')
+    .replace(/\/\*[\s\S]*?\*\//g, ' ')
+    .replace(/(^|[^:])\/\/[^\n]*/g, '$1');
+}
+
+function candidateClasses(rawContent) {
+  const content = stripComments(rawContent);
   const found = [];
   const attrs = [
     ...content.matchAll(/class="([^"]*)"/g),
+    // [class.text-error]="..." es la forma que CLAUDE.md obliga a usar en vez de ngClass,
+    // y no contiene la subcadena `class="`, asi que se escapaba entera de la guardia.
+    ...content.matchAll(/\[class\.([a-z0-9:.\\[\]%-]+)\]/g),
+    // routerLinkActive="..." y otros atributos que llevan clases sin llamarse `class`
+    ...content.matchAll(/routerLinkActive="([^"]*)"/g),
     ...content.matchAll(/'([^']*)'/g),
     ...content.matchAll(/`([^`]*)`/g),
   ];
@@ -216,8 +255,9 @@ const REQUIRED_TOKENS = [
   '--tracking-eyebrow',
   '--radius-field',
   '--radius-chip',
-  '--color-outline-field',
   '--color-placeholder',
+  '--text-cta',
+  '--container-modal-md',
   '--shadow-ambient',
   '--container-content',
 ];
@@ -238,6 +278,7 @@ for (const decl of ['--font-serif: initial', '--font-mono: initial']) {
 
 // 3. Clases que no emiten CSS, y clases prohibidas.
 const orphans = [];
+const ambiguous = [];
 const forbidden = [];
 
 for (const file of files) {
@@ -258,6 +299,31 @@ for (const file of files) {
 
     let namespaces;
     let suffix;
+
+    if (cls.startsWith('max-w-')) {
+      // Tailwind v4 resuelve `max-w-*` contra --spacing-* ANTES que contra --container-*.
+      // Validar solo contra --container-* dejaba pasar `max-w-lg`, que existe en el tema por
+      // defecto como contenedor pero compilaba a var(--spacing-lg) = 48px. El peligro real no
+      // es que falte el token: es que el nombre exista en los DOS namespaces.
+      const suffixMw = cls.slice('max-w-'.length);
+      if (!suffixMw || /^\d/.test(suffixMw)) continue;
+      const asSpacing = tokens.has(`--spacing-${suffixMw}`);
+      const asContainer = tokens.has(`--container-${suffixMw}`) || DEFAULT_CONTAINERS.has(suffixMw);
+      if (asSpacing && asContainer) {
+        ambiguous.push(
+          `${file}:${lineOf(cls)} -> ${cls} (ambiguo: --spacing-${suffixMw} gana sobre ` +
+            `--container-${suffixMw}, asi que compila a espaciado, no a ancho de contenedor)`,
+        );
+      } else if (asSpacing) {
+        ambiguous.push(
+          `${file}:${lineOf(cls)} -> ${cls} (resuelve a --spacing-${suffixMw}: es un valor de ` +
+            `espaciado usado como ancho maximo)`,
+        );
+      } else if (!asContainer) {
+        orphans.push(`${file}:${lineOf(cls)} -> ${cls} (no hay token --container-${suffixMw})`);
+      }
+      continue;
+    }
 
     if (cls.startsWith('bg-') || cls.startsWith('border-')) {
       const prefix = cls.startsWith('bg-') ? 'bg-' : 'border-';
@@ -287,6 +353,12 @@ for (const file of files) {
 if (orphans.length) {
   failures.push(
     `Clases que no emiten CSS (${orphans.length}):\n  ${orphans.sort().join('\n  ')}`,
+  );
+}
+if (ambiguous.length) {
+  failures.push(
+    `Clases max-w-* que no resuelven al ancho esperado (${ambiguous.length}):\n  ` +
+      ambiguous.sort().join('\n  '),
   );
 }
 if (forbidden.length) {

@@ -20,7 +20,7 @@ Además, la auditoría del Figma invalida una premisa de `docs/DESIGN.md`: **no 
   - nuevo `--tracking-cta` 1.92px (botón primario) y `--tracking-eyebrow` 1.2px (antecabeza de sección)
   - `--text-body-md` mantiene 16px; nuevo `--text-body-sm` 14px (valor real de inputs y textarea en Figma)
 - Nuevos tokens de forma, medidos en Figma (D3 resuelto: *formas de Figma, color de DESIGN.md*): `--radius-field` 2px (inputs, textarea, select, botones), `--radius-chip` 12px.
-- Nuevo token de color `--color-outline-field` `#e2e8df` (borde real de los campos; `outline-variant` `#c5c7bf` se conserva para divisores) y `--color-placeholder` `rgba(140,156,130,0.7)`. El resto de la paleta MD3 de `docs/DESIGN.md` **no se toca**.
+- Nuevo token `--color-placeholder`. **Corregido tras la revisión de accesibilidad**: el valor de Figma (`rgba(140,156,130,0.7)`) da 2,02:1 sobre blanco, muy por debajo del 4,5:1 de WCAG AA, y era `sage-leaf` aclarado — el mismo verde que la propia documentación prohíbe como texto. Queda en `#6b7a64` (4,57:1). El borde de campo de Figma (`#e2e8df`, 1,25:1) **no llega a token**: los campos usan `border-outline` (`#757871`, 4,49:1), que ya existe en la paleta, porque SC 1.4.11 pide 3:1 cuando el borde es lo que identifica el control. El resto de la paleta MD3 **no se toca**.
 - Utilidades `@utility` para las composiciones tipográficas que hoy se invocan con clases inexistentes, de modo que `font-label-sm`, `font-body-md` y `font-h3` dejen de usarse: se sustituyen por `text-label-sm`/`text-body-md`/`text-h3` más los tokens de tracking.
 
 **Primitivos (`src/app/shared/components/ui/*`)**
@@ -28,7 +28,7 @@ Además, la auditoría del Figma invalida una premisa de `docs/DESIGN.md`: **no 
 - `Button`: fondo `deep-moss`, `--radius-field`, padding 32/14, label 12px SemiBold uppercase `--tracking-cta`. Variantes `primary` / `secondary` (borde) / `ghost`.
 - `Badge`: se elimina `font-label-sm` de su cadena base (`badge.ts:17`).
 - Nuevo primitivo `Chip` (`app-chip`), que no existe en el código: píldora `--radius-chip`, 12px ExtraBold uppercase, estado activo `deep-moss`/blanco e inactivo `surface-container-low`/`deep-moss`. Lo exige el filtro de categorías del Home y de Joyería.
-- `Input`, `TextArea`, `Select`: fondo blanco, borde 1px `outline-field`, `--radius-field`, padding 15/11, texto 14px, placeholder `--color-placeholder`; etiqueta 12px SemiBold uppercase encima del campo.
+- `Input`, `TextArea`, `Select`: fondo blanco, borde 1px `outline`, `--radius-field`, padding 15/11, texto 14px, placeholder `--color-placeholder`; etiqueta 12px SemiBold uppercase encima del campo, y el anillo de foco compartido con Button y Chip.
 - `Select` y `TextArea` pasan a `ChangeDetectionStrategy.OnPush` (hoy no lo declaran, contra `CLAUDE.md`).
 - `Badge`, `Modal` y `Select` cambian sus getters de cadena de clases por `computed()` (hoy son getters no reactivos bajo OnPush).
 - `RadioGroup`: el `name` por defecto deja de generarse con `Math.random()` en la inicialización del campo (`radio-group.ts:21`), que produce markup distinto en servidor y en cliente; pasa a un contador determinista por instancia.

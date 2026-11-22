@@ -90,6 +90,22 @@ describe('Chip', () => {
     }
   });
 
+  // Escenario «Chip presents a selectable pill»: limite visible y altura del nodo.
+  it('should draw a visible 1px boundary in both states without changing height', async () => {
+    expect(classList()).toContain('border');
+    expect(classList()).toContain('border-outline');
+    // Altura real: el borde cabe dentro de los 24px del nodo `3:73` gracias a `h-6`.
+    expect(chip().offsetHeight).toBe(24);
+    expect(getComputedStyle(chip()).borderTopWidth).toBe('1px');
+
+    fixture.componentRef.setInput('selected', true);
+    await fixture.whenStable();
+
+    expect(classList()).toContain('border-deep-moss');
+    expect(classList()).not.toContain('border-outline');
+    expect(chip().offsetHeight).toBe(24);
+  });
+
   // Escenario «Interactive chip»: accionable con puntero y estado expuesto a a11y.
   it('should render a native button exposing its selected state when interactive', async () => {
     fixture.componentRef.setInput('interactive', true);
@@ -139,23 +155,35 @@ describe('Chip', () => {
     expect(emitted).toEqual([true, false]);
   });
 
-  // Escenario «Interactive chip»: emite su seleccion al activarse con teclado.
-  it('should emit on Enter and on Space, and swallow the synthesized click', async () => {
+  /**
+   * Escenario «Interactive chip»: activacion con teclado. La activacion con Enter y con
+   * Espacio la aporta el `<button type="button">` nativo, que sintetiza el click; el
+   * componente no tiene manejador de teclado propio (lo tenia, y solo servia para
+   * cancelar el click que el propio navegador generaba).
+   *
+   * Lo que se comprueba aqui es la condicion de la que depende ese comportamiento: el
+   * chip accionable es un boton nativo enfocable, no un `div` con `role`, y su click
+   * emite. La pulsacion de tecla real no se puede simular desde Karma (un
+   * `KeyboardEvent` sintetico no genera el click), asi que esa ultima pieza la cubre el
+   * navegador y no este test.
+   */
+  it('should be a focusable native button whose click emits, which is what gives it keyboard activation', async () => {
     const emitted: boolean[] = [];
     component.selectedChange.subscribe((next) => emitted.push(next));
     fixture.componentRef.setInput('interactive', true);
     await fixture.whenStable();
 
-    for (const key of ['Enter', ' ', 'Spacebar']) {
-      const event = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true });
-      button()!.dispatchEvent(event);
-      expect(event.defaultPrevented).toBeTrue();
-    }
+    expect(button()!.tagName).toBe('BUTTON');
+    expect(button()!.type).toBe('button');
 
-    expect(emitted).toEqual([true, true, true]);
+    button()!.focus();
+    expect(document.activeElement).toBe(button());
+
+    button()!.click();
+    expect(emitted).toEqual([true]);
   });
 
-  it('should ignore keys that do not activate a button', async () => {
+  it('should not react to keys that do not activate a native button', async () => {
     const emitted: boolean[] = [];
     component.selectedChange.subscribe((next) => emitted.push(next));
     fixture.componentRef.setInput('interactive', true);

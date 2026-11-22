@@ -20,7 +20,7 @@ export class Badge {
   };
 
   protected readonly sizeClasses: Record<BadgeSize, string> = {
-    sm: 'px-xs py-[2px] text-[10px]',
+    sm: 'px-xs py-badge-y text-label-xs',
     md: 'px-sm py-xs',
   };
 

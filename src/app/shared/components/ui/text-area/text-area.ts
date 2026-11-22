@@ -1,11 +1,16 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  output,
+} from '@angular/core';
+import { UiIdService } from '../../../../core/services/ui-id/ui-id.service';
 import {
   FIELD_BASE_CLASSES,
   FIELD_BORDER_CLASSES,
 } from '../../../consts/components/input/input.const';
-
-/** Contador de modulo para el id de respaldo: estable entre servidor y cliente. */
-let nextTextAreaId = 0;
 
 @Component({
   selector: 'app-text-area',
@@ -28,7 +33,8 @@ export class TextArea {
 
   valueChange = output<string>();
 
-  private readonly autoId = `app-text-area-${++nextTextAreaId}`;
+  /** Id de respaldo, generado por el inyector para que sea identico en servidor y en cliente (D-7). */
+  private readonly autoId = inject(UiIdService).next('app-text-area');
 
   readonly fieldId = computed(() => this.id() || this.autoId);
 

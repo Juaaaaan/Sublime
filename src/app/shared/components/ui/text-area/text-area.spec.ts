@@ -88,7 +88,7 @@ describe('TextArea', () => {
 
     it('should use the field border colour when there is no error', () => {
       const classes = component.inputClasses();
-      expect(classes).toContain('border-outline-field');
+      expect(classes).toContain('border-outline');
       expect(classes).toContain('focus:border-primary');
     });
 
@@ -97,7 +97,7 @@ describe('TextArea', () => {
       const classes = component.inputClasses();
       expect(classes).toContain('border-error');
       expect(classes).toContain('focus:border-error');
-      expect(classes).not.toContain('border-outline-field');
+      expect(classes).not.toContain('border-outline');
     });
   });
 
@@ -238,7 +238,7 @@ describe('TextArea', () => {
       fixture.detectChanges();
       const textareaEl: HTMLTextAreaElement = fixture.nativeElement.querySelector('textarea');
       expect(textareaEl.className).toContain('bg-surface-container-lowest');
-      expect(textareaEl.className).toContain('border-outline-field');
+      expect(textareaEl.className).toContain('border-outline');
     });
   });
 
@@ -405,16 +405,21 @@ describe('TextArea', () => {
     });
   });
 
-  // Escenario del spec: «Class strings react to input changes» — OnPush + signals.
+  // Escenario del spec: «Class strings react to input changes» — OnPush + signals. Sin
+  // `detectChanges()`: solo se espera a que el fixture se estabilice, que es lo que
+  // distingue una senal de un getter bajo zoneless + OnPush.
   describe('change detection', () => {
-    it('should update the rendered border when the error input changes', () => {
-      fixture.detectChanges();
-      const textareaEl: HTMLTextAreaElement = fixture.nativeElement.querySelector('textarea');
-      expect(textareaEl.className).toContain('border-outline-field');
+    it('should update the rendered border when the error input changes', async () => {
+      const textareaEl = () =>
+        fixture.nativeElement.querySelector('textarea') as HTMLTextAreaElement;
+      await fixture.whenStable();
+      expect(textareaEl().className).toContain('border-outline');
+
       fixture.componentRef.setInput('error', 'Tell us more');
-      fixture.detectChanges();
-      expect(textareaEl.className).toContain('border-error');
-      expect(textareaEl.className).not.toContain('border-outline-field');
+      await fixture.whenStable();
+
+      expect(textareaEl().className).toContain('border-error');
+      expect(textareaEl().className).not.toContain('border-outline');
     });
   });
 });

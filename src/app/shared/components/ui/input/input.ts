@@ -1,16 +1,17 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  output,
+} from '@angular/core';
+import { UiIdService } from '../../../../core/services/ui-id/ui-id.service';
 import {
   FIELD_BASE_CLASSES,
   FIELD_BORDER_CLASSES,
   InputType,
 } from '../../../consts/components/input/input.const';
-
-/**
- * Contador de modulo para el id de respaldo. No usa `Math.random()` a proposito: el
- * prerender y la hidratacion instancian los componentes en el mismo orden, asi que el
- * contador produce el mismo marcado en servidor y en cliente (misma razon que D-7).
- */
-let nextInputId = 0;
 
 @Component({
   selector: 'app-input',
@@ -32,7 +33,8 @@ export class InputComponent {
 
   valueChange = output<string>();
 
-  private readonly autoId = `app-input-${++nextInputId}`;
+  /** Id de respaldo, generado por el inyector para que sea identico en servidor y en cliente (D-7). */
+  private readonly autoId = inject(UiIdService).next('app-input');
 
   /** Id real del control: el recibido o, si no llega ninguno, uno estable generado aqui. */
   readonly fieldId = computed(() => this.id() || this.autoId);

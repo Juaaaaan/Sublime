@@ -109,7 +109,7 @@ ESLint is configured with `angular-eslint` covering both `.ts` and `.html` files
 
 Brand personality: tactile craftsmanship meets botanical calm. Target audience values slow fashion, intentionality, and handmade imperfection. The UI is gallery-like — it recedes to let product photography dominate. Every interaction should feel deliberate and soft, mimicking polished resin. Style: **Botanical Minimalism** (sage/moss greens on warm ivory). Source of truth for the design: `DESIGN.md` in the Claude Project.
 
-Tailwind v4 tokens are defined in `src/tailwind.css` via `@theme`. Fonts (Noto Serif + Manrope) are loaded via `<link>` in `src/index.html`.
+Tailwind v4 tokens are defined in `src/tailwind.css` via `@theme`. The single font family, **Nunito Sans** (variable, with italics), is loaded via `<link>` in `src/index.html`. There is no serif family: `--font-serif` and `--font-mono` are closed with `initial`, so `font-serif` and `font-mono` emit no CSS and are rejected by `npm run lint:tokens`.
 
 ### Colors
 
@@ -134,13 +134,19 @@ Avoid heavy shadows. Use `border border-outline-variant` (1px) to define compone
 
 | Scale | Tailwind class | Font | Use |
 |-------|---------------|------|-----|
-| h1 | `text-h1 font-serif tracking-h1` | Noto Serif 48px | Hero headlines |
-| h2 | `text-h2 font-serif tracking-h2` | Noto Serif 32px | Section titles |
-| h3 | `text-h3 font-serif` | Noto Serif 24px | Sub-sections |
-| body-lg | `text-body-lg font-sans` | Manrope 18px | Lead paragraphs |
-| body-md | `text-body-md font-sans` | Manrope 16px | Body copy |
-| label-md | `text-label-md font-sans font-semibold tracking-label-md` | Manrope 14px | Buttons, navigation |
-| label-sm | `text-label-sm font-sans font-semibold tracking-label uppercase` | Manrope 12px | Chips, field labels, tags |
+| h1 | `text-h1 tracking-h1` | 48px, Bold 700 | Hero headlines |
+| h2 | `text-h2 tracking-h2` | 32px, SemiBold 600 | Section titles |
+| h3 | `text-h3` | 24px, SemiBold 600 | Sub-sections |
+| lead | `text-lead italic` | 24px, Light 300 | Hero sub-headline |
+| body-lg | `text-body-lg` | 18px | Lead paragraphs |
+| body-md | `text-body-md` | 16px | Body copy |
+| body-sm | `text-body-sm` | 14px | Form fields, small copy |
+| label-md | `text-label-md font-semibold tracking-label-md` | 14px | Navigation |
+| label-sm | `text-label-sm font-semibold tracking-label uppercase` | 12px | Field labels, tags |
+| eyebrow | `text-label-sm font-semibold tracking-eyebrow uppercase` | 12px | Section kickers |
+| CTA | `text-label-sm font-semibold tracking-cta uppercase` | 12px | Button labels |
+
+Weights for h1-h3 and lead come from the token itself (`--text-h*--font-weight`), so no `font-bold` is needed; an explicit `font-*` class still overrides. Do not add `font-sans`: it is the body default.
 
 Mobile h2 variant: `text-h2-mobile` (28px).
 
@@ -152,13 +158,16 @@ Layout: 12-column fixed grid, 1200px max-width desktop (`max-w-content`). Storyt
 
 ### Components
 
-- **Buttons (primary):** `bg-on-surface text-surface rounded px-sm py-xs transition-all duration-300` — solid dark with white text. Slow 300ms transitions.
-- **Buttons (secondary):** Transparent background, `border border-outline-variant rounded`, same slow transition.
-- **Input fields:** `border-b border-outline-variant` or full 4-sided border. Labels: `text-label-sm uppercase tracking-label` above the field.
+- **Buttons (primary):** `bg-deep-moss text-on-primary rounded-field px-cta-x py-cta-y text-label-sm font-semibold uppercase tracking-cta transition-all duration-300`. Use the `app-button` primitive rather than re-deriving this.
+- **Buttons (secondary):** Transparent background, `border border-outline-variant rounded-field`, same shape and slow transition.
+- **Input fields:** full 1px border, `bg-surface-container-lowest border border-outline-field rounded-field px-field-x py-field-y text-body-sm`, placeholder via `placeholder:text-placeholder`. Labels `text-label-sm font-semibold uppercase tracking-label` above the field; hints and errors are `text-label-sm` in sentence case, never uppercase. Use `app-input`, `app-select` and `app-text-area`.
 - **Product cards:** `bg-surface-container-lowest rounded-lg` — white fill, no border, separated by whitespace or `bg-primary-container` tint. Generous internal padding.
-- **Chips / Tags:** `rounded-full bg-primary-container text-label-sm` — pill-shaped, no border, light fill.
+- **Chips / Tags:** `app-chip` — `rounded-chip` (12px, not a full pill), `px-sm py-chip-y`, `text-label-sm font-extrabold uppercase tracking-label`; `bg-deep-moss text-on-primary` when selected, `bg-surface-container-low text-deep-moss` when not.
 - **Navigation:** Centered persistent header, `bg-surface/80 backdrop-blur-[10px]`.
 - **Images:** All product photography uses warm-tone treatment. Always use `NgOptimizedImage`.
+- **Callouts:** `app-callout` — advisory note with a 4px `border-l-4 border-deep-moss`, tenuous fill and italic `text-body-sm`.
+
+Primitives carry no UI copy of their own: every string reaches them through `input()` or `<ng-content>`, already translated by Transloco. `npm run lint:tokens` fails on any class that emits no CSS, so a typo in a utility is caught instead of silently losing the style.
 
 ## graphify
 

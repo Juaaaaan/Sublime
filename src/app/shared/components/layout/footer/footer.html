@@ -9,27 +9,27 @@
     <div class="flex flex-wrap justify-center gap-6">
       <a
         routerLink="/cuidados"
-        class="font-label-sm text-on-surface-variant hover:text-on-surface underline underline-offset-4 transition-colors duration-300"
+        class="font-label-sm uppercase text-on-surface-variant hover:text-on-surface underline underline-offset-4 transition-colors duration-300"
       >
-        CUIDADOS Y ENVÍOS
+        {{ 'footer.links.care' | transloco }}
       </a>
       <a
         routerLink="/contacto"
-        class="font-label-sm text-on-surface-variant hover:text-on-surface underline underline-offset-4 transition-colors duration-300"
+        class="font-label-sm uppercase text-on-surface-variant hover:text-on-surface underline underline-offset-4 transition-colors duration-300"
       >
-        CONTACTO
+        {{ 'footer.links.contact' | transloco }}
       </a>
       <a
         routerLink="/personaliza"
-        class="font-label-sm text-on-surface-variant hover:text-on-surface underline underline-offset-4 transition-colors duration-300"
+        class="font-label-sm uppercase text-on-surface-variant hover:text-on-surface underline underline-offset-4 transition-colors duration-300"
       >
-        PERSONALIZA TU PIEZA
+        {{ 'footer.links.customize' | transloco }}
       </a>
     </div>
 
     <!-- Copyright -->
-    <p class="font-label-sm text-on-surface-variant">
-      © {{ year }} SUBLIME. HANDCRAFTED INTENTION.
+    <p class="font-label-sm uppercase text-on-surface-variant">
+      © {{ year }} Sublime. {{ 'footer.tagline' | transloco }}
     </p>
   </div>
 </footer>

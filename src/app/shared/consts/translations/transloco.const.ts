@@ -7,6 +7,7 @@ export const TRANSLOCO_CONST_CONFIG: TranslocoTestingOptions = {
   translocoConfig: {
     availableLangs: ['en', 'es'],
     defaultLang: 'en',
+    reRenderOnLangChange: true,
   },
   preloadLangs: true,
 };

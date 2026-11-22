@@ -8,7 +8,15 @@
   "hero": {
     "headline": "Handcrafted Resin Art",
     "subheadline": "Each piece is a unique expression — shaped by hand, sealed in time.",
-    "cta": "Explore the Collection"
+    "cta": "Explore the Collection",
+    "eyebrow": "Handcrafted intention",
+    "title_before": "Wearable",
+    "title_emphasis": "ethereal",
+    "title_after": "beauty",
+    "intro": "I am a self-taught artisan who found peace in the flowing rhythm of working with resin. Each piece is a meditation, capturing the quiet elegance of nature's imperfections within polished, crystalline forms.",
+    "image_alt": "Handcrafted resin jewelry by Sublime",
+    "cta_collections": "View collections",
+    "cta_story": "Our story"
   },
   "products": {
     "title": "The Collection",
@@ -129,12 +137,17 @@
     "learnMore": "Learn more",
     "close": "Close",
     "open": "Open",
-    "currency": "USD"
+    "currency": "EUR"
   },
   "footer": {
     "tagline": "Handmade with intention.",
     "rights": "All rights reserved.",
     "privacy": "Privacy Policy",
-    "terms": "Terms of Service"
+    "terms": "Terms of Service",
+    "links": {
+      "care": "Care and shipping",
+      "contact": "Contact",
+      "customize": "Customize your piece"
+    }
   }
 }

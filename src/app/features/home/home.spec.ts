@@ -3,6 +3,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Home } from './home';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
+import { TranslocoTestingModule } from '@jsverse/transloco';
+import { TRANSLOCO_CONST_CONFIG } from '../../shared/consts/translations/transloco.const';
 
 describe('Home', () => {
   let component: Home;
@@ -10,7 +12,7 @@ describe('Home', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Home],
+      imports: [Home, TranslocoTestingModule.forRoot(TRANSLOCO_CONST_CONFIG)],
       providers: [
         {
           provide: ActivatedRoute,

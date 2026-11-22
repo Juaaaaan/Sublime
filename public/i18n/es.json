@@ -8,7 +8,15 @@
   "hero": {
     "headline": "Arte en Resina Artesanal",
     "subheadline": "Cada pieza es una expresión única — moldeada a mano, sellada en el tiempo.",
-    "cta": "Explorar la Colección"
+    "cta": "Explorar la Colección",
+    "eyebrow": "Intención hecha a mano",
+    "title_before": "Belleza",
+    "title_emphasis": "etérea",
+    "title_after": "para llevar",
+    "intro": "Soy una artesana autodidacta que encontró la paz en el ritmo fluido del trabajo con resina. Cada pieza es una meditación, capturando la quieta elegancia de las imperfecciones de la naturaleza dentro de formas cristalinas y pulidas.",
+    "image_alt": "Joyería artesanal de resina de Sublime",
+    "cta_collections": "Ver colecciones",
+    "cta_story": "Nuestra historia"
   },
   "products": {
     "title": "La Colección",
@@ -129,12 +137,17 @@
     "learnMore": "Saber más",
     "close": "Cerrar",
     "open": "Abrir",
-    "currency": "USD"
+    "currency": "EUR"
   },
   "footer": {
     "tagline": "Hecho a mano con intención.",
     "rights": "Todos los derechos reservados.",
     "privacy": "Política de Privacidad",
-    "terms": "Términos de Servicio"
+    "terms": "Términos de Servicio",
+    "links": {
+      "care": "Cuidados y envíos",
+      "contact": "Contacto",
+      "customize": "Personaliza tu pieza"
+    }
   }
 }

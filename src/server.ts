@@ -6,11 +6,21 @@ import {
 } from '@angular/ssr/node';
 import express from 'express';
 import { join } from 'node:path';
+import { describeMissingDeployedHost, resolveAllowedHosts } from './server-hosts';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
 const app = express();
-const angularApp = new AngularNodeAppEngine();
+
+/**
+ * `allowedHosts` es obligatorio: `@angular/ssr` 21 valida la cabecera `host` y, con la
+ * lista vacía, no acepta ningún host y degrada a renderizado en cliente devolviendo 200.
+ * Pasar la opción al constructor sustituye la lectura de `NG_ALLOWED_HOSTS` que hace el
+ * framework, así que la unión con esa variable la hace `resolveAllowedHosts`.
+ */
+const angularApp = new AngularNodeAppEngine({
+  allowedHosts: resolveAllowedHosts(process.env),
+});
 
 /**
  * Example Express Rest API endpoints can be defined here.
@@ -59,6 +69,11 @@ if (isMainModule(import.meta.url) || process.env['pm_id']) {
     }
 
     console.log(`Node Express server listening on http://localhost:${port}`);
+
+    const missingHostWarning = describeMissingDeployedHost(process.env);
+    if (missingHostWarning) {
+      console.warn(missingHostWarning);
+    }
   });
 }
 

@@ -170,6 +170,14 @@ Rules:
 - Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
 - After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
 
+## Workflow: rediseño Sublime con OpenSpec
+
+Para el rediseño de la web, el trabajo se organiza en changes de OpenSpec definidos en `openspec/ROADMAP.md`. Cuando la petición sea ejecutar un change del roadmap, o el usuario invoque `/ship-change`, **sigue `.claude/commands/ship-change.md` en lugar del protocolo ODD de abajo**. Este flujo cuenta como petición explícita de SDD: no crees documentos en `odd/tasks/`.
+
+- Fuente de diseño: `docs/DESIGN.md` y el archivo de Figma indicado en el roadmap.
+- La sesión principal orquesta; los subagentes (`developer`, `qa`, `design-qa`, `data`, `reviewer`, `Explore`) no se invocan entre sí.
+- El push y la PR (a `develop`) los hace siempre el usuario.
+
 ## Workflow: Organic Driven Development (ODD)
 
 Before making any code change, follow this protocol:

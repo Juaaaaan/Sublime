@@ -2,6 +2,7 @@ import {
   APP_INITIALIZER,
   ApplicationConfig,
   inject,
+  provideAppInitializer,
   provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection,
 } from '@angular/core';
@@ -15,6 +16,7 @@ import localeEs from '@angular/common/locales/es';
 
 import { routes } from './app.routes';
 import { TranslocoHttpLoader } from './core/services/transloco/transloco-loader';
+import { SeoService } from './core/services/seo/seo.service';
 import { LangDetectorService } from './core/services/transloco/lang-detector.service';
 
 export const appConfig: ApplicationConfig = {
@@ -47,5 +49,6 @@ export const appConfig: ApplicationConfig = {
       },
       multi: true,
     },
+    provideAppInitializer(() => inject(SeoService).init()),
   ],
 };

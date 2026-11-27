@@ -6,9 +6,9 @@ export const environment = {
   stripePublicKey: 'pk_test_...',
   appUrl: 'http://localhost:4200',
   contact: {
-    // TODO RCA-28: número de WhatsApp real pendiente de confirmación con la clienta
-    whatsappNumber: '+34600000000',
-    // TODO RCA-28: email de contacto real pendiente de confirmación con la clienta
-    email: 'hello@sublime.example',
+    // Formato wa.me: prefijo internacional y número, sin "+" ni espacios
+    whatsappNumber: '34690071950',
+    whatsappDisplay: '+34 690 07 19 50',
+    email: 'hola@sublimecraftart.es',
   },
 };

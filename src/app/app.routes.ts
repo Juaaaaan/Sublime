@@ -9,11 +9,13 @@ export const routes: Routes = [
       {
         path: '',
         pathMatch: 'full',
+        data: { seo: 'home' },
         loadComponent: () => import('./features/home/home').then((m) => m.Home),
       },
       {
         path: 'colecciones',
         pathMatch: 'full',
+        data: { seo: 'collections' },
         loadComponent: () =>
           import('./features/collections/collections').then((m) => m.Collections),
       },
@@ -21,18 +23,21 @@ export const routes: Routes = [
       {
         path: 'cuidados',
         pathMatch: 'full',
+        data: { seo: 'care' },
         loadComponent: () => import('./features/health-care/health-care').then((m) => m.HealthCare),
       },
 
       {
         path: 'stock',
         pathMatch: 'full',
+        data: { seo: 'stock' },
         loadComponent: () => import('./features/stock/stock').then((m) => m.Stock),
       },
 
       {
         path: 'contacto',
         pathMatch: 'full',
+        data: { seo: 'contact' },
         loadComponent: () => import('./features/contact/contact').then((m) => m.Contact),
       },
     ],

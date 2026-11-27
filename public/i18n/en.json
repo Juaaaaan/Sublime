@@ -45,7 +45,6 @@
     "certified": "Certified mail",
     "pickup": "In-person pickup"
   },
-
   "collections": {
     "title_section": {
       "series": "The 2026 Series",
@@ -92,14 +91,12 @@
       }
     }
   },
-
   "care": {
     "title_section": {
       "title": "Care & Handcrafting Times",
       "subtitle": "Artistry requires patience and intentionality. Each piece is a journey from liquid resin to a wearable treasure."
     }
   },
-
   "about": {
     "title": "About the Studio",
     "body": "Every piece begins as an idea — a color, a feeling, a texture found in nature. We pour, cure, and finish each item by hand in our small studio."
@@ -107,30 +104,10 @@
   "contact": {
     "title": "Let's connect",
     "subtitle": "Write to us without rush — every message is read slowly, the way every piece is made.",
-    "name": "Full Name",
-    "email": "Email Address",
-    "subject": "Subject",
-    "subjectPlaceholder": "Select a reason...",
-    "subjectOptions": {
-      "customCommission": "Custom Commission",
-      "orderInquiry": "Order Inquiry",
-      "wholesale": "Wholesale",
-      "press": "Press / Collaboration",
-      "other": "Other"
-    },
-    "message": "Message",
-    "send": "Send Message",
-    "success": "Thank you! We'll be in touch soon.",
-    "error": "Something went wrong. Please try again.",
     "legalNotice": "Your order is not confirmed until we talk and payment is received.",
     "whatsapp": "Message us on WhatsApp",
     "emailLink": "Email us",
-    "studioLocation": "Studio Location",
-    "errors": {
-      "required": "This field is required.",
-      "email": "Enter a valid email address.",
-      "minLength": "This field is too short."
-    }
+    "studioLocation": "Studio Location"
   },
   "common": {
     "loading": "Loading…",
@@ -147,8 +124,29 @@
     "terms": "Terms of Service",
     "links": {
       "care": "Care and shipping",
-      "contact": "Contact",
-      "customize": "Customize your piece"
+      "contact": "Contact"
+    }
+  },
+  "seo": {
+    "home": {
+      "title": "Sublime | Handmade resin jewelry",
+      "description": "Handcrafted jewelry in UV resin, epoxy resin and stainless steel. Ready-made or made-to-order pieces."
+    },
+    "collections": {
+      "title": "Collections | Sublime",
+      "description": "Discover Sublime jewelry collections, handmade in resin."
+    },
+    "care": {
+      "title": "Care and shipping | Sublime",
+      "description": "How to care for your resin and stainless steel jewelry, plus making and shipping times."
+    },
+    "stock": {
+      "title": "In stock | Sublime",
+      "description": "Resin jewelry already made and available without the crafting wait."
+    },
+    "contact": {
+      "title": "Contact | Sublime",
+      "description": "Message us on WhatsApp or by email about handmade jewelry and custom orders."
     }
   }
 }

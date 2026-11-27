@@ -1,123 +1,39 @@
 <ng-container *transloco="let t" id="rc-contact">
   <app-intro-page-section [title]="t('contact.title')" [description]="t('contact.subtitle')" />
 
-  <div class="max-w-[1200px] mx-auto px-gutter py-xl grid grid-cols-1 gap-lg md:grid-cols-5 md:items-start">
-    <form
-      class="flex flex-col gap-md rounded-xl border border-outline-variant bg-surface-container-lowest p-lg shadow-ambient md:col-span-3"
-      novalidate
-      (submit)="onSubmit($event)"
-    >
-      <div class="grid grid-cols-1 gap-gutter md:grid-cols-2">
-        <app-input
-          id="contact-full-name"
-          [label]="t('contact.name')"
-          type="text"
-          [required]="true"
-          [value]="form.controls.fullName.value ?? ''"
-          [error]="errorFor('fullName')"
-          (valueChange)="onFieldChange('fullName', $event)"
-        />
-        <app-input
-          id="contact-email"
-          [label]="t('contact.email')"
-          type="email"
-          [required]="true"
-          [value]="form.controls.email.value ?? ''"
-          [error]="errorFor('email')"
-          (valueChange)="onFieldChange('email', $event)"
-        />
-      </div>
-
-      <app-select
-        id="contact-subject"
-        [label]="t('contact.subject')"
-        [placeholder]="t('contact.subjectPlaceholder')"
-        [required]="true"
-        [value]="form.controls.subject.value ?? ''"
-        [error]="errorFor('subject')"
-        [options]="[
-          { value: 'custom_commission', label: t('contact.subjectOptions.customCommission') },
-          { value: 'order_inquiry', label: t('contact.subjectOptions.orderInquiry') },
-          { value: 'wholesale', label: t('contact.subjectOptions.wholesale') },
-          { value: 'press', label: t('contact.subjectOptions.press') },
-          { value: 'other', label: t('contact.subjectOptions.other') },
-        ]"
-        (valueChange)="onFieldChange('subject', $event)"
-      />
-
-      <app-text-area
-        id="contact-message"
-        [label]="t('contact.message')"
-        [required]="true"
-        [rows]="5"
-        [value]="form.controls.message.value ?? ''"
-        [error]="errorFor('message')"
-        (valueChange)="onFieldChange('message', $event)"
-      />
-
-      <div class="flex items-start gap-xs rounded-lg border border-tertiary-fixed-dim/30 bg-surface-container p-sm">
-        <svg
-          class="mt-0.5 h-5 w-5 shrink-0 text-on-surface-variant"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          stroke-width="1.5"
-          aria-hidden="true"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
-          />
-        </svg>
-        <p class="font-sans text-body-md text-on-surface-variant">{{ t('contact.legalNotice') }}</p>
-      </div>
-
-      <app-button type="submit" [loading]="isSubmitting()" [fullWidth]="true">
-        {{ t('contact.send') }}
-      </app-button>
-
-      <p
-        class="text-label-sm font-semibold uppercase tracking-widest"
-        aria-live="polite"
-        [class.text-error]="submitStatus() === 'error'"
-        [class.text-primary]="submitStatus() === 'success'"
-      >
-        @if (submitStatus() === 'success') {
-          {{ t('contact.success') }}
-        } @else if (submitStatus() === 'error') {
-          {{ t('contact.error') }}
-        }
-      </p>
-    </form>
-
-    <aside class="flex flex-col gap-md md:col-span-2">
-      <img
-        ngSrc="https://picsum.photos/seed/contact-jewelry/445/334"
-        width="445"
-        height="334"
-        class="w-full rounded-lg object-cover"
-        [alt]="t('contact.title')"
-      />
-
+  <div
+    class="max-w-[1200px] mx-auto px-gutter py-xl grid grid-cols-1 gap-lg md:grid-cols-2 md:items-start"
+  >
+    <div class="flex flex-col gap-md">
       <a
         [href]="'https://wa.me/' + contactInfo.whatsappNumber"
-        [attr.aria-label]="t('contact.whatsapp')"
+        target="_blank"
+        rel="noopener noreferrer"
         class="flex items-center justify-between gap-xs border-b border-outline-variant py-sm font-sans text-body-md text-on-surface transition-colors duration-300 hover:text-primary"
       >
-        <span>{{ t('contact.whatsapp') }}</span>
+        <span class="flex flex-col">
+          <span>{{ t('contact.whatsapp') }}</span>
+          <span class="text-on-surface-variant">{{ contactInfo.whatsappDisplay }}</span>
+        </span>
         <span aria-hidden="true">&rarr;</span>
       </a>
 
       <a
         [href]="'mailto:' + contactInfo.email"
-        [attr.aria-label]="t('contact.emailLink')"
         class="flex items-center justify-between gap-xs border-b border-outline-variant py-sm font-sans text-body-md text-on-surface transition-colors duration-300 hover:text-primary"
       >
-        <span>{{ t('contact.emailLink') }}</span>
+        <span class="flex flex-col">
+          <span>{{ t('contact.emailLink') }}</span>
+          <span class="text-on-surface-variant">{{ contactInfo.email }}</span>
+        </span>
         <span aria-hidden="true">&rarr;</span>
       </a>
+
+      <p
+        class="rounded-lg bg-surface-container p-sm font-sans text-body-md text-on-surface-variant"
+      >
+        {{ t('contact.legalNotice') }}
+      </p>
 
       <div class="border-t border-outline-variant pt-md">
         <p class="text-label-sm font-semibold uppercase tracking-widest text-on-surface-variant">
@@ -126,6 +42,14 @@
         <!-- TODO RCA-28: dirección real pendiente de confirmación con la clienta -->
         <p class="mt-xs font-sans text-body-md text-on-surface">Madrid, Spain</p>
       </div>
-    </aside>
+    </div>
+
+    <img
+      ngSrc="https://picsum.photos/seed/contact-jewelry/445/334"
+      width="445"
+      height="334"
+      class="w-full rounded-lg object-cover"
+      [alt]="t('contact.title')"
+    />
   </div>
 </ng-container>

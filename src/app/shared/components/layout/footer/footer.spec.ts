@@ -40,14 +40,14 @@ describe('FooterComponent', () => {
     expect(logoLink!.textContent!.trim()).toBe('Sublime');
   });
 
-  it('should render navigation links to /cuidados, /contacto and /personaliza', () => {
+  it('should link to /cuidados and /contacto but not to the missing /personaliza page', () => {
     const el: HTMLElement = fixture.nativeElement;
     const hrefs = Array.from(el.querySelectorAll<HTMLAnchorElement>('a')).map((a) =>
       a.getAttribute('href'),
     );
     expect(hrefs).toContain('/cuidados');
     expect(hrefs).toContain('/contacto');
-    expect(hrefs).toContain('/personaliza');
+    expect(hrefs).not.toContain('/personaliza');
   });
 
   it('should render the link labels in the active language', () => {
@@ -55,7 +55,6 @@ describe('FooterComponent', () => {
     const labels = Array.from(el.querySelectorAll('a')).map((a) => a.textContent!.trim());
     expect(labels).toContain('Care and shipping');
     expect(labels).toContain('Contact');
-    expect(labels).toContain('Customize your piece');
   });
 
   it('should translate the link labels and tagline when the language changes', async () => {
@@ -65,7 +64,6 @@ describe('FooterComponent', () => {
     const el: HTMLElement = fixture.nativeElement;
     const labels = Array.from(el.querySelectorAll('a')).map((a) => a.textContent!.trim());
     expect(labels).toContain('Cuidados y envíos');
-    expect(labels).toContain('Personaliza tu pieza');
     expect(el.textContent).toContain('Hecho a mano con intención.');
   });
 });

@@ -1,0 +1,189 @@
+# Design
+
+## Context
+
+Motivación en `proposal.md` → *Why*. Estado actual relevante, verificado en el código:
+
+- `src/tailwind.css` (133 líneas) ya declara **todos** los tokens que nombra `docs/DESIGN.md`: paleta MD3 completa (líneas 7-75), `--font-serif`/`--font-sans` (79-80), escala `--text-*` con interlineado emparejado (83-98), `--tracking-*` (101-104), radios (108-113), espaciado (117-124), `--container-content` (128) y `--shadow-ambient` (132). No falta ningún token de la lista de DESIGN.md.
+- El problema es el inverso: hay **52 usos de clases que no existen** repartidos en 20 ficheros — `font-label-sm` (35), `font-body-md` (8), `font-h3` (2), `shadow-soft` (2), `mb-mb` (4, typo), `pb-base` (1). Tailwind v4 no falla con una utilidad desconocida: simplemente no emite CSS, así que el desfase es silencioso.
+- Los 7 primitivos existen en `src/app/shared/components/ui/*`, todos con `.spec.ts`, y todos sus `.scss` están **vacíos** (0 bytes): el estilo es 100% utilidades Tailwind en plantilla o en cadenas construidas en TS.
+- `src/styles.scss` (13 líneas) fija la familia del `body` desde `--font-sans` (3-7) y fuerza serif en `h1,h2,h3` (9-12).
+- Angular 21 **zoneless**: un getter que devuelve una cadena de clases no se reevalúa de forma fiable bajo `OnPush`. Hoy lo hacen `badge.ts:15`, `modal.ts:57` y `select.ts:28`.
+- Prerender de todas las rutas (`app.routes.server.ts`, `RenderMode.Prerender`), por lo que cualquier acceso a `document` sin guarda rompe el build, no solo el runtime. `modal.ts:32-37` escribe `document.body.style.overflow` dentro de un `effect()`.
+- Cobertura exigida al 80% **por fichero** (`karma.config.js:14-26`, `check.each`), con `src/tailwind.css` incluido en los estilos del target de test (`angular.json`), así que las clases con token sí resuelven en los tests.
+- El archivo de Figma **no publica variables** (`get_variable_defs` sobre `3:2` → `{}`). Los valores se han leído del contexto de diseño de los nodos; no hay sincronización automática posible.
+
+## Goals / Non-Goals
+
+**Goals:**
+
+- Dejar la capa de tokens como única fuente de verdad del estilo, sin clases huérfanas.
+- Alinear tipografía y forma con lo medido en Figma, manteniendo la paleta MD3 del proyecto.
+- Dejar los 9 primitivos reactivos, `OnPush` y seguros en prerender, con API estable para los changes 2-16.
+- Hacer el desfase detectable de forma automática, para que no vuelva a aparecer en los 16 changes siguientes.
+
+**Non-Goals (de diseño, los de alcance están en el proposal):**
+
+- No se introduce una capa de componentes de terceros (Angular Material, Spartan, etc.): el estilo es demasiado específico y la dependencia no se justifica para 9 primitivos.
+- No se crea un sistema de variantes con CVA o similar; las cadenas de clases se mantienen en `computed()` dentro de cada componente.
+- No se autogeneran tokens desde Figma: sin variables publicadas no hay nada que sincronizar.
+- No se cambia la API pública de los primitivos salvo donde el spec lo exige, para no romper los consumidores actuales.
+
+## Decisions
+
+### D-1. Nunito Sans sustituye a las dos familias, y `--font-serif` se elimina
+
+Figma usa Nunito Sans en los 3 nodos auditados de 3 frames distintos (`3:15` y `3:2941` en los dos Home, `3:71` en secciones, `3:1549`/`3:1552` en formularios), con pesos Light/Regular/SemiBold/Bold/ExtraBold y una itálica. No aparece ni un nodo serif.
+
+Se elimina el token `--font-serif` en lugar de dejarlo apuntando a Nunito Sans. Un alias serif que no es serif es exactamente el tipo de trampa que ha causado este change: quien escriba `font-serif` en el change 5 creerá que está pidiendo un serif. Al borrar el token, `font-serif` pasa a ser una clase inexistente y la comprobación automática del punto D-6 la caza.
+
+Consecuencia: los 17 usos actuales de `font-serif` y la regla `h1,h2,h3` de `styles.scss:9-12` desaparecen; los títulos heredan la familia del `body`.
+
+**Corrección aplicada durante la implementación:** borrar `--font-serif` de `@theme` **no** basta. Tailwind v4 trae `--font-serif` y `--font-mono` en su tema por defecto, así que tras eliminar el token el build seguía emitiendo `--font-serif: ui-serif, Georgia, …` y `.font-serif{font-family:var(--font-serif)}`: los 17 usos no quedaban sin efecto, pasaban a renderizar en Georgia, una familia ajena al sistema. La forma correcta de cerrar el namespace es declarar `--font-serif: initial;` (y `--font-mono: initial;`), que en Tailwind v4 elimina la clave y con ella la utilidad. Verificado: ni la variable ni la clase aparecen en el CSS compilado.
+
+De aquí sale una restricción para D-6: la guardia **no** puede deducir "no hay token ⇒ clase inválida" para nombres que colisionan con el tema por defecto de Tailwind. Esos necesitan una lista explícita de **prohibidas** (`font-serif`, `font-mono`), además de la lista de permitidas.
+
+El `<link>` de `index.html:11` pasa a una sola petición con rango de pesos e itálica:
+`family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000`. Se conservan los `preconnect` (9-10).
+
+*Alternativa descartada:* self-host de la fuente en `public/`. Mejora privacidad y elimina un dominio externo, pero es un cambio de infraestructura ajeno a este change y el proyecto ya carga Google Fonts.
+
+*Alternativa descartada:* mantener Manrope para cuerpo. Rompe la fidelidad con el Figma sin ganancia, y obliga a cargar dos familias.
+
+### D-2. `fontVariationSettings` de Figma se ignora
+
+Todos los nodos traen `"YTLC" 500, "wdth" 100`. `wdth: 100` es el valor por defecto y `YTLC` (lowercase height) no es un eje de Nunito Sans: son residuos del exportador. No se añade `font-variation-settings` a ningún token.
+
+### D-3. Qué valor gana cuando Figma y DESIGN.md discrepan
+
+Regla acordada: **forma y tipografía de Figma; color de DESIGN.md.** Resultado:
+
+| Propiedad | Hoy en `tailwind.css` | Figma | Decisión |
+| --- | --- | --- | --- |
+| Familia | `Noto Serif` + `Manrope` | Nunito Sans | Figma (D-1) |
+| `--text-h1` / lh / tracking | 3rem / 1.2 / −0.02em | 48px / 51.84px / −1.2px | Figma: `3rem` / `1.08` / `-0.025em` |
+| `--text-h2` / lh / tracking | 2rem / 1.3 / −0.01em | 32px / 38.4px / −0.64px | Figma: `2rem` / `1.2` / `-0.02em` |
+| Peso de los títulos | sin declarar (400) | H1 Bold 700, H2/H3 SemiBold 600, lead Light 300 | Figma, vía `--text-h*--font-weight` |
+| `--text-label-sm` tracking | 0.1em (= 1.2px) | 0.6px en labels, 1.2px en antecabezas | Se separan: `--tracking-label` `0.05em`, nuevo `--tracking-eyebrow` `0.1em` |
+| Tracking de CTA | no existe | 1.92px sobre 12px | nuevo `--tracking-cta` `0.16em` |
+| Radio de campo y botón | `--radius` 4px | 2px | nuevo `--radius-field` `0.125rem`; `--radius` se mantiene para el resto |
+| Radio de chip | `--radius-full` | 12px | nuevo `--radius-chip` `0.75rem` |
+| Borde de campo | `outline-variant` `#c5c7bf` | `#e2e8df` | **ninguno de los dos**: `border-outline` `#757871`. Ver la excepción de accesibilidad abajo |
+| Placeholder | no existe | `rgba(140,156,130,.7)` | nuevo `--color-placeholder`, pero en `#6b7a64`. Ver la excepción de accesibilidad abajo |
+| Altura del botón | — | 44px (nodo `3:1584`) | `--text-cta` con caja de 16px; con `text-label-sm` (lh 1) quedaba en 40px |
+| Ancho del panel del modal | `max-w-sm/lg/2xl` | sin frame | `--container-modal-sm/md/lg`. `max-w-lg` compilaba a 48px |
+| Fondo de botón primario | `on-surface` `#191d17` | `#2c3528` | Figma: `deep-moss`, que **ya existe** como token |
+| Color de título | `on-surface` `#191d17` | `#2c3528` | Figma: `deep-moss`, token existente |
+| Paleta restante | MD3 | hex sueltos | DESIGN.md, sin cambios |
+
+**Excepción de accesibilidad a D-3, decidida por el usuario.** Dos colores del diseño no llegan a WCAG AA y se desvían a propósito:
+
+| Valor de Figma | Contraste | Sustituto | Contraste |
+| --- | --- | --- | --- |
+| placeholder `rgba(140,156,130,.7)` sobre blanco | 2,02:1 (AA pide 4,5) | `#6b7a64` | 4,57:1 |
+| borde de campo `#e2e8df` sobre blanco | 1,25:1 (SC 1.4.11 pide 3) | `border-outline` `#757871` | 4,49:1 |
+
+El primero era `sage-leaf` aclarado al 70%, es decir peor que el color que `docs/DESIGN.md` ya marca como «solo decorativo, no vale como texto»: importarlo habría contradicho la propia documentación. El segundo dejaba los campos prácticamente invisibles sobre la tarjeta blanca. Se corrigen aquí y no en el change 16 porque los 14 changes de página se construyen sobre estos primitivos. El chip no seleccionado recibe por lo mismo un borde de 1px: su fondo daba 1,04:1 contra la página.
+
+Ningún color MD3 existente se modifica. Los tamaños se expresan en `rem` para no romper el zoom del navegador, y los tracking en `em` para que escalen con el tamaño de fuente, que es lo que Figma expresa en px absolutos.
+
+Tokens nuevos añadidos: `--text-lead` (1.5rem / 1.3), `--text-body-sm` (0.875rem / 1.43), `--tracking-cta`, `--tracking-eyebrow`, `--radius-field`, `--radius-chip`, `--color-placeholder`, `--text-cta` (12px con caja de 16px), `--text-label-xs`, `--container-modal-sm/md/lg`, `--spacing-badge-y`, los `--text-h1/h2--letter-spacing`, los pesos `--text-h1/h2/h3/lead/h2-mobile--font-weight` y el padding de controles `--spacing-cta-x` (32px), `--spacing-cta-y` (14px), `--spacing-field-x` (15px) y `--spacing-field-y` (11px).
+
+**Añadido tras la revisión de QA:** el peso de los títulos faltaba en esta tabla y en las plantillas, así que todos los H1 y H2 renderizaban a 400 pese a que la propuesta prometía Bold y SemiBold. Se resuelve en el token (`--text-h*--font-weight`) y no clase a clase: Tailwind lo emite como `font-weight: var(--tw-font-weight, var(--text-h1--font-weight))`, de modo que una clase `font-light` explícita sigue ganando donde se quiera a propósito.
+
+El padding de control no entra en la escala de sección (xs/sm/md/lg/xl) porque no es ritmo de página: son los 14px y 15px que salen del diseño de los propios campos y botones. Sin estos tokens, el botón `md` quedaba en 48px frente a los 44px del nodo `3:1584`.
+
+### D-4. Las clases inexistentes se sustituyen una a una, sin crear alias
+
+Hay dos caminos: declarar `@utility font-label-sm { … }` para que las 35 llamadas actuales funcionen, o reemplazar cada uso por las clases con token.
+
+Se elige reemplazar. `font-*` en Tailwind significa familia o peso; usar ese prefijo para una composición de tamaño + tracking + mayúsculas perpetúa la confusión que generó el bug, y el change 15 (móvil) tendría que lidiar con dos vocabularios. La sustitución es mecánica y está acotada:
+
+| Clase inexistente | Sustitución |
+| --- | --- |
+| `font-label-sm` (35) | `text-label-sm font-semibold tracking-label uppercase` |
+| `font-body-md` (8) | `text-body-md` |
+| `font-h3` (2) | `text-h3` |
+| `shadow-soft` (2) | `shadow-ambient` |
+| `pb-base` (1) | `pb-sm` |
+| `mb-mb` (4) | `mb-md` |
+
+`pb-base` → `pb-sm` y `mb-mb` → `mb-md` son los valores que el layout pide a ojo en el frame correspondiente; al no haber generado nunca CSS, no hay apariencia previa que preservar.
+
+### D-5. Clases en `computed()`, nunca en getters
+
+Bajo zoneless + `OnPush`, un getter solo se reevalúa si algo más dispara la detección en ese componente. `Button`, `Input` y `TextArea` ya usan `computed()`; `Badge` (`badge.ts:15`), `Modal` (`modal.ts:57`) y `Select` (`select.ts:28`) pasan a `computed()`. Es un cambio interno: la plantilla sigue leyendo `classes()`/`panelClasses()` como una llamada.
+
+`Select` y `TextArea` añaden `changeDetection: ChangeDetectionStrategy.OnPush`, que hoy no declaran.
+
+### D-6. Una comprobación automática impide que vuelvan las clases huérfanas
+
+Sin esto, los 15 changes siguientes reintroducen el bug. Se añade un test unitario de la capa de tokens (`src/app/shared/tokens.spec.ts`) que:
+
+1. lee `src/tailwind.css` y extrae los nombres de token de `@theme`;
+2. recorre las plantillas y las cadenas de clases de `src/app/**`;
+3. falla listando cualquier clase `text-*`, `tracking-*`, `font-*`, `shadow-*`, `rounded-*`, `max-w-*` o de espaciado cuyo sufijo no corresponda a un token ni a una utilidad nativa de Tailwind.
+
+No va como regla de ESLint porque la lista de utilidades válidas depende del contenido de `tailwind.css`, que ESLint no resuelve.
+
+**Corrección aplicada durante la implementación:** tampoco puede ir como spec de Karma, que es lo que decía este diseño. Los tests del proyecto corren en navegador (`ChromeHeadless`), sin acceso al sistema de ficheros: un spec no puede leer `src/tailwind.css` ni recorrer `src/app` (`TS2307: Cannot find module 'node:fs'`). La guardia pasa a ser un script de Node, `scripts/check-tokens.mjs`, expuesto como `npm run lint:tokens` y enganchado en el hook de pre-commit de Husky junto a `lint` y `test:coverage`, que es la puerta real que se pretendía usar.
+
+El script comprueba cuatro cosas: que existan los tokens de los que depende media UI, que las familias por defecto de Tailwind que el sistema no usa sigan cerradas con `initial`, que ninguna clase emita cero CSS, y que no aparezca ninguna clase de la lista de prohibidas. Las utilidades nativas permitidas y las prohibidas son listas explícitas en el propio fichero, para que añadir una sea una decisión consciente.
+
+La heurística necesitó normalizar dos familias de utilidades que no son cromáticas aunque lo parezcan: `border-b`/`border-l-2` son grosor de lado, `border-solid` es estilo y solo `border-t-primary` lleva color; y `bg-linear-to-r` es un degradado, no un color. Sin eso daba 22 falsos positivos. Verificado en ambos sentidos: pasa sobre el código limpio (84 ficheros, 100 tokens) y falla al reintroducir a mano `font-label-sm`, `mb-mb` y `font-serif`.
+
+**Huecos cerrados tras la revisión de QA.** La primera versión de la guardia tenía dos agujeros que la hacían aparentar más cobertura de la que daba:
+
+1. **El modificador de opacidad la desactivaba por completo.** `candidateClasses()` filtraba con `/^[a-z][a-z0-9-]*$/`, que rechaza la barra, así que `bg-inexistente/80` se descartaba entera sin mirarse — incluso `font-serif/90`, estando prohibida, pasaba. No era teórico: hay 11 clases con modificador en `src/app`, varias del propio sistema (`bg-navbar/80`, `border-outline-variant/40`, `bg-on-surface/5`). Ninguna estaba rota, pero la guardia no lo garantizaba. Ahora se corta por `/` igual que por `:`.
+2. **Prefijos sin cubrir.** Faltaban `leading-`, `drop-shadow-`, `gap-x-`, `gap-y-`, `space-x-` y `space-y-`; `drop-shadow-soft` es el vecino directo de `shadow-soft`, el bug original. Añadidos con sus nativas. `gap-x-mb` además diagnosticaba mal el token (`--spacing-x-mb`): se resuelve ordenando los prefijos de más largo a más corto.
+
+Quedan fuera a propósito `w-`, `h-`, `inset-`, `top-/right-/bottom-/left-`, `translate-`, `ring-` y `divide-`: admiten fracciones, porcentajes y palabras clave (`w-1/2`, `h-screen`, `inset-auto`) que darían falsos positivos constantes. El alcance está documentado en la cabecera del script.
+
+También se corrigió el número de línea que reporta: antes daba la primera línea que *contuviera* la cadena, por lo que con una clase repetida señalaba el sitio equivocado; ahora busca con límites de palabra.
+
+*Alternativa descartada:* `eslint-plugin-tailwindcss`. A fecha de hoy no soporta la detección de tokens de `@theme` de Tailwind v4, que es justo lo que hace falta.
+
+### D-7. `RadioGroup`: contador de módulo en lugar de `Math.random()`
+
+`radio-group.ts:21` inicializa el `name` con `Math.random()` en la declaración del campo, así que servidor y cliente generan valores distintos y el markup hidratado no coincide. Se sustituye por un contador incremental a nivel de módulo (`radio-group-${++counter}`): el orden de instanciación durante el prerender y durante la hidratación es el mismo, luego el valor coincide.
+
+*Alternativa descartada:* `inject(APP_ID)` + índice. Más indirecto y no aporta nada sobre el contador.
+
+### D-8. `Modal`: guarda de plataforma y restauración del valor previo
+
+El `effect()` de `modal.ts:32-37` pasa a comprobar `isPlatformBrowser(inject(PLATFORM_ID))` antes de tocar el documento, y guarda el `overflow` previo del `body` para restaurarlo al cerrar, en lugar de fijarlo a vacío. `MODAL_SIZES` deja de mapear a `max-w-sm|max-w-lg|max-w-2xl|max-w-full mx-sm` y pasa a usar `--container-*` y espaciado con token. Se mantiene `A11yModule` del CDK para el focus trap: ya es dependencia y cubre el requisito de foco del spec.
+
+### D-9. Dos primitivos nuevos, no variantes de los existentes
+
+- **`Chip`**: el diseño lo usa como filtro con estado (`3:73`-`3:84`) con radio 12px y peso ExtraBold. `Badge` es un indicador no interactivo con otra forma y otro peso; meter el estado seleccionado y el rol de botón dentro de `Badge` mezclaría dos responsabilidades. Se crea `app-chip` aparte, con una entrada `interactive` que decide si renderiza `<button>` o `<span>`.
+- **`Callout`**: el aviso de `3:1581` reaparece en carrito y personalización. Se extrae ahora para que los changes 7 y 8 lo reutilicen en vez de duplicar el markup.
+
+Ambos siguen la estructura de carpetas existente (`ui/<name>/` con `.ts`, `.html`, `.spec.ts` y constantes en `shared/consts/components/<name>/`), y su plantilla es inline solo si cabe en ~10 líneas, según `CLAUDE.md`.
+
+### D-10. Orden de ejecución: tokens primero, limpieza después
+
+El orden importa porque la fase intermedia es visualmente inconsistente: si se tocan antes los primitivos, quedan apuntando a tokens que aún no existen. Secuencia: (1) tokens + fuente + `styles.scss` + `index.html`; (2) sustitución de las clases huérfanas en los 20 ficheros y, **al final de ese mismo grupo**, el test de la capa de tokens, que entra ya en verde; (3) primitivos uno a uno, cada uno con su spec; (4) `Chip` y `Callout`; (5) `docs/DESIGN.md`.
+
+El test de la capa de tokens se añade **después** de la limpieza, no antes. Añadirlo antes lo dejaría fallando a propósito durante todo el grupo de sustituciones, y el pre-commit de Husky ejecuta lint y cobertura completos en cada commit: habría commits en rojo o tentación de `--no-verify`. La enumeración de clases huérfanas que iba a dar ese test ya está hecha (52 usos, con fichero y línea, en el propio `tasks.md`), así que no se pierde nada usándolo como red de seguridad a posteriori en lugar de como guía.
+
+## Risks / Trade-offs
+
+- **El cambio de familia altera a la vez el aspecto de todas las páginas existentes.** → Es el objetivo, no un efecto colateral, y es la razón por la que el roadmap marca este change como no paralelo. Se verifica contra los screenshots de los frames `3:2` y `3:1536` antes de cerrar.
+- **Nunito Sans tiene métricas distintas a Noto Serif/Manrope: cambian los saltos de línea y algún bloque puede desbordar.** → El pase de verificación revisa Home, Contacto y Stock, que son las páginas con más texto hoy. Los desbordes de layout que no provengan del cambio de fuente se anotan y se dejan para el change de la página correspondiente, no se arreglan aquí.
+- **Los valores de Figma se han leído de 3 frames, no de los 14.** → Los tres nodos coinciden entre sí y cubren título, antecabeza, lead, etiqueta, campo, select, textarea, aviso, botón y chip. Si un change posterior encuentra un valor distinto en su frame, se trata como excepción de esa página y, si se repite, se promueve a token entonces.
+- **Borrar `--font-serif` rompe los 18 usos de `font-serif` de golpe.** → Entran en la misma lista de sustitución del paso 3 y el test de D-6 garantiza que no quede ninguno.
+- **Los dos tests que afirman clases sin CSS se reescriben, lo que reduce momentáneamente la red de seguridad.** → Se reescriben para afirmar la clase con token equivalente en el mismo elemento, no se borran.
+- **El test de D-6 puede dar falsos positivos con utilidades nativas poco comunes** (`text-center`, `text-balance`, `font-light`). → Su lista de permitidas es explícita y está en el propio fichero; añadir una utilidad legítima es una línea.
+- **Deuda conocida que no se aborda:** `footer.ts:8` declara `standalone: true` (redundante en Angular 21) y `footer.ts`, `select.ts`, `text-area.ts` e `intro-page-section.ts` no son `OnPush`. De esos, este change solo arregla `select` y `text-area`, que son primitivos. `footer` e `intro-page-section` caen en el change 2 y en el de su página.
+
+## Migration Plan
+
+No hay migración de datos, de API ni de esquema: el cambio es de capa de presentación y se despliega con el propio build.
+
+- **Verificación antes de cerrar**: `npm run test:coverage` (80% por fichero), `npm run lint`, `npm run build`; prerender de todas las rutas sin error; y comparación visual de Home, Contacto y Stock contra sus frames.
+- **Rollback**: revertir el merge del change. No queda estado persistido, ni migración de Supabase, ni fichero de i18n tocado, así que el revert es completo. El único efecto externo es la petición de fuente a Google Fonts, que vuelve a la anterior con el mismo revert.
+- **Orden respecto al roadmap**: este change debe estar en `develop` antes de empezar el change 2; los changes 3-14 asumen estos primitivos y estos tokens.
+
+## Open Questions
+
+- Ninguna que bloquee. **D2** (sitio bilingüe o solo español) sigue abierta pero no afecta aquí: los primitivos no llevan texto propio y este change no toca `public/i18n/*.json`. Conviene cerrarla antes del change 2.

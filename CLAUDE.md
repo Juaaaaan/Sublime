@@ -58,9 +58,16 @@ npm test             # Unit tests with Karma/Jasmine
 npm run test:coverage  # Unit tests with coverage report
 npm run lint         # ESLint (TypeScript + Angular templates)
 npm run serve:ssr:Sublime  # Run the built SSR server at http://localhost:4000
+npm run test:ssr           # Check the built server actually renders on the server
 ```
 
 To run a single test file: `npx ng test --include='**/path/to/file.spec.ts'`
+
+### Verifying SSR
+
+`@angular/ssr` validates the `host` header against an allow-list as DNS-rebinding protection. `src/server.ts` allows `localhost`, `127.0.0.1` and `[::1]`, plus whatever `NG_ALLOWED_HOSTS` carries as a comma-separated list; the deployed domain is added there, in the environment, never in the repository.
+
+A host that is not on the list does not get an error: the server answers **200 with the client bootstrap document** instead of the rendered page. Status codes cannot tell the two apart, so check the body — the bootstrap is ~15 KB and identical for every route, while a prerendered page is 28-41 KB and contains its own content. `npm run test:ssr` does that check against the files in `dist/`; it needs `npm run build` first.
 
 The pre-commit hook runs `npm test` automatically via Husky.
 
@@ -109,7 +116,7 @@ ESLint is configured with `angular-eslint` covering both `.ts` and `.html` files
 
 Brand personality: tactile craftsmanship meets botanical calm. Target audience values slow fashion, intentionality, and handmade imperfection. The UI is gallery-like — it recedes to let product photography dominate. Every interaction should feel deliberate and soft, mimicking polished resin. Style: **Botanical Minimalism** (sage/moss greens on warm ivory). Source of truth for the design: `DESIGN.md` in the Claude Project.
 
-Tailwind v4 tokens are defined in `src/tailwind.css` via `@theme`. Fonts (Noto Serif + Manrope) are loaded via `<link>` in `src/index.html`.
+Tailwind v4 tokens are defined in `src/tailwind.css` via `@theme`. The single font family, **Nunito Sans** (variable, with italics), is loaded via `<link>` in `src/index.html`. There is no serif family: `--font-serif` and `--font-mono` are closed with `initial`, so `font-serif` and `font-mono` emit no CSS and are rejected by `npm run lint:tokens`.
 
 ### Colors
 
@@ -128,19 +135,26 @@ Material Design 3 tonal palette. Key roles:
 | Light chip / badge | `bg-secondary-container` | Pale sage (#d4e5c8) |
 | Brand aliases | `bg-forest-mist` `bg-deep-moss` `bg-ivory-surface` | #d2dcd0 / #2c3528 / #f8faf0. `sage-leaf` (#8c9c82) is decorative only (2.77:1 as text) |
 
-Avoid heavy shadows. Use `border border-outline-variant` (1px) to define component boundaries. When elevation is needed (modals, floating cart) use: `shadow-ambient`.
+Avoid heavy shadows. Use `border border-outline-variant` (1px) for decorative dividers, and `border-outline` (#757871) where the border is what identifies a control: `outline-variant` is 1.6:1 and fails the 3:1 of SC 1.4.11. When elevation is needed (modals, floating cart) use: `shadow-ambient`.
 
 ### Typography
 
 | Scale | Tailwind class | Font | Use |
 |-------|---------------|------|-----|
-| h1 | `text-h1 font-serif tracking-h1` | Noto Serif 48px | Hero headlines |
-| h2 | `text-h2 font-serif tracking-h2` | Noto Serif 32px | Section titles |
-| h3 | `text-h3 font-serif` | Noto Serif 24px | Sub-sections |
-| body-lg | `text-body-lg font-sans` | Manrope 18px | Lead paragraphs |
-| body-md | `text-body-md font-sans` | Manrope 16px | Body copy |
-| label-md | `text-label-md font-sans font-semibold tracking-label-md` | Manrope 14px | Buttons, navigation |
-| label-sm | `text-label-sm font-sans font-semibold tracking-label uppercase` | Manrope 12px | Chips, field labels, tags |
+| h1 | `text-h1 tracking-h1` | 48px, Bold 700 | Hero headlines |
+| h2 | `text-h2 tracking-h2` | 32px, SemiBold 600 | Section titles |
+| h3 | `text-h3` | 24px, SemiBold 600 | Sub-sections |
+| lead | `text-lead italic` | 24px, Light 300 | Hero sub-headline |
+| body-lg | `text-body-lg` | 18px | Lead paragraphs |
+| body-md | `text-body-md` | 16px | Body copy |
+| body-sm | `text-body-sm` | 14px | Form fields, small copy |
+| label-md | `text-label-md font-semibold tracking-label-md` | 14px | Navigation |
+| label-sm | `text-label-sm font-semibold tracking-label uppercase` | 12px | Field labels, tags |
+| eyebrow | `text-label-sm font-semibold tracking-eyebrow uppercase` | 12px | Section kickers |
+| CTA | `text-cta tracking-cta uppercase` | 12px / 16px box | Button labels |
+| label-xs | `text-label-xs` | 10px | Small badge |
+
+Weights for h1-h3 and lead come from the token itself (`--text-h*--font-weight`), so no `font-bold` is needed; an explicit `font-*` class still overrides. Do not add `font-sans`: it is the body default.
 
 Mobile h2 variant: `text-h2-mobile` (28px).
 
@@ -152,13 +166,16 @@ Layout: 12-column fixed grid, 1200px max-width desktop (`max-w-content`). Storyt
 
 ### Components
 
-- **Buttons (primary):** `bg-on-surface text-surface rounded px-sm py-xs transition-all duration-300` — solid dark with white text. Slow 300ms transitions.
-- **Buttons (secondary):** Transparent background, `border border-outline-variant rounded`, same slow transition.
-- **Input fields:** `border-b border-outline-variant` or full 4-sided border. Labels: `text-label-sm uppercase tracking-label` above the field.
+- **Buttons (primary):** `bg-deep-moss text-on-primary rounded-field px-cta-x py-cta-y text-cta uppercase tracking-cta transition-all duration-300`. `text-cta` carries the 16px line box that makes the button 44px tall; `text-label-sm` has a line-height of 1 and would leave it at 40px. Use the `app-button` primitive rather than re-deriving this.
+- **Buttons (secondary):** Transparent background, `border border-deep-moss rounded-field`, same shape and slow transition. Not `outline-variant`: at 1.62:1 it falls under the 3:1 WCAG 2.1 SC 1.4.11 asks of a control boundary.
+- **Input fields:** full 1px border, `bg-surface-container-lowest border border-outline rounded-field px-field-x py-field-y text-body-sm`, placeholder via `placeholder:text-placeholder`. Labels `text-label-sm font-semibold uppercase tracking-label` above the field; hints and errors are `text-label-sm` in sentence case, never uppercase. Every interactive primitive shares one focus ring, `focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary`, which changes shape rather than only colour; never pair it with `outline-none`. Use `app-input`, `app-select` and `app-text-area`.
 - **Product cards:** `bg-surface-container-lowest rounded-lg` — white fill, no border, separated by whitespace or `bg-primary-container` tint. Generous internal padding.
-- **Chips / Tags:** `rounded-full bg-primary-container text-label-sm` — pill-shaped, no border, light fill.
+- **Chips / Tags:** `app-chip` — `rounded-chip` (12px, not a full pill), `px-sm py-chip-y`, `text-label-sm font-extrabold uppercase tracking-label`; `bg-deep-moss text-on-primary` when selected, `bg-surface-container-low text-deep-moss` when not.
 - **Navigation:** Centered persistent header, `bg-surface/80 backdrop-blur-[10px]`.
 - **Images:** All product photography uses warm-tone treatment. Always use `NgOptimizedImage`.
+- **Callouts:** `app-callout` — advisory note with a 4px `border-l-4 border-deep-moss`, tenuous fill and italic `text-body-sm`.
+
+Primitives carry no UI copy of their own: every string reaches them through `input()` or `<ng-content>`, already translated by Transloco. `npm run lint:tokens` fails on any class that emits no CSS, so a typo in a utility is caught instead of silently losing the style.
 
 ## graphify
 
@@ -169,6 +186,14 @@ Rules:
 - If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
 - Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
 - After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
+
+## Workflow: rediseño Sublime con OpenSpec
+
+Para el rediseño de la web, el trabajo se organiza en changes de OpenSpec definidos en `openspec/ROADMAP.md`. Cuando la petición sea ejecutar un change del roadmap, o el usuario invoque `/ship-change`, **sigue `.claude/commands/ship-change.md` en lugar del protocolo ODD de abajo**. Este flujo cuenta como petición explícita de SDD: no crees documentos en `odd/tasks/`.
+
+- Fuente de diseño: `docs/DESIGN.md` y el archivo de Figma indicado en el roadmap.
+- La sesión principal orquesta; los subagentes (`developer`, `qa`, `design-qa`, `data`, `reviewer`, `Explore`) no se invocan entre sí.
+- El push y la PR (a `develop`) los hace siempre el usuario.
 
 ## Workflow: Organic Driven Development (ODD)
 

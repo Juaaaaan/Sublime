@@ -5,6 +5,8 @@ import { TranslocoService } from '@jsverse/transloco';
 const SUPPORTED_LANGS = ['en', 'es'] as const;
 type SupportedLang = (typeof SUPPORTED_LANGS)[number];
 const FALLBACK_LANG: SupportedLang = 'en';
+// Sin petición (prerender) se genera el HTML en el idioma principal de la tienda
+const SERVER_DEFAULT_LANG: SupportedLang = 'es';
 
 function extractLang(raw: string): SupportedLang {
   const code = raw.split('-')[0].toLowerCase();
@@ -36,6 +38,6 @@ export class LangDetectorService {
     const header = this.request?.headers.get('accept-language') ?? '';
     // Accept-Language: es-419,es;q=0.9,en;q=0.8 — take the first entry
     const first = header.split(',')[0]?.trim() ?? '';
-    return extractLang(first);
+    return first ? extractLang(first) : SERVER_DEFAULT_LANG;
   }
 }

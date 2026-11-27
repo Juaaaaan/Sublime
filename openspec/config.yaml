@@ -2,33 +2,40 @@ schema: spec-driven
 githubCopilot:
   cloudAgent: true
 
-# Project context (optional)
-# This is shown to AI when creating artifacts.
-# Add your tech stack, conventions, style guides, domain knowledge, etc.
-# Example:
-#   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+# Contexto del proyecto: lo leen los agentes al crear cada artefacto.
+context: |
+  Proyecto: Sublime (antes Resin Craft Art). Tienda web de joyería artesanal en resina UV,
+  resina epoxi y acero inoxidable, tote bags DTF y talleres. Marca de una artesana (Ester).
+  Los pedidos casi siempre son por encargo: NO hay pago online automático. El pedido no empieza
+  hasta hablar con la clienta por WhatsApp o email y pagar (Bizum, Revolut o transferencia).
+  Stack: Angular 21 (SSR, zoneless, standalone, Signals, OnPush), Tailwind v4 (tokens en
+  src/tailwind.css), Transloco (es/en, textos en public/i18n), Supabase, Resend, Vercel.
+  Diseño: docs/DESIGN.md (Botanical Minimalism). Figma: archivo kAEGwQ9NFWaPwyGqI0s8MT,
+  mapa de frames en openspec/ROADMAP.md. Orden y decisiones pendientes: openspec/ROADMAP.md.
+  Convenciones: CLAUDE.md. Commits Conventional Commits. Ramas desde develop, PR a develop.
+  Idioma del código: inglés. Textos de UI siempre por Transloco (es y en), nunca hardcodeados.
 
-# Per-artifact rules (optional)
-# Add custom rules for specific artifacts.
-# Example:
-#   rules:
-#     proposal:
-#       - Keep proposals under 500 words
-#       - Always include a "Non-goals" section
-#     tasks:
-#       - Break tasks into chunks of max 2 hours
+rules:
+  proposal:
+    - Incluir una sección "Non-goals" y una sección "Decisiones pendientes" si dependen de la clienta.
+    - Citar los frames de Figma (id y nombre) que se implementan.
+    - No mezclar en un mismo change más de una página o más de un componente base.
+  design:
+    - Reutilizar componentes de src/app/shared antes de crear nuevos.
+    - Usar solo tokens de src/tailwind.css (nada de hex ni valores arbitrarios salvo justificación).
+    - Cualquier cambio de esquema de Supabase se propone como SQL en el design; no se aplica sin confirmación.
+  tasks:
+    - Tareas pequeñas (como máximo 1-2 horas), cada una con su verificación, agrupadas en secciones que dejen lint y tests en verde al terminar cada una (el pre-commit de Husky ejecuta lint y test:coverage completos).
+    - No crear un test que falle a propósito en una tarea separada de las que lo arreglan: se fusionan o se reordenan.
+    - Como máximo unas 25 tareas por change; si hay más, proponer dividirlo.
+    - Incluir siempre una tarea final de tests (cobertura mínima 80% por fichero), lint y build.
+    - Incluir i18n (es y en) y comprobación SSR cuando haya texto o acceso a navegador.
 
-# Per-operation guidance (optional)
-# Add advisory guidance for how apply and archive work should be conducted.
-# This is separate from artifact rules above.
-# Example:
-#   operations:
-#     apply:
-#       guidance:
-#         - Keep test summaries concise
-#     archive:
-#       guidance:
-#         - Summarize the archive outcome before finishing
+operations:
+  apply:
+    guidance:
+      - Ejecutar npm run test:coverage, npm run lint y npm run build antes de dar un change por terminado.
+      - No hacer git push ni tocar main/develop; el push y la PR los hace el usuario.
+  archive:
+    guidance:
+      - Resumir el resultado del archivado antes de terminar.

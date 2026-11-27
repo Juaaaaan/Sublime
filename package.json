@@ -9,8 +9,10 @@
     "test": "ng test --watch=false --browsers=ChromeHeadless",
     "test:coverage": "ng test --watch=false --code-coverage --browsers=ChromeHeadless",
     "lint": "ng lint",
+    "lint:tokens": "node scripts/check-tokens.mjs",
+    "test:ssr": "node scripts/check-ssr.mjs",
     "prepare": "husky || true",
-    "precommit": "npm run lint && npm run test:coverage",
+    "precommit": "npm run lint && npm run lint:tokens && npm run test:coverage",
     "doc:graph": "graphify update .",
     "doc:graph:obsidian": "graphify . --obsidian",
     "serve:ssr:Sublime": "node dist/Sublime/server/server.mjs"

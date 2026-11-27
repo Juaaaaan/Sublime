@@ -3,32 +3,26 @@
     class="flex flex-col md:flex-row justify-between items-center px-8 max-w-content mx-auto gap-6"
   >
     <!-- Logo -->
-    <a routerLink="/" class="text-lg font-serif italic text-on-surface"> Sublime </a>
+    <a routerLink="/" class="text-lg italic text-on-surface"> Sublime </a>
 
     <!-- Links -->
     <div class="flex flex-wrap justify-center gap-6">
       <a
         routerLink="/cuidados"
-        class="font-label-sm uppercase text-on-surface-variant hover:text-on-surface underline underline-offset-4 transition-colors duration-300"
+        class="text-label-sm font-semibold tracking-label uppercase text-on-surface-variant hover:text-on-surface underline underline-offset-4 transition-colors duration-300"
       >
         {{ 'footer.links.care' | transloco }}
       </a>
       <a
         routerLink="/contacto"
-        class="font-label-sm uppercase text-on-surface-variant hover:text-on-surface underline underline-offset-4 transition-colors duration-300"
+        class="text-label-sm font-semibold tracking-label uppercase text-on-surface-variant hover:text-on-surface underline underline-offset-4 transition-colors duration-300"
       >
         {{ 'footer.links.contact' | transloco }}
-      </a>
-      <a
-        routerLink="/personaliza"
-        class="font-label-sm uppercase text-on-surface-variant hover:text-on-surface underline underline-offset-4 transition-colors duration-300"
-      >
-        {{ 'footer.links.customize' | transloco }}
       </a>
     </div>
 
     <!-- Copyright -->
-    <p class="font-label-sm uppercase text-on-surface-variant">
+    <p class="text-label-sm font-semibold tracking-label uppercase text-on-surface-variant">
       © {{ year }} Sublime. {{ 'footer.tagline' | transloco }}
     </p>
   </div>

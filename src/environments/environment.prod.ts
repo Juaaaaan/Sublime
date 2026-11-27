@@ -4,7 +4,7 @@ export const environment = {
   supabaseAnonKey:
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJycmd2b3hlbmFhYnF5bWh0cHFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2MzA2OTEsImV4cCI6MjA5MzIwNjY5MX0.3JjEqImWGM0GZLSEa2-YxCvPDq38NALI-Qv1UIBHcCI',
   stripePublicKey: 'pk_live_...',
-  appUrl: 'https://tudominio.com',
+  appUrl: 'https://www.sublimecraftart.es',
   contact: {
     // Formato wa.me: prefijo internacional y número, sin "+" ni espacios
     whatsappNumber: '34690071950',

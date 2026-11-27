@@ -20,10 +20,16 @@ Reglas de `CLAUDE.md`, tokens del design system, i18n con Transloco (es/en).
 - [x] 1. Contacto: datos reales y sin formulario simulado. Aceptación: enlaces `wa.me/34690071950` y `mailto:hola@sublimecraftart.es` visibles; no hay `<form>`.
 - [x] 2. Entornos: `fileReplacements` y `appUrl`. Aceptación: el bundle de producción usa `appUrl` del dominio.
 - [x] 3. Ocultar enlaces a "Personaliza" (menú y pie). Aceptación: ningún `href="/personaliza"`.
-- [ ] 4. SEO: título, descripción, canónica y Open Graph por ruta, `robots.txt`, `sitemap.xml`, idioma. Aceptación: presentes en el HTML prerenderizado.
+- [x] 4. SEO: título, descripción, canónica y Open Graph por ruta, `robots.txt`, `sitemap.xml`, idioma. Aceptación: presentes en el HTML prerenderizado.
 
 ## Verificación
-Línea base: 399 tests, lint y lint:tokens correctos.
+- `npm run test:coverage`: 401 tests correctos y umbrales cumplidos. `npm run lint` y `lint:tokens` correctos.
+- `ng build` en una copia temporal con el incrustado de fuentes desactivado (el entorno bloquea Google Fonts): 5 rutas prerenderizadas, con contacto y etiquetas SEO correctos; sin `localhost:4200` ni datos de relleno.
+- `npm run test:ssr` correcto sobre esa copia (textos esperados actualizados al español).
+- Pendiente: comprobar el despliegue de Vercel con la compilación sin modificar.
+
+## Decisión
+El HTML prerenderizado pasa de inglés a español (idioma principal de la tienda). El navegador sigue cambiando al idioma del visitante.
 
 ## Siguiente paso
-Tarea 4.
+Revisar la PR a `develop` y publicar `develop` en `main`.

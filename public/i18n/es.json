@@ -126,5 +126,27 @@
       "care": "Cuidados y envíos",
       "contact": "Contacto"
     }
+  },
+  "seo": {
+    "home": {
+      "title": "Sublime | Joyas hechas a mano en resina",
+      "description": "Joyas artesanales en resina UV, resina epoxi y acero inoxidable. Piezas hechas a mano, en stock o por encargo."
+    },
+    "collections": {
+      "title": "Colecciones | Sublime",
+      "description": "Descubre las colecciones de joyas de Sublime, hechas a mano en resina."
+    },
+    "care": {
+      "title": "Cuidados y envíos | Sublime",
+      "description": "Cómo cuidar tus joyas de resina y acero inoxidable, y tiempos de fabricación y envío."
+    },
+    "stock": {
+      "title": "Piezas en stock | Sublime",
+      "description": "Joyas de resina ya fabricadas y disponibles sin esperar a su elaboración."
+    },
+    "contact": {
+      "title": "Contacto | Sublime",
+      "description": "Escríbenos por WhatsApp o correo para consultas y encargos de joyas hechas a mano."
+    }
   }
 }

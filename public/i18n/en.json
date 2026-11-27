@@ -126,5 +126,27 @@
       "care": "Care and shipping",
       "contact": "Contact"
     }
+  },
+  "seo": {
+    "home": {
+      "title": "Sublime | Handmade resin jewelry",
+      "description": "Handcrafted jewelry in UV resin, epoxy resin and stainless steel. Ready-made or made-to-order pieces."
+    },
+    "collections": {
+      "title": "Collections | Sublime",
+      "description": "Discover Sublime jewelry collections, handmade in resin."
+    },
+    "care": {
+      "title": "Care and shipping | Sublime",
+      "description": "How to care for your resin and stainless steel jewelry, plus making and shipping times."
+    },
+    "stock": {
+      "title": "In stock | Sublime",
+      "description": "Resin jewelry already made and available without the crafting wait."
+    },
+    "contact": {
+      "title": "Contact | Sublime",
+      "description": "Message us on WhatsApp or by email about handmade jewelry and custom orders."
+    }
   }
 }

@@ -23,8 +23,8 @@ const STARTUP_TIMEOUT_MS = 20_000;
 
 /** Rutas comprobadas, con un texto propio de cada página que solo aparece si hubo render. */
 const ROUTES = [
-  { path: '/', markers: ['Handcrafted intention', 'The Celestial Shore'] },
-  { path: '/contacto', markers: ["Let's connect", 'Message us on WhatsApp'] },
+  { path: '/', markers: ['Intención hecha a mano', 'The Celestial Shore'] },
+  { path: '/contacto', markers: ["Let's connect", 'Escríbenos por WhatsApp'] },
 ];
 
 const failures = [];
